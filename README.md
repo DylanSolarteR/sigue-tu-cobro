@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [ ] set up database and data models.
+- [x] set up database and data models.
 - [ ] create dashboard page.
 - [ ] add functionality to dashboard page.
 - [ ] create and style landing page.
