@@ -11,6 +11,18 @@ const globalForDb = globalThis as unknown as {
   conn: Pool | undefined;
 };
 
+
+const connObject = {
+  host: env.SINGLESTORE_HOST,
+  user: env.SINGLESTORE_USER,
+  password: env.SINGLESTORE_PASSWORD,
+  database: env.SINGLESTORE_DATABASE,
+  ssl: {},
+  maxIdle: 0,
+};
+
+console.log(connObject)
+
 const conn =
   globalForDb.conn ??
   createPool({
