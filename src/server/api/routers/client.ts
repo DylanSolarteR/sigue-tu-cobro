@@ -5,13 +5,14 @@ import { client } from "@/server/db/schema";
 
 export const clientRouter = createTRPCRouter({
     create: publicProcedure
-        .input(z.object({ name: z.string().min(1) }))
+        .input(z.object({ name: z.string().min(1), docType: z.enum(["CC", "CE", "NIT"]), docNumber: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            await ctx.db.insert(client).values({
+            console.log("Creating client", input);
+            console.log(await ctx.db.insert(client).values({
                 name: input.name,
-                docType: "CC",
-                docNumber: "123456789",
-            });
+                docType: input.docType,
+                docNumber: input.docNumber,
+            }));
         }),
 
 });
