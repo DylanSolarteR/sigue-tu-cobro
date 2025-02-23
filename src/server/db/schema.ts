@@ -47,6 +47,9 @@ export const collection_account = createTable("collection_account_table", {
   updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
 },
   (t) => {
-    return [index("client_id").on(t.client_id), index("collector_id").on(t.collector_id)];
+    return [
+      index("client_id").on(t.client_id),
+      index("collector_id").on(t.collector_id)
+    ];
   }
 );
