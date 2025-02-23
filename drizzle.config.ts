@@ -1,12 +1,10 @@
-import { type Config } from "drizzle-kit";
-
-import { env } from "@/env";
-
-export default {
+import { defineConfig } from 'drizzle-kit';
+export default defineConfig({
+  out: './drizzle',
   schema: "./src/server/db/schema.ts",
-  dialect: "sqlite",
+  dialect: 'singlestore',
+  tablesFilter: ['stc_*'],
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: process.env.DATABASE_URL!,
   },
-  tablesFilter: ["sigue-tu-cobro_*"],
-} satisfies Config;
+});
