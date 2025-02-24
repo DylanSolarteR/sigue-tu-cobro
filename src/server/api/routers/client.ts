@@ -8,11 +8,13 @@ export const clientRouter = createTRPCRouter({
         .input(z.object({ name: z.string().min(1), docType: z.enum(["CC", "CE", "NIT"]), docNumber: z.string() }))
         .mutation(async ({ ctx, input }) => {
             console.log("Creating client", input);
-            console.log(await ctx.db.insert(client).values({
+            const result = await ctx.db.insert(client).values({
                 name: input.name,
                 docType: input.docType,
                 docNumber: input.docNumber,
-            }));
+            }).$returningId()
+
+            console.log("Created client", result);
         }),
 
 });

@@ -11,4 +11,5 @@
 - [ ] create clients page.
 - [ ] create collector page.
 - [ ] integrate with better auth.
+- [ ] change navbar if user is logged in
 - [ ] create config page.
