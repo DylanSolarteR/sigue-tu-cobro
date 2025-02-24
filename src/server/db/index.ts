@@ -1,7 +1,8 @@
 import { drizzle } from "drizzle-orm/singlestore";
-import { createPool, type Pool } from "mysql2";
+import { createPool, type Pool } from "mysql2/promise";
 
 import { env } from "@/env";
+import * as schema from "./schema";
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
@@ -11,22 +12,11 @@ const globalForDb = globalThis as unknown as {
   conn: Pool | undefined;
 };
 
-
-const connObject = {
-  host: env.SINGLESTORE_HOST,
-  user: env.SINGLESTORE_USER,
-  password: env.SINGLESTORE_PASSWORD,
-  database: env.SINGLESTORE_DATABASE,
-  ssl: {},
-  maxIdle: 0,
-};
-
-console.log(connObject)
-
 const conn =
   globalForDb.conn ??
   createPool({
     host: env.SINGLESTORE_HOST,
+    port: parseInt(env.SINGLESTORE_PORT),
     user: env.SINGLESTORE_USER,
     password: env.SINGLESTORE_PASSWORD,
     database: env.SINGLESTORE_DATABASE,
@@ -41,4 +31,4 @@ conn.addListener("error", (err) => {
   console.error("Database connection error:", err);
 });
 
-export const db = drizzle({ client: conn });
+export const db = drizzle(conn, { schema });
