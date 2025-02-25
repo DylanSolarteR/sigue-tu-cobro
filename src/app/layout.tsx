@@ -2,9 +2,8 @@ import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import localFont from "next/font/local";
-
 import { TRPCReactProvider } from "@/trpc/react";
-import Navbar from "@/components/Navbar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 const geologica = localFont({ src: "../fonts/Geologica.woff2" });
 
 export const metadata: Metadata = {
@@ -21,8 +20,11 @@ export default function RootLayout({
     <html lang="es" className={geologica.className}>
       <body className="h-full min-h-screen">
         <TRPCReactProvider>
-          <Navbar />
-          {children}
+          <SidebarProvider>
+            <div className="max-w-screen h-full min-h-screen w-full">
+              {children}
+            </div>
+          </SidebarProvider>
         </TRPCReactProvider>
       </body>
     </html>
