@@ -6,11 +6,8 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 
 import {
@@ -28,48 +25,52 @@ function SidebarDashboard() {
   const path = usePathname();
   return (
     <Sidebar variant="floating" collapsible="icon" className="rounded-full">
-      <SidebarHeader>
-        <SidebarTrigger className="rounded-xl hover:bg-[#10473A]" />
-      </SidebarHeader>
-      <SidebarContent className="flex flex-col items-center justify-start">
-        <SidebarCard
-          title={"Resumen"}
-          active_href={path}
-          Icon={ChartNoAxesCombined}
-          href="/dashboard"
-        />
-        <SidebarCard
-          title={"Cuentas de Cobro"}
-          active_href={path}
-          Icon={NotebookText}
-          href="/cuentas-cobro"
-        />
-        <SidebarCard
-          title={"Clientes"}
-          active_href={path}
-          Icon={Handshake}
-          href="/clientes"
-        />
-        <SidebarCard
-          title={"Cobradores"}
-          active_href={path}
-          Icon={HandCoins}
-          href="/cobradores"
-        />
-        <SidebarCard
-          title={"Configuración"}
-          active_href={path}
-          Icon={Settings}
-          href="/config"
-        />
+      <SidebarContent className="flex">
+        <SidebarGroup className="flex flex-col items-center justify-start">
+          <SidebarCard
+            title={"Resumen"}
+            active_href={path}
+            Icon={ChartNoAxesCombined}
+            href="/dashboard"
+          />
+          <SidebarCard
+            title={"Cuentas de Cobro"}
+            active_href={path}
+            Icon={NotebookText}
+            href="/cuentas-cobro"
+          />
+          <SidebarCard
+            title={"Clientes"}
+            active_href={path}
+            Icon={Handshake}
+            href="/clientes"
+          />
+          <SidebarCard
+            title={"Cobradores"}
+            active_href={path}
+            Icon={HandCoins}
+            href="/cobradores"
+          />
+          <SidebarCard
+            title={"Configuración"}
+            active_href={path}
+            Icon={Settings}
+            href="/config"
+          />
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="flex flex-col items-center justify-start">
-        <SidebarMenu className="flex">
-          <SidebarMenuItem className="flex flex-row items-center justify-between">
-            <CircleUser />
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarGroup className="flex flex-col items-center justify-start">
+          <SidebarMenuButton
+            className="flex h-10 flex-row items-center gap-4 rounded-lg py-10 hover:bg-muted hover:brightness-125"
+            tooltip={"Perfil"}
+          >
+            <CircleUser className="min-h-8 min-w-8" />
+            <span className="text-ellipsis text-lg">Username</span>
+          </SidebarMenuButton>
+        </SidebarGroup>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }
@@ -88,12 +89,15 @@ function SidebarCard(props: {
       <SidebarMenuButton
         className={`${active_href === href ? "bg-[#10473A] hover:bg-[#10473A]" : "hover:bg-transparent"} h-16 rounded-3xl text-xl`}
         asChild
+        tooltip={title}
       >
         <Link
           href={href}
           className={`${active_href === href ? "" : "brightness-50"} flex flex-row items-center justify-start space-x-2 hover:brightness-100`}
         >
-          <Icon className="brightness min-h-4 min-w-4" />
+          <Icon
+            className={`brightness min-h-4 min-w-4 md:min-h-8 md:min-w-8`}
+          />
           <span className="text-wrap">{title}</span>
         </Link>
       </SidebarMenuButton>
