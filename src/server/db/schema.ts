@@ -44,3 +44,19 @@ export const collection_account = createTable("collection_account_table", {
     ];
   }
 );
+
+export const user = createTable("user_table", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  username: text("username").notNull(),
+  password: text("password").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
+export const Schema = {
+  actor: actor,
+  collection_account_item: collection_account_item,
+  collection_account: collection_account,
+  user: user,
+};

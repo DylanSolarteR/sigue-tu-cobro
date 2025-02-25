@@ -3,9 +3,22 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { actor } from "@/server/db/schema";
 
+const actorSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    docType: z.enum(["CC", "CE", "NIT"]),
+    docNumber: z.string(),
+    type: z.enum(["client", "collector"]),
+    expeditionPlace: z.string().optional(),
+    telephone: z.string().optional(),
+    isActive: z.boolean(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+});
+
 export const actorRouter = createTRPCRouter({
     createClient: publicProcedure
-        .input(z.object({ name: z.string().min(1), docType: z.enum(["CC", "CE", "NIT"]), docNumber: z.string(), type: z.enum(["client", "collector"]) }))
+        .input(actorSchema)
         .mutation(async ({ ctx, input }) => {
             console.log("Creating actor: client", input);
             const result = await ctx.db.insert(actor).values({
@@ -18,7 +31,7 @@ export const actorRouter = createTRPCRouter({
             console.log("Created client", result);
         }),
     createCollector: publicProcedure
-        .input(z.object({ name: z.string().min(1), docType: z.enum(["CC", "CE", "NIT"]), docNumber: z.string(), type: z.enum(["client", "collector"]) }))
+        .input(actorSchema)
         .mutation(async ({ ctx, input }) => {
             console.log("Creating actor: collector", input);
             const result = await ctx.db.insert(actor).values({
