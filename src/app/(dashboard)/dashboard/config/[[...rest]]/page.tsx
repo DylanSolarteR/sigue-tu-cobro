@@ -6,7 +6,7 @@ function Config() {
     <>
       <UserProfile
         fallback={
-          <Skeleton className="flex h-full w-[80%] flex-col items-center justify-center gap-2"></Skeleton>
+          <Skeleton className="flex h-full w-[55rem] flex-col items-center justify-center gap-2"></Skeleton>
         }
       />
     </>

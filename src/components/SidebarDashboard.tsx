@@ -9,14 +9,7 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
+import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
 
 import {
   ChartNoAxesCombined,
@@ -69,19 +62,30 @@ function SidebarDashboard() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="flex flex-col items-center justify-start">
-        <SidebarGroup className="flex flex-col items-center justify-start">
+        <SidebarGroup className="flex flex-col items-center justify-center">
           <SidebarMenuButton
-            className="flex h-10 flex-row items-center gap-4 rounded-lg py-10 hover:bg-muted hover:brightness-125"
+            className="flex h-10 flex-row items-center justify-start gap-4 rounded-lg py-10 selection:bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent"
             tooltip={"Perfil"}
           >
             <SignedIn>
               <UserButton
                 afterSwitchSessionUrl="/dashboard/resume"
                 fallback={<CircleUser className="min-h-8 min-w-8" />}
+                userProfileMode="navigation"
+                userProfileUrl="/dashboard/config"
+                showName={true}
+                appearance={{
+                  elements: {
+                    avatarBox: {
+                      order: 1,
+                    },
+                    userButtonOuterIdentifier: {
+                      order: 2,
+                      fontSize: "1.25rem",
+                    },
+                  },
+                }}
               />
-              <span className="text-ellipsis text-lg">
-                {user?.fullName ?? ""}
-              </span>
             </SignedIn>
           </SidebarMenuButton>
         </SidebarGroup>

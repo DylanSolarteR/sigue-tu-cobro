@@ -8,7 +8,7 @@ export const actor = createTable("actor_table", {
   name: text("name").notNull(),
   docType: singlestoreEnum("doc_type", ["CC", "CE", "NIT"]).notNull(),
   docNumber: text("doc_number").notNull(),
-  type: singlestoreEnum("type", ["client", "collector"]).notNull(),
+  type: singlestoreEnum("type", ["client", "creditor"]).notNull(),
   expeditionPlace: text("expedition_place"),
   telephone: text("telephone"),
   isActive: boolean("is_active").notNull().default(true),
@@ -16,21 +16,21 @@ export const actor = createTable("actor_table", {
   updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
-export const collection_account_item = createTable("collection_account_item_table", {
+export const billing_statement_item = createTable("billing_statement_item_table", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-  collection_account_id: text("collection_account_id").notNull(),
+  billing_statement_id: text("billing_statement_id").notNull(),
   amount: int("amount").notNull(),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
   updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
 }, (t) => {
-  return [index("collection_account_id").on(t.collection_account_id)];
+  return [index("billing_statement_id").on(t.billing_statement_id)];
 });
 
-export const collection_account = createTable("collection_account_table", {
+export const billing_statement = createTable("billing_statement_table", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   client_id: text("client_id").notNull(),
-  collector_id: text("collector_id").notNull(),
+  creditor_id: text("creditor_id").notNull(),
   amount: int("amount").notNull(),
   status: text("status").notNull(),
   isActive: boolean("is_active").notNull().default(true),
@@ -40,7 +40,7 @@ export const collection_account = createTable("collection_account_table", {
   (t) => {
     return [
       index("client_id").on(t.client_id),
-      index("collector_id").on(t.collector_id)
+      index("creditor_id").on(t.creditor_id)
     ];
   }
 );

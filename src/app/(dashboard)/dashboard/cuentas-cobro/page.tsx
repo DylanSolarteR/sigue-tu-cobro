@@ -3,7 +3,7 @@ import { Button } from "@/components/ui";
 function Cuentas() {
   return (
     <>
-      <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-full">
+      <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-[70rem] md:max-w-full">
         <div className="flex h-full flex-col items-start justify-start gap-4">
           <h1 className="px-8 text-2xl text-white">Cuentas de cobro</h1>
           <div className="flex w-full flex-row items-center justify-center gap-4 px-8">
@@ -24,7 +24,7 @@ function Cuentas() {
           </div>
         </div>
       </section>
-      <section className="rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-full"></section>
+      <section className="rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full"></section>
     </>
   );
 }
