@@ -4,6 +4,9 @@ import { type Metadata } from "next";
 import localFont from "next/font/local";
 import { TRPCReactProvider } from "@/trpc/react";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+
 const geologica = localFont({ src: "../fonts/Geologica.woff2" });
 
 export const metadata: Metadata = {
@@ -20,11 +23,22 @@ export default function RootLayout({
     <html lang="es" className={geologica.className}>
       <body className="h-full min-h-screen">
         <TRPCReactProvider>
-          <SidebarProvider>
-            <div className="max-w-screen h-full min-h-screen w-full">
-              {children}
-            </div>
-          </SidebarProvider>
+          <ClerkProvider
+            appearance={{
+              baseTheme: dark,
+              variables: {
+                colorPrimary: "#319678",
+                colorText: "white",
+                colorBackground: "#0D0D0D",
+              },
+            }}
+          >
+            <SidebarProvider>
+              <div className="max-w-screen h-full min-h-screen w-full">
+                {children}
+              </div>
+            </SidebarProvider>
+          </ClerkProvider>
         </TRPCReactProvider>
       </body>
     </html>

@@ -17,8 +17,8 @@ function Return() {
       <Tooltip>
         <TooltipTrigger>
           <Link
-            href={"/dashboard"}
-            className={`${path === "/dashboard" ? "hidden" : "flex"} p items-center justify-center rounded-lg p-2 hover:bg-[#10473A]`}
+            href={"/dashboard/resumen"}
+            className={`${path === "/dashboard/resumen" ? "hidden" : "flex"} p items-center justify-center rounded-lg p-2 hover:bg-[#10473A]`}
           >
             <ChartNoAxesCombined size={16} />
           </Link>

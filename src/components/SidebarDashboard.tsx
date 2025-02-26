@@ -9,6 +9,14 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 
 import {
   ChartNoAxesCombined,
@@ -23,6 +31,7 @@ import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 function SidebarDashboard() {
   const path = usePathname();
+  const { user } = useUser();
   return (
     <Sidebar variant="floating" collapsible="icon" className="rounded-full">
       <SidebarContent className="flex">
@@ -31,31 +40,31 @@ function SidebarDashboard() {
             title={"Resumen"}
             active_href={path}
             Icon={ChartNoAxesCombined}
-            href="/dashboard"
+            href="/dashboard/resumen"
           />
           <SidebarCard
             title={"Cuentas de Cobro"}
             active_href={path}
             Icon={NotebookText}
-            href="/cuentas-cobro"
+            href="/dashboard/cuentas-cobro"
           />
           <SidebarCard
             title={"Clientes"}
             active_href={path}
             Icon={Handshake}
-            href="/clientes"
+            href="/dashboard/clientes"
           />
           <SidebarCard
-            title={"Cobradores"}
+            title={"Acreedores"}
             active_href={path}
             Icon={HandCoins}
-            href="/cobradores"
+            href="/dashboard/acreedores"
           />
           <SidebarCard
             title={"Configuración"}
             active_href={path}
             Icon={Settings}
-            href="/config"
+            href="/dashboard/config"
           />
         </SidebarGroup>
       </SidebarContent>
@@ -65,8 +74,15 @@ function SidebarDashboard() {
             className="flex h-10 flex-row items-center gap-4 rounded-lg py-10 hover:bg-muted hover:brightness-125"
             tooltip={"Perfil"}
           >
-            <CircleUser className="min-h-8 min-w-8" />
-            <span className="text-ellipsis text-lg">Username</span>
+            <SignedIn>
+              <UserButton
+                afterSwitchSessionUrl="/dashboard/resume"
+                fallback={<CircleUser className="min-h-8 min-w-8" />}
+              />
+              <span className="text-ellipsis text-lg">
+                {user?.fullName ?? ""}
+              </span>
+            </SignedIn>
           </SidebarMenuButton>
         </SidebarGroup>
       </SidebarFooter>
