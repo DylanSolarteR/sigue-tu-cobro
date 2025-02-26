@@ -31,10 +31,12 @@ function Navbar() {
         <div
           className={`flex-col items-center gap-5 sm:flex-row sm:opacity-100 ${ShowCollapse ? "flex" : "hidden sm:flex"} transition-opacity`}
         >
-          <Button className="rounded-2xl bg-transparent text-sm hover:brightness-110 sm:text-base">
-            Iniciar Sesión
-          </Button>
-          <Link href={"/dashboard"}>
+          <Link href={"/entrar"}>
+            <Button className="rounded-2xl bg-transparent text-sm hover:brightness-110 sm:text-base">
+              Iniciar Sesión
+            </Button>
+          </Link>
+          <Link href={"/entrar"}>
             <Button className="rounded-2xl text-sm hover:brightness-110 sm:text-base">
               Registrarse
             </Button>

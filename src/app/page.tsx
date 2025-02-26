@@ -23,9 +23,9 @@ export default async function Home() {
                   fácilmente.
                 </h2>
               </div>
-              <Link href="/dashboard" className="w-full sm:w-fit">
+              <Link href="/entrar" className="w-full sm:w-fit">
                 <Button className="w-full rounded-xl bg-secondary p-6 text-xl font-bold hover:bg-secondary hover:brightness-110 sm:p-14 sm:text-5xl">
-                  Regístrate Ahora
+                  Inicia Ahora
                 </Button>
               </Link>
             </article>
