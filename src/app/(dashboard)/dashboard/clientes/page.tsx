@@ -1,23 +1,31 @@
+"use server";
 import { Button } from "@/components/ui";
+import ListClients from "@/components/dashboard/clients/ListClients";
+import { Suspense } from "react";
+import Link from "next/link";
 
-function Clientes() {
+async function Clientes() {
   return (
     <>
       <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-[70rem] md:max-w-full">
         <div className="flex h-full flex-col items-start justify-start gap-4">
           <h1 className="px-8 text-2xl text-white">Clientes</h1>
-          <div className="flex w-full flex-row items-center justify-center gap-4 px-8">
-            <Button
-              size={"xl"}
-              variant={"outline"}
-              className="bg-primary drop-shadow-lg hover:brightness-110"
-            >
-              Crear nuevo cliente
-            </Button>
+          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
+            <Link href={"/dashboard/clientes/crear"}>
+              <Button
+                size={"xl"}
+                variant={"outline"}
+                className="bg-primary drop-shadow-lg hover:brightness-110"
+              >
+                Crear nuevo cliente
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
-      <section className="rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full"></section>
+      <section className="flex rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full">
+        <ListClients />
+      </section>
     </>
   );
 }

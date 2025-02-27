@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { SignedIn, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 import {
   ChartNoAxesCombined,
@@ -24,7 +24,6 @@ import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 function SidebarDashboard() {
   const path = usePathname();
-  const { user } = useUser();
   return (
     <Sidebar variant="floating" collapsible="icon" className="rounded-full">
       <SidebarContent className="flex">
@@ -107,13 +106,13 @@ function SidebarCard(props: {
   return (
     <SidebarGroup>
       <SidebarMenuButton
-        className={`${active_href === href ? "bg-[#10473A] hover:bg-[#10473A]" : "hover:bg-transparent"} h-16 rounded-3xl text-xl`}
+        className={`${active_href.includes(href) ? "bg-[#10473A] hover:bg-[#10473A]" : "hover:bg-transparent"} h-16 rounded-3xl text-xl`}
         asChild
         tooltip={title}
       >
         <Link
           href={href}
-          className={`${active_href === href ? "" : "brightness-50"} flex flex-row items-center justify-start space-x-2 hover:brightness-100`}
+          className={`${active_href.includes(href) ? "" : "brightness-50"} flex flex-row items-center justify-start space-x-2 hover:brightness-100`}
         >
           <Icon
             className={`brightness min-h-4 min-w-4 md:min-h-8 md:min-w-8`}

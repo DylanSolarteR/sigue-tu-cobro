@@ -6,7 +6,7 @@ function Acreedores() {
       <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-[70rem] md:max-w-full">
         <div className="flex h-full flex-col items-start justify-start gap-4">
           <h1 className="px-8 text-2xl text-white">Acreedores</h1>
-          <div className="flex w-full flex-row items-center justify-center gap-4 px-8">
+          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
             <Button
               size={"xl"}
               variant={"outline"}

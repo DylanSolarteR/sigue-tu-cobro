@@ -1,4 +1,4 @@
-import KPICard from "@/components/dashboard/KPICard";
+import KPICard from "@/components/dashboard/summary/KPICard";
 import { Button } from "@/components/ui";
 import Link from "next/link";
 
