@@ -1,7 +1,6 @@
 "use server";
 import { Button } from "@/components/ui";
 import ListClients from "@/components/dashboard/clients/ListClients";
-import { Suspense } from "react";
 import Link from "next/link";
 
 async function Clientes() {

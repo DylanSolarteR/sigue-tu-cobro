@@ -56,6 +56,30 @@ export async function getCreditors() {
     return result;
 }
 
+export async function getCreditorById(id: string): Promise<ActionResponse<Actor>> {
+    const validatedId = z.string().safeParse(id);
+
+    if (!validatedId.success) {
+        return {
+            success: false,
+            message: 'El acreedor no existe',
+        };
+    }
+
+    const result = await api.actor.queries.getCreditorById({ id });
+    if (!result) {
+        return {
+            success: false,
+            message: 'El acreedor no existe',
+        };
+    }
+    return {
+        success: true,
+        message: 'Acreedor encontrado',
+        data: result,
+    };
+}
+
 export async function createClient(prevState: ActionResponse<Actor> | null, formData: FormData): Promise<ActionResponse<Actor>> {
     try {
         const rawData: Actor = {
@@ -121,7 +145,7 @@ export async function createCreditor(prevState: ActionResponse<Actor> | null, fo
             }
         }
 
-        await api.actor.mutations.client.create({
+        await api.actor.mutations.creditor.create({
             name: validatedData.data.name,
             docType: validatedData.data.docType,
             docNumber: validatedData.data.docNumber,
@@ -223,7 +247,7 @@ export async function updateCreditorById(prevState: ActionResponse<Actor> | null
             }
         }
 
-        await api.actor.mutations.client.update({
+        await api.actor.mutations.creditor.update({
             id: validatedId.data as string,
             name: validatedData.data.name,
             docType: validatedData.data.docType,
@@ -283,7 +307,7 @@ export async function deleteCreditorById(id: string): Promise<ActionResponse<Act
     }
     try {
 
-        await api.actor.mutations.client.delete({ id });
+        await api.actor.mutations.creditor.delete({ id });
 
         return {
             success: true,
