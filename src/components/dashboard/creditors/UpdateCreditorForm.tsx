@@ -47,7 +47,6 @@ function UpdateCreditorForm({ id }: { id: string }) {
         setClientInitialData(res.data as Actor);
         setLoading(false);
       } else {
-        console.log("paila socito");
         setClientExists(false);
         setLoading(false);
       }

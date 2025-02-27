@@ -42,7 +42,7 @@ export const actorRouter = createTRPCRouter({
                 )
             );
             if (client.length === 0) {
-                return null;
+                throw new Error("Client not found");
             }
             return client[0];
         }),
@@ -64,6 +64,9 @@ export const actorRouter = createTRPCRouter({
                     eq(actor.ownerId, ctx.user.userId as string)
                 )
             );
+            if (creditor.length === 0) {
+                throw new Error("Creditor not found");
+            }
             return creditor[0];
         }),
     },

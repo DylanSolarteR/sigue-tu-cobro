@@ -1,20 +1,23 @@
 export interface billing_statement {
-    id: string;
-    ownerId: string;
+    id?: string;
     client_id: string;
     creditor_id: string;
-    amount: number;
+    amount?: number;
+    showItemAmount?: boolean;
     status: string;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    payDate: string,
+    extraInfo: string;
+    isActive?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface billing_statement_item {
-    id: string;
+    id?: string;
     billing_statement_id: string;
     amount: number;
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    desc: string;
+    isActive?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
 }

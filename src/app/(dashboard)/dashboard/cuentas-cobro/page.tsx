@@ -1,4 +1,6 @@
+import ListBillingStatements from "@/components/dashboard/billing-statements/ListBillingStatements";
 import { Button } from "@/components/ui";
+import Link from "next/link";
 
 function Cuentas() {
   return (
@@ -7,24 +9,21 @@ function Cuentas() {
         <div className="flex h-full flex-col items-start justify-start gap-4">
           <h1 className="px-8 text-2xl text-white">Cuentas de cobro</h1>
           <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Button
-              size={"xl"}
-              variant={"outline"}
-              className="bg-primary drop-shadow-lg hover:brightness-110"
-            >
-              Ver historial de cuentas de cobro
-            </Button>
-            <Button
-              size={"xl"}
-              variant={"outline"}
-              className="bg-primary drop-shadow-lg hover:brightness-110"
-            >
-              Crear nueva cuenta de cobro
-            </Button>
+            <Link href={"/dashboard/cuentas-cobro/crear"}>
+              <Button
+                size={"xl"}
+                variant={"outline"}
+                className="bg-primary drop-shadow-lg hover:brightness-110"
+              >
+                Crear nueva cuenta de cobro
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
-      <section className="rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full"></section>
+      <section className="rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full">
+        <ListBillingStatements />
+      </section>
     </>
   );
 }

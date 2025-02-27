@@ -12,3 +12,9 @@ export const onlyNumberInput = (e: KeyboardEvent) => {
     e.preventDefault()
   }
 };
+
+export const priceInput = (e: KeyboardEvent) => {
+  if (!/[0-9]|Delete|Backspace|ArrowLeft|Tab|ArrowRight/i.test(e.key)) {
+    e.preventDefault()
+  }
+};
