@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { Toaster } from "@/components/Toaster";
 
 const geologica = localFont({ src: "../fonts/Geologica.woff2" });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
               <div className="max-w-screen h-full min-h-screen w-full">
                 {children}
               </div>
+              <Toaster />
             </SidebarProvider>
           </ClerkProvider>
         </TRPCReactProvider>
