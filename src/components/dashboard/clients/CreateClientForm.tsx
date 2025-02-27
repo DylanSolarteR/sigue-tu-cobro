@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { createCreditor } from "@/actions/actor.api";
+import { createClient } from "@/actions/actor.api";
 import { Actor } from "@/types/actor";
 import { ActionResponse } from "@/types/actionResponses";
 import {
@@ -29,10 +29,7 @@ const initialState: ActionResponse<Actor> = {
 };
 
 function CreateClientForm() {
-  const [state, action, isPending] = useActionState(
-    createCreditor,
-    initialState,
-  );
+  const [state, action, isPending] = useActionState(createClient, initialState);
   return (
     <Card className="mx-auto flex h-full w-full max-w-full flex-col overflow-auto bg-transparent">
       <CardHeader>

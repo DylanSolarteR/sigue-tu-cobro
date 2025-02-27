@@ -35,9 +35,9 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="flex h-full flex-col items-center justify-between rounded-md p-4">
-      <div className="h-fit rounded-md border-2 border-accent/30">
-        <Table className="h-full rounded-md">
+    <div className="flex h-full w-full flex-col items-center justify-between rounded-md p-8">
+      <div className="h-fit w-full rounded-md border-2 border-accent/30">
+        <Table className="h-full w-full rounded-md">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow

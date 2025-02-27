@@ -21,7 +21,7 @@ function CrearAcreedor() {
           </div>
         </div>
       </section>
-      <section className="flex overflow-auto rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full">
+      <section className="flex items-center justify-center overflow-auto rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full">
         <CreateAcreedorForm />
       </section>
     </>

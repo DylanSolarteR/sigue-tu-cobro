@@ -3,13 +3,17 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { actor, billing_statement } from "@/server/db/schema";
 import { eq, and, aliasedTable, desc } from "drizzle-orm";
+import { billing_statement as billing_statement_type } from "@/types/billing-statement";
 
 const billing_statement_Schema = z.object({
     id: z.string().optional(),
-    client_id: z.string(),
-    creditor_id: z.string(),
+    client_id: z.string().nonempty({ message: "El Cliente es requerido" }),
+    creditor_id: z.string().nonempty({ message: "El Acreedor es requerido" }),
     amount: z.number().optional(),
-    status: z.enum(["payed", "pending"]),
+    extraInfo: z.string().optional(),
+    showItemAmount: z.boolean().optional(),
+    payDate: z.string(),
+    status: z.enum(["payed", "pending"], { message: "Invalid status" }),
     isActive: z.boolean().optional(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
@@ -17,7 +21,7 @@ const billing_statement_Schema = z.object({
 
 export const billingStatementRouter = createTRPCRouter({
     queries: {
-        getAllBillingStatements: privateProcedure.query(async ({ ctx }) => {
+        getAll: privateProcedure.query(async ({ ctx }): Promise<billing_statement_type[]> => {
             const client = aliasedTable(actor, "client");
             const creditor = aliasedTable(actor, "creditor");
             const billingStatements = await ctx.db.select(
@@ -29,6 +33,10 @@ export const billingStatementRouter = createTRPCRouter({
                     creditor_name: creditor.name,
                     amount: billing_statement.amount,
                     status: billing_statement.status,
+                    extraInfo: billing_statement.extraInfo,
+                    payDate: billing_statement.payDate,
+                    showItemAmount: billing_statement.showItemAmount,
+                    createdAt: billing_statement.createdAt,
                 }
             ).from(billing_statement)
                 .innerJoin(client, eq(billing_statement.client_id, client.id))
@@ -41,18 +49,54 @@ export const billingStatementRouter = createTRPCRouter({
                 ).orderBy(desc(billing_statement.updatedAt));
             return billingStatements;
         }),
-
-
+        getOne: privateProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }): Promise<billing_statement_type> => {
+            const client = aliasedTable(actor, "client");
+            const creditor = aliasedTable(actor, "creditor");
+            const billingStatement = await ctx.db.select(
+                {
+                    id: billing_statement.id,
+                    client_id: billing_statement.client_id,
+                    client_name: client.name,
+                    creditor_id: billing_statement.creditor_id,
+                    creditor_name: creditor.name,
+                    amount: billing_statement.amount,
+                    extraInfo: billing_statement.extraInfo,
+                    showItemAmount: billing_statement.showItemAmount,
+                    status: billing_statement.status,
+                    payDate: billing_statement.payDate,
+                    createdAt: billing_statement.createdAt,
+                }
+            ).from(billing_statement)
+                .innerJoin(client, eq(billing_statement.client_id, client.id))
+                .innerJoin(creditor, eq(billing_statement.creditor_id, creditor.id))
+                .where(
+                    and(
+                        eq(billing_statement.isActive, true),
+                        eq(billing_statement.ownerId, ctx.user.userId as string),
+                        eq(billing_statement.id, input.id)
+                    )
+                );
+            if (billingStatement.length === 0) {
+                throw new Error("Cuenta de cobro no encontrada");
+            }
+            return billingStatement[0]!;
+        }),
     },
     mutations: {
-        create: privateProcedure.input(billing_statement_Schema).mutation(async ({ ctx, input }) => {
+        create: privateProcedure.input(z.object({
+            client_id: z.string().nonempty({ message: "El Cliente es requerido" }),
+            creditor_id: z.string().nonempty({ message: "El Acreedor es requerido" }),
+            payDate: z.string(),
+        })).mutation(async ({ ctx, input }) => {
             console.log("Creating billing statement", input);
             const result = await ctx.db.insert(billing_statement).values({
                 ownerId: ctx.user.userId as string,
                 client_id: input.client_id,
                 creditor_id: input.creditor_id,
+                payDate: input.payDate,
                 amount: 0,
                 status: "pending",
+                showItemAmount: true,
                 isActive: true,
             }).$returningId()
 
@@ -60,18 +104,29 @@ export const billingStatementRouter = createTRPCRouter({
         }),
         update: privateProcedure.input(z.object({
             id: z.string(),
-            client_id: z.string(),
-            creditor_id: z.string(),
             amount: z.number(),
             status: z.enum(["payed", "pending"]),
+            extraInfo: z.string().optional(),
+            payDate: z.string(),
+            showItemAmount: z.boolean().optional(),
         })).mutation(async ({ ctx, input }) => {
             console.log("Updating billing statement", input);
             await ctx.db.update(billing_statement).set({
-                client_id: input.client_id,
-                creditor_id: input.creditor_id,
                 amount: input.amount,
                 status: input.status,
+                extraInfo: input.extraInfo ?? "",
                 updatedAt: new Date().toISOString(),
+                payDate: input.payDate,
+                showItemAmount: input.showItemAmount ?? true,
+            }).where(eq(billing_statement.id, input.id));
+        }),
+        updateAmount: privateProcedure.input(z.object({
+            id: z.string(),
+            amount: z.number(),
+        })).mutation(async ({ ctx, input }) => {
+            console.log("Updating billing statement amount", input);
+            await ctx.db.update(billing_statement).set({
+                amount: input.amount,
             }).where(eq(billing_statement.id, input.id));
         }),
         delete: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {

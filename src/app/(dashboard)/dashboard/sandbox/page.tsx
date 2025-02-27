@@ -1,12 +1,12 @@
 import { UserButton } from "@clerk/nextjs";
 import { api } from "@/trpc/server";
 import { getClients } from "@/actions/actor.api";
-import { get } from "http";
+import * as bs from "@/actions/billing-statement.api";
 
 function page() {
   async function createClient() {
     "use server";
-    const resultId = await api.actor.mutations.createClient({
+    const resultId = await api.actor.mutations.client.create({
       name: "John Doe",
       docType: "CC",
       docNumber: "123456789",
@@ -16,7 +16,7 @@ function page() {
   }
   async function createCreditor() {
     "use server";
-    const resultId = await api.actor.mutations.createCreditor({
+    const resultId = await api.actor.mutations.creditor.create({
       name: "Doe Jhon",
       docType: "CC",
       docNumber: "123456789",
@@ -50,8 +50,7 @@ function page() {
 
   async function listBillingStatements() {
     "use server";
-    const billingStatements =
-      await api.billing_statement.queries.getAllBillingStatements();
+    const billingStatements = await api.billing_statement.queries.getAll();
     console.log(billingStatements);
   }
 

@@ -27,27 +27,35 @@ export async function getClients() {
 }
 
 export async function getClientById(id: string): Promise<ActionResponse<Actor>> {
-    const validatedId = z.string().safeParse(id);
+    try {
+        const validatedId = z.string().safeParse(id);
 
-    if (!validatedId.success) {
+        if (!validatedId.success) {
+            return {
+                success: false,
+                message: 'El cliente no existe',
+            };
+        }
+
+        const result = await api.actor.queries.getClientById({ id });
+        if (!result) {
+            return {
+                success: false,
+                message: 'El cliente no existe',
+            };
+        }
+        return {
+            success: true,
+            message: 'Cliente encontrado',
+            data: result,
+        };
+    } catch (error) {
         return {
             success: false,
-            message: 'El cliente no existe',
-        };
+            message: 'Un error ha ocurrido',
+        }
     }
 
-    const result = await api.actor.queries.getClientById({ id });
-    if (!result) {
-        return {
-            success: false,
-            message: 'El cliente no existe',
-        };
-    }
-    return {
-        success: true,
-        message: 'Cliente encontrado',
-        data: result,
-    };;
 }
 
 export async function getCreditors() {
@@ -57,27 +65,36 @@ export async function getCreditors() {
 }
 
 export async function getCreditorById(id: string): Promise<ActionResponse<Actor>> {
-    const validatedId = z.string().safeParse(id);
 
-    if (!validatedId.success) {
+    try {
+        const validatedId = z.string().safeParse(id);
+
+        if (!validatedId.success) {
+            return {
+                success: false,
+                message: 'El acreedor no existe',
+            };
+        }
+        const result = await api.actor.queries.getCreditorById({ id });
+        if (!result) {
+            return {
+                success: false,
+                message: 'El acreedor no existe',
+            };
+        }
+        return {
+            success: true,
+            message: 'Acreedor encontrado',
+            data: result,
+        };
+
+    } catch (error) {
         return {
             success: false,
-            message: 'El acreedor no existe',
+            message: 'Un error ha ocurrido',
         };
     }
 
-    const result = await api.actor.queries.getCreditorById({ id });
-    if (!result) {
-        return {
-            success: false,
-            message: 'El acreedor no existe',
-        };
-    }
-    return {
-        success: true,
-        message: 'Acreedor encontrado',
-        data: result,
-    };
 }
 
 export async function createClient(prevState: ActionResponse<Actor> | null, formData: FormData): Promise<ActionResponse<Actor>> {
