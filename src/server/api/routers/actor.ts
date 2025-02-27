@@ -142,6 +142,8 @@ export const actorRouter = createTRPCRouter({
                         ownerId: ctx.user.userId as string,
                         docType: input.docType,
                         docNumber: input.docNumber,
+                        telephone: input.telephone,
+                        expeditionPlace: input.expeditionPlace,
                         type: "creditor",
                     }).$returningId()
 

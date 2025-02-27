@@ -1,8 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { CheckCircle2 } from "lucide-react";
-import { createClient } from "@/actions/actor.api";
+import { createCreditor } from "@/actions/actor.api";
 import { Actor } from "@/types/actor";
 import { ActionResponse } from "@/types/actionResponses";
 import {
@@ -30,7 +29,10 @@ const initialState: ActionResponse<Actor> = {
 };
 
 function CreateClientForm() {
-  const [state, action, isPending] = useActionState(createClient, initialState);
+  const [state, action, isPending] = useActionState(
+    createCreditor,
+    initialState,
+  );
   return (
     <Card className="mx-auto flex h-full w-full max-w-full flex-col overflow-auto bg-transparent">
       <CardHeader>
@@ -45,7 +47,6 @@ function CreateClientForm() {
             variant={state.success ? "default" : "destructive"}
             className={`${state.success ? "border border-green-800" : "bg-background"} mb-4 flex items-center justify-start`}
           >
-            {/* {state.success && <CheckCircle2 className="h-4 w-4" />} */}
             <AlertDescription>{state.message}</AlertDescription>
           </Alert>
         )}

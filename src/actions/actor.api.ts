@@ -56,6 +56,30 @@ export async function getCreditors() {
     return result;
 }
 
+export async function getCreditorById(id: string): Promise<ActionResponse<Actor>> {
+    const validatedId = z.string().safeParse(id);
+
+    if (!validatedId.success) {
+        return {
+            success: false,
+            message: 'El acreedor no existe',
+        };
+    }
+
+    const result = await api.actor.queries.getCreditorById({ id });
+    if (!result) {
+        return {
+            success: false,
+            message: 'El acreedor no existe',
+        };
+    }
+    return {
+        success: true,
+        message: 'Acreedor encontrado',
+        data: result,
+    };
+}
+
 export async function createClient(prevState: ActionResponse<Actor> | null, formData: FormData): Promise<ActionResponse<Actor>> {
     try {
         const rawData: Actor = {
@@ -121,7 +145,7 @@ export async function createCreditor(prevState: ActionResponse<Actor> | null, fo
             }
         }
 
-        await api.actor.mutations.client.create({
+        await api.actor.mutations.creditor.create({
             name: validatedData.data.name,
             docType: validatedData.data.docType,
             docNumber: validatedData.data.docNumber,
@@ -223,7 +247,7 @@ export async function updateCreditorById(prevState: ActionResponse<Actor> | null
             }
         }
 
-        await api.actor.mutations.client.update({
+        await api.actor.mutations.creditor.update({
             id: validatedId.data as string,
             name: validatedData.data.name,
             docType: validatedData.data.docType,
@@ -245,3 +269,54 @@ export async function updateCreditorById(prevState: ActionResponse<Actor> | null
     }
 }
 
+export async function deleteClientById(id: string): Promise<ActionResponse<Actor>> {
+
+    const validatedId = z.string().safeParse(id);
+
+    if (!validatedId.success) {
+        return {
+            success: false,
+            message: 'El cliente no existe',
+        };
+    }
+    try {
+
+        await api.actor.mutations.client.delete({ id });
+
+        return {
+            success: true,
+            message: 'Cliente eliminado exitosamente',
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: 'Ocurrió un error al eliminar el cliente',
+        };
+    }
+}
+
+export async function deleteCreditorById(id: string): Promise<ActionResponse<Actor>> {
+
+    const validatedId = z.string().safeParse(id);
+
+    if (!validatedId.success) {
+        return {
+            success: false,
+            message: 'El acreedor no existe',
+        };
+    }
+    try {
+
+        await api.actor.mutations.creditor.delete({ id });
+
+        return {
+            success: true,
+            message: 'Acreedor eliminado exitosamente',
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: 'Ocurrió un error al eliminar el acreedor',
+        };
+    }
+}
