@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui";
 
 interface props {
   title: string;

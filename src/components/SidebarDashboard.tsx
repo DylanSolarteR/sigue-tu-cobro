@@ -9,14 +9,7 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 import {
   ChartNoAxesCombined,
@@ -31,7 +24,6 @@ import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 function SidebarDashboard() {
   const path = usePathname();
-  const { user } = useUser();
   return (
     <Sidebar variant="floating" collapsible="icon" className="rounded-full">
       <SidebarContent className="flex">
@@ -69,19 +61,30 @@ function SidebarDashboard() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="flex flex-col items-center justify-start">
-        <SidebarGroup className="flex flex-col items-center justify-start">
+        <SidebarGroup className="flex flex-col items-center justify-center">
           <SidebarMenuButton
-            className="flex h-10 flex-row items-center gap-4 rounded-lg py-10 hover:bg-muted hover:brightness-125"
+            className="flex h-10 flex-row items-center justify-start gap-4 rounded-lg py-10 selection:bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent"
             tooltip={"Perfil"}
           >
             <SignedIn>
               <UserButton
                 afterSwitchSessionUrl="/dashboard/resume"
                 fallback={<CircleUser className="min-h-8 min-w-8" />}
+                userProfileMode="navigation"
+                userProfileUrl="/dashboard/config"
+                showName={true}
+                appearance={{
+                  elements: {
+                    avatarBox: {
+                      order: 1,
+                    },
+                    userButtonOuterIdentifier: {
+                      order: 2,
+                      fontSize: "1.25rem",
+                    },
+                  },
+                }}
               />
-              <span className="text-ellipsis text-lg">
-                {user?.fullName ?? ""}
-              </span>
             </SignedIn>
           </SidebarMenuButton>
         </SidebarGroup>
@@ -103,13 +106,13 @@ function SidebarCard(props: {
   return (
     <SidebarGroup>
       <SidebarMenuButton
-        className={`${active_href === href ? "bg-[#10473A] hover:bg-[#10473A]" : "hover:bg-transparent"} h-16 rounded-3xl text-xl`}
+        className={`${active_href.includes(href) ? "bg-[#10473A] hover:bg-[#10473A]" : "hover:bg-transparent"} h-16 rounded-3xl text-xl`}
         asChild
         tooltip={title}
       >
         <Link
           href={href}
-          className={`${active_href === href ? "" : "brightness-50"} flex flex-row items-center justify-start space-x-2 hover:brightness-100`}
+          className={`${active_href.includes(href) ? "" : "brightness-50"} flex flex-row items-center justify-start space-x-2 hover:brightness-100`}
         >
           <Icon
             className={`brightness min-h-4 min-w-4 md:min-h-8 md:min-w-8`}

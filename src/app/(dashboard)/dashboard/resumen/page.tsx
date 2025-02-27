@@ -1,11 +1,11 @@
-import KPICard from "@/components/dashboard/KPICard";
+import KPICard from "@/components/dashboard/summary/KPICard";
 import { Button } from "@/components/ui";
 import Link from "next/link";
 
 function Dashboard() {
   return (
     <>
-      <section className="grid h-full w-full grid-cols-2 items-center justify-center gap-3 md:flex md:h-[16rem] md:w-full md:flex-row md:items-center md:justify-between md:gap-3">
+      <section className="grid h-full w-full grid-cols-2 items-center justify-center gap-3 md:flex md:h-[16rem] md:w-[70rem] md:max-w-full md:flex-row md:items-center md:justify-between md:gap-3">
         <KPICard title="Ganancia total" value={"$" + 0}></KPICard>
         <KPICard title="Ganancia mes" value={"$" + 0}></KPICard>
         <KPICard title="Cuentas cobradas" value={0}></KPICard>
