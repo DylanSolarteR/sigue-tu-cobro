@@ -1,7 +1,10 @@
+import { Actor } from "./actor";
 export interface billing_statement {
     id?: string;
     client_id: string;
+    client: Actor;
     creditor_id: string;
+    creditor: Actor
     amount?: number;
     showItemAmount?: boolean;
     status: string;
