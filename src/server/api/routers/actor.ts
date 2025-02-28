@@ -76,7 +76,6 @@ export const actorRouter = createTRPCRouter({
             create: privateProcedure
                 .input(actorSchema)
                 .mutation(async ({ ctx, input }) => {
-                    console.log("Creating actor: client", input);
                     const result = await ctx.db.insert(actor).values({
                         name: input.name,
                         ownerId: ctx.user.userId as string,
@@ -87,7 +86,6 @@ export const actorRouter = createTRPCRouter({
                         type: "client",
                     }).$returningId()
 
-                    console.log("Created client", result);
                 }),
             update: privateProcedure
                 .input(z.object({
@@ -100,7 +98,6 @@ export const actorRouter = createTRPCRouter({
                 })
                 )
                 .mutation(async ({ ctx, input }) => {
-                    console.log("Updating actor: client", input);
                     const result = await ctx.db.update(actor).set({
                         name: input.name,
                         docType: input.docType,
@@ -115,12 +112,10 @@ export const actorRouter = createTRPCRouter({
                         )
                     )
 
-                    console.log("Updated client", result);
                 }),
             delete: privateProcedure
                 .input(z.object({ id: z.string() }))
                 .mutation(async ({ ctx, input }) => {
-                    console.log("Deleting actor: client", input);
                     const result = await ctx.db.update(actor).set({
                         isActive: false
                     }).where(
@@ -130,8 +125,6 @@ export const actorRouter = createTRPCRouter({
                             eq(actor.ownerId, ctx.user.userId as string)
                         )
                     )
-
-                    console.log("Deleted client", result);
                 }),
         },
         creditor: {
@@ -139,7 +132,6 @@ export const actorRouter = createTRPCRouter({
             create: privateProcedure
                 .input(actorSchema)
                 .mutation(async ({ ctx, input }) => {
-                    console.log("Creating actor: creditor", input);
                     const result = await ctx.db.insert(actor).values({
                         name: input.name,
                         ownerId: ctx.user.userId as string,
@@ -150,7 +142,6 @@ export const actorRouter = createTRPCRouter({
                         type: "creditor",
                     }).$returningId()
 
-                    console.log("Created creditor", result);
                 }),
             update: privateProcedure
                 .input(z.object({
@@ -165,7 +156,6 @@ export const actorRouter = createTRPCRouter({
                 })
                 )
                 .mutation(async ({ ctx, input }) => {
-                    console.log("Updating actor: creditor", input);
                     const result = await ctx.db.update(actor).set({
                         name: input.name,
                         docType: input.docType,
@@ -180,12 +170,10 @@ export const actorRouter = createTRPCRouter({
                         )
                     )
 
-                    console.log("Updated creditor", result);
                 }),
             delete: privateProcedure
                 .input(z.object({ id: z.string() }))
                 .mutation(async ({ ctx, input }) => {
-                    console.log("Deleting actor: creditor", input);
                     const result = await ctx.db.update(actor).set({
                         isActive: false
                     }).where(
@@ -196,7 +184,6 @@ export const actorRouter = createTRPCRouter({
                         )
                     )
 
-                    console.log("Deleted creditor", result);
                 }),
         }
     }

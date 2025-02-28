@@ -2,7 +2,7 @@ import { Button, Card } from "@/components/ui/";
 import { SpotlightBorder } from "@/components/SpotlightBorder";
 import { HydrateClient } from "@/trpc/server";
 import Link from "next/link";
-import Stonks from "@/media/svg/Stonks.svg";
+import Stonks from "@/media/svg/Stonks.svg?url";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 
@@ -35,11 +35,11 @@ export default async function Home() {
                 spotlightColor="#319678"
               >
                 <Card className="flex h-fit w-full items-center justify-center border border-primary bg-primary px-16 py-14 shadow-inner lg:w-fit">
-                  <Image
+                  {/* <Image
                     src={Stonks}
                     alt="stonks image"
                     className="h-full w-auto"
-                  />
+                  /> */}
                 </Card>
               </SpotlightBorder>
             </article>

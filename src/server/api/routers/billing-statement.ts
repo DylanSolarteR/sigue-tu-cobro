@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { actor, billing_statement } from "@/server/db/schema";
-import { eq, and, aliasedTable, desc } from "drizzle-orm";
+import { eq, and, aliasedTable, desc, sum } from "drizzle-orm";
 import { billing_statement as billing_statement_type } from "@/types/billing-statement";
 
 const billing_statement_Schema = z.object({
@@ -28,9 +28,23 @@ export const billingStatementRouter = createTRPCRouter({
                 {
                     id: billing_statement.id,
                     client_id: billing_statement.client_id,
-                    client_name: client.name,
+                    client: {
+                        id: client.id,
+                        name: client.name,
+                        docType: client.docType,
+                        docNumber: client.docNumber,
+                        expeditionPlace: client.expeditionPlace,
+                        telephone: client.telephone,
+                    },
                     creditor_id: billing_statement.creditor_id,
-                    creditor_name: creditor.name,
+                    creditor: {
+                        id: creditor.id,
+                        name: creditor.name,
+                        docType: creditor.docType,
+                        docNumber: creditor.docNumber,
+                        expeditionPlace: creditor.expeditionPlace,
+                        telephone: creditor.telephone,
+                    },
                     amount: billing_statement.amount,
                     status: billing_statement.status,
                     extraInfo: billing_statement.extraInfo,
@@ -56,9 +70,23 @@ export const billingStatementRouter = createTRPCRouter({
                 {
                     id: billing_statement.id,
                     client_id: billing_statement.client_id,
-                    client_name: client.name,
+                    client: {
+                        id: client.id,
+                        name: client.name,
+                        docType: client.docType,
+                        docNumber: client.docNumber,
+                        expeditionPlace: client.expeditionPlace,
+                        telephone: client.telephone,
+                    },
                     creditor_id: billing_statement.creditor_id,
-                    creditor_name: creditor.name,
+                    creditor: {
+                        id: creditor.id,
+                        name: creditor.name,
+                        docType: creditor.docType,
+                        docNumber: creditor.docNumber,
+                        expeditionPlace: creditor.expeditionPlace,
+                        telephone: creditor.telephone,
+                    },
                     amount: billing_statement.amount,
                     extraInfo: billing_statement.extraInfo,
                     showItemAmount: billing_statement.showItemAmount,
@@ -81,6 +109,47 @@ export const billingStatementRouter = createTRPCRouter({
             }
             return billingStatement[0]!;
         }),
+        numberOfBillingStatements: privateProcedure.query(async ({ ctx }) => {
+            const count = await ctx.db.$count(billing_statement,
+                and(
+                    eq(billing_statement.isActive, true),
+                    eq(billing_statement.ownerId, ctx.user.userId as string)
+                )
+            );
+            return count;
+        }),
+        numberOfPendingBillingStatements: privateProcedure.query(async ({ ctx }) => {
+            const count = await ctx.db.$count(billing_statement,
+                and(
+                    eq(billing_statement.isActive, true),
+                    eq(billing_statement.ownerId, ctx.user.userId as string),
+                    eq(billing_statement.status, "pending")
+                )
+            );
+            return count;
+        }),
+        numberOfPayedBillingStatements: privateProcedure.query(async ({ ctx }) => {
+            const count = await ctx.db.$count(billing_statement,
+                and(
+                    eq(billing_statement.isActive, true),
+                    eq(billing_statement.ownerId, ctx.user.userId as string),
+                    eq(billing_statement.status, "payed")
+                )
+            );
+            return count;
+        }
+        ),
+        totalAmount: privateProcedure.query(async ({ ctx }) => {
+            const total = await ctx.db.select({ value: sum(billing_statement.amount) }).from(billing_statement)
+                .where(
+                    and(
+                        eq(billing_statement.isActive, true),
+                        eq(billing_statement.ownerId, ctx.user.userId as string)
+                    )
+                );
+            return total[0]?.value ?? 0;
+        }),
+
     },
     mutations: {
         create: privateProcedure.input(z.object({
@@ -88,7 +157,6 @@ export const billingStatementRouter = createTRPCRouter({
             creditor_id: z.string().nonempty({ message: "El Acreedor es requerido" }),
             payDate: z.string(),
         })).mutation(async ({ ctx, input }) => {
-            console.log("Creating billing statement", input);
             const result = await ctx.db.insert(billing_statement).values({
                 ownerId: ctx.user.userId as string,
                 client_id: input.client_id,
@@ -100,7 +168,6 @@ export const billingStatementRouter = createTRPCRouter({
                 isActive: true,
             }).$returningId()
 
-            console.log("Created billing statement", result);
         }),
         update: privateProcedure.input(z.object({
             id: z.string(),
@@ -110,7 +177,6 @@ export const billingStatementRouter = createTRPCRouter({
             payDate: z.string(),
             showItemAmount: z.boolean().optional(),
         })).mutation(async ({ ctx, input }) => {
-            console.log("Updating billing statement", input);
             await ctx.db.update(billing_statement).set({
                 amount: input.amount,
                 status: input.status,
@@ -124,13 +190,11 @@ export const billingStatementRouter = createTRPCRouter({
             id: z.string(),
             amount: z.number(),
         })).mutation(async ({ ctx, input }) => {
-            console.log("Updating billing statement amount", input);
             await ctx.db.update(billing_statement).set({
                 amount: input.amount,
             }).where(eq(billing_statement.id, input.id));
         }),
         delete: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-            console.log("Updating billing statement", input);
             await ctx.db.update(billing_statement).set({
                 isActive: false,
             }).where(eq(billing_statement.id, input.id));

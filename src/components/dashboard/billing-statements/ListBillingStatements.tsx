@@ -1,11 +1,9 @@
 "use client";
-import { Actor } from "@/types/actor";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/dashboard/datatable/Datatable";
 import { useEffect, useState } from "react";
-import { deleteClientById, getClients } from "@/actions/actor.api";
 import Loading from "@/components/Loading";
-import { Download, Edit, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Button,
@@ -20,6 +18,8 @@ import {
   getBillingStatements,
 } from "@/actions/billing-statement.api";
 
+import DownloadPDFButton from "@/components/generatePDF";
+
 function ListBillingStatements() {
   const [billingStatements, setBillingStatements] = useState<
     billing_statement[]
@@ -29,13 +29,13 @@ function ListBillingStatements() {
 
   const columns: ColumnDef<billing_statement>[] = [
     {
-      accessorKey: "client_name",
+      accessorKey: "client.name",
       header: () => (
         <div className="text-center text-xl text-foreground">Cliente</div>
       ),
     },
     {
-      accessorKey: "creditor_name",
+      accessorKey: "creditor.name",
       header: () => (
         <div className="text-center text-xl text-foreground">Acreedor</div>
       ),
@@ -83,13 +83,13 @@ function ListBillingStatements() {
         <div className="text-center text-xl text-foreground">Acciones</div>
       ),
       cell: ({ row }) => {
-        const client = row.original;
+        const billingS = row.original;
 
         return (
           <div className="flex flex-row items-center justify-center">
             <button
               onClick={() => {
-                handleEdit(client.id as string);
+                handleEdit(billingS.id as string);
               }}
             >
               <Edit size={24} />
@@ -99,23 +99,17 @@ function ListBillingStatements() {
                 <Trash size={24} />
               </PopoverTrigger>
               <PopoverContent className="flex flex-col gap-4 rounded-lg bg-background p-4 text-center">
-                <p>¿Estás seguro de eliminar este cliente?</p>
+                <p>¿Estás seguro de eliminar esta cuenta de cobro?</p>
                 <Button
                   onClick={() => {
-                    handleDelete(client.id as string);
+                    handleDelete(billingS.id as string);
                   }}
                 >
                   Eliminar
                 </Button>
               </PopoverContent>
             </Popover>
-            <button
-              onClick={() => {
-                handleDownload(client.id as string);
-              }}
-            >
-              <Download size={24} />
-            </button>
+            <DownloadPDFButton data={billingS} />
           </div>
         );
       },
@@ -138,8 +132,6 @@ function ListBillingStatements() {
   function handleEdit(id: string) {
     router.push(`/dashboard/cuentas-cobro/editar/${id}`);
   }
-
-  function handleDownload(id: string) {}
 
   async function handleDelete(id: string) {
     const result = await deleteBillingstatement(id);

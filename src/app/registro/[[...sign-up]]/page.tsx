@@ -1,4 +1,3 @@
-import { Meteors } from "@/components/MeteorsBackground";
 import { SignUp } from "@clerk/nextjs";
 
 function Registro() {
@@ -8,7 +7,6 @@ function Registro() {
         <div className="z-50">
           <SignUp />
         </div>
-        <Meteors number={30} />
       </div>
     </main>
   );
