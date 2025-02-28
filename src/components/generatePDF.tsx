@@ -107,6 +107,10 @@ export const BillingStatementPDF: React.FC<{
           <Text style={styles.text}>{data.client.name.toUpperCase()}</Text>
           <Text style={styles.text}>
             {DocTypeAdapter(data.client.docType) + ": " + data.client.docNumber}
+            {data.client.expeditionPlace &&
+            data.client.expeditionPlace.length > 0
+              ? " de " + data.client.expeditionPlace
+              : ""}
           </Text>
           <Text style={styles.text}>Debe a</Text>
           <Text style={styles.text}>{data.creditor.name.toUpperCase()}</Text>
@@ -114,6 +118,10 @@ export const BillingStatementPDF: React.FC<{
             {DocTypeAdapter(data.creditor.docType) +
               ": " +
               data.creditor.docNumber}
+            {data.creditor.expeditionPlace &&
+            data.creditor.expeditionPlace.length > 0
+              ? " de " + data.creditor.expeditionPlace
+              : ""}
           </Text>
           <Text style={styles.amount}>
             La suma de ${data.amount?.toLocaleString()} (
@@ -129,7 +137,10 @@ export const BillingStatementPDF: React.FC<{
               (item) =>
                 item.desc && (
                   <View style={styles.row} key={item.id}>
-                    <Text style={styles.description}>{item.desc}</Text>
+                    <Text style={styles.description}>
+                      {"•   "}
+                      {item.desc}
+                    </Text>
                     {data.showItemAmount && (
                       <Text style={styles.amountColumn}>
                         ${item.amount?.toLocaleString()}
@@ -145,6 +156,8 @@ export const BillingStatementPDF: React.FC<{
           <Text style={styles.text}>{data.extraInfo}</Text>
         </View>
 
+        <View style={styles.section}></View>
+        <View style={styles.section}></View>
         {/* Firma */}
         <Text style={styles.text}>Atentamente,</Text>
         <View style={styles.signatureSection}>
@@ -154,6 +167,11 @@ export const BillingStatementPDF: React.FC<{
             {DocTypeAdapter(data.creditor.docType) +
               ": " +
               data.creditor.docNumber}
+          </Text>
+          <Text>
+            {data.creditor.telephone && data.creditor.telephone.length > 0
+              ? "Teléfono: " + data.creditor.telephone
+              : ""}
           </Text>
         </View>
       </Page>
@@ -183,8 +201,11 @@ const DownloadPDFButton = ({ data }: { data: billing_statement }) => {
       ).toLocaleString("es-CO", { dateStyle: "long" })}).pdf`}
     >
       {({ loading }) => (
-        <button className="flex items-center justify-center">
-          {loading ? "Generando PDF..." : <Download size={24} />}
+        <button
+          className={`flex items-center justify-center ${loading ? "cursor-not-allowed" : "cursor-pointer"} `}
+          disabled={loading}
+        >
+          {<Download size={24} />}
         </button>
       )}
     </PDFDownloadLink>

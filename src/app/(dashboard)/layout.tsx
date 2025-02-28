@@ -7,7 +7,7 @@ export default function DashboardLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <main className="max-w-screen h-full w-full">
-      <div className="max-w-screen flex h-screen max-h-full w-full items-start justify-center px-56 sm:px-2">
+      <div className="max-w-screen flex h-screen max-h-screen w-full items-start justify-center px-56 sm:px-2">
         <SidebarDashboard />
         <div className="flex h-full w-full flex-row items-center justify-center gap-6">
           <main className="wrap flex h-full max-h-[50rem] w-fit max-w-[70rem] flex-col items-center justify-center gap-2">

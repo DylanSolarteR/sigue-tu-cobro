@@ -1,4 +1,3 @@
-import { Meteors } from "@/components/MeteorsBackground";
 import { SignIn } from "@clerk/nextjs";
 
 function Entrar() {
@@ -8,7 +7,6 @@ function Entrar() {
         <div className="z-50">
           <SignIn />
         </div>
-        <Meteors number={30} />
       </div>
     </main>
   );

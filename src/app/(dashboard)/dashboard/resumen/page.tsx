@@ -1,24 +1,110 @@
-import KPICard from "@/components/dashboard/summary/KPICard";
 import { Button } from "@/components/ui";
 import Link from "next/link";
+import Statistics from "./Statistics";
+import { Suspense } from "react";
+import Loading from "@/components/Loading";
 
 function Dashboard() {
   return (
     <>
-      <section className="grid h-full w-full grid-cols-2 items-center justify-center gap-3 md:flex md:h-[16rem] md:w-[70rem] md:max-w-full md:flex-row md:items-center md:justify-between md:gap-3">
-        <KPICard title="Ganancia total" value={"$" + 0}></KPICard>
-        <KPICard title="Ganancia mes" value={"$" + 0}></KPICard>
-        <KPICard title="Cuentas cobradas" value={0}></KPICard>
-        <KPICard title="Cuentas sin cobrar" value={0}></KPICard>
+      <section className="grid h-full w-full grid-cols-1 items-center justify-center gap-3 md:flex md:h-[16rem] md:w-[70rem] md:max-w-[70rem] md:flex-row md:items-center md:justify-between md:gap-3">
+        <Suspense
+          fallback={
+            <div className="flex h-full w-full items-center justify-center">
+              <Loading />
+            </div>
+          }
+        >
+          <Statistics />
+        </Suspense>
       </section>
       <section className="flex h-full max-h-[30rem] w-full items-center justify-center gap-3">
-        <div className="h-full grow rounded-lg bg-muted"></div>
+        <div className="h-full grow overflow-auto rounded-lg bg-muted">
+          <div className="px-8 py-4">
+            <h2 className="mb-4 text-xl font-bold">Como empezar</h2>
+            <ol className="list-inside list-decimal space-y-2 font-normal">
+              <li>
+                <span className="font-semibold">Crear Cliente y Acreedor</span>{" "}
+                🧑‍💼
+                <p>Para crear un cliente y acreedor, sigue estos pasos:</p>
+                <ul className="ml-4 list-inside list-disc">
+                  <li>
+                    Accede al menú de{" "}
+                    <span className="text-accent">clientes</span>.
+                  </li>
+                  <li>
+                    Haz clic en{" "}
+                    <span className="text-accent">"Nuevo Cliente"</span>.
+                  </li>
+                  <li>Rellena los datos del cliente y guarda.</li>
+                  <li>Repite el proceso para crear un acreedor.</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-semibold">Crear Cuenta de Cobro</span> 📝
+                <p>Para crear una cuenta de cobro, sigue estos pasos:</p>
+                <ul className="ml-4 list-inside list-disc">
+                  <li>
+                    Accede al menú de{" "}
+                    <span className="text-accent">cuentas de cobro</span>.
+                  </li>
+                  <li>
+                    Haz clic en{" "}
+                    <span className="text-accent">"Nueva Cuenta de Cobro"</span>
+                    .
+                  </li>
+                  <li>Selecciona el cliente y acreedor.</li>
+                  <li>Rellena los detalles de la cuenta y guarda.</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-semibold">Editar la cuenta de cobro</span>{" "}
+                ✏️
+                <p>
+                  Para editar una cuenta de cobro existente, sigue estos pasos:
+                </p>
+                <ul className="ml-4 list-inside list-disc">
+                  <li>
+                    Accede al menú de{" "}
+                    <span className="text-accent">cuentas de cobro</span>.
+                  </li>
+                  <li>Selecciona la cuenta que deseas editar.</li>
+                  <li>
+                    Haz clic en <span className="text-accent">"Editar"</span>.
+                  </li>
+                  <li>Realiza los cambios necesarios y guarda.</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-semibold">
+                  Descargar la cuenta de cobro (Opcional)
+                </span>{" "}
+                📥
+                <p>Para descargar una cuenta de cobro, sigue estos pasos:</p>
+                <ul className="ml-4 list-inside list-disc">
+                  <li>
+                    Accede al menú de{" "}
+                    <span className="text-accent">cuentas de cobro</span>.
+                  </li>
+                  <li>
+                    Haz clic en el icono de{" "}
+                    <span className="text-accent">descarga</span> de la cuenta
+                    que deseas descargar.
+                  </li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+        </div>
         <div className="flex h-full w-[17rem] flex-col items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-secondary to-accent p-2">
           {/* <h2></h2> */}
           <p className="text-bold text-center text-2xl">
             Crea una nueva cuenta de cobro en unos pocos clicks
           </p>
-          <Link href={"/cuentas-cobro"} className="hover:drop-shadow-xl">
+          <Link
+            href={"/dashboard/cuentas-cobro"}
+            className="hover:drop-shadow-xl"
+          >
             <Button size={"xl"}>Crear nueva</Button>
           </Link>
         </div>

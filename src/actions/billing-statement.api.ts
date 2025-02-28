@@ -18,6 +18,30 @@ const billing_statement_Schema = z.object({
     updatedAt: z.string().optional(),
 });
 
+
+export async function getStatistics() {
+    try {
+        const numberOfBillingStatements = await api.billing_statement.queries.numberOfBillingStatements();
+        const numberOfPayedBillingStatements = await api.billing_statement.queries.numberOfPayedBillingStatements();
+        const numberOfPendingBillingStatements = await api.billing_statement.queries.numberOfPendingBillingStatements();
+        const totalAmount = await api.billing_statement.queries.totalAmount();
+        return {
+            data: {
+                numberOfBillingStatements,
+                numberOfPayedBillingStatements,
+                numberOfPendingBillingStatements,
+                totalAmount
+            },
+            success: true,
+            message: "Estadísticas obtenidas correctamente"
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: "Error al obtener estadísticas"
+        }
+    }
+}
 export async function getBillingStatements(): Promise<ActionResponse<billing_statement[]>> {
     try {
         const result = await api.billing_statement.queries.getAll();
@@ -61,6 +85,8 @@ export async function createBillingStatement(prevState: ActionResponse<billing_s
         const rawData: billing_statement = {
             extraInfo: "",
             client_id: formData.get('client') as string,
+            client: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
+            creditor: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
             creditor_id: formData.get('creditor') as string,
             payDate: date,
             status: 'pending',
@@ -107,10 +133,11 @@ export async function updateBillingStatement(prevState: ActionResponse<billing_s
                 message: 'La cuenta de cobro a actualizar no existe',
             };
         }
-        console.log("amount", amount)
         const rawData: billing_statement = {
             client_id: "some client",
+            client: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
             creditor_id: "some creditor",
+            creditor: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
             status: formData.get('status') as string,
             amount: amount,
             extraInfo: formData.get('extraInfo') as string,

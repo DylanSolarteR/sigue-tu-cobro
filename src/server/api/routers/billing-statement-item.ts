@@ -34,7 +34,6 @@ export const billingStatementItemRouter = createTRPCRouter({
     },
     mutations: {
         create: privateProcedure.input(billing_statement_item_Schema).mutation(async ({ ctx, input }) => {
-            console.log("Creating billing statement item", input);
             const result = await ctx.db.insert(billing_statement_item).values({
                 billing_statement_id: input.billing_statement_id,
                 desc: input.desc,
@@ -43,7 +42,6 @@ export const billingStatementItemRouter = createTRPCRouter({
                 isActive: true,
             }).$returningId()
 
-            console.log("Created billing statement item", result);
             return result[0]?.id;
         }),
         update: privateProcedure.input(z.object({
@@ -51,7 +49,6 @@ export const billingStatementItemRouter = createTRPCRouter({
             amount: z.number(),
             desc: z.string().min(1, { message: "La descripción es requerida" }),
         })).mutation(async ({ ctx, input }) => {
-            console.log("Updating billing statement item", input);
             await ctx.db.update(billing_statement_item).set({
                 amount: input.amount,
                 desc: input.desc,
@@ -59,7 +56,6 @@ export const billingStatementItemRouter = createTRPCRouter({
             }).where(eq(billing_statement_item.id, input.id));
         }),
         delete: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-            console.log("Updating billing statement item", input);
             await ctx.db.update(billing_statement_item).set({
                 isActive: false,
             }).where(eq(billing_statement_item.id, input.id));

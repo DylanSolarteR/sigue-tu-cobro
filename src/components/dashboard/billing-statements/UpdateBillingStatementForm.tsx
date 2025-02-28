@@ -74,9 +74,9 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
 
   const [items, setItems] = useState<billing_statement_item[]>([]);
 
-  useMemo(() => {
+  useMemo(async () => {
     const total = items.reduce((acc, item) => acc + item.amount, 0);
-    updateBillingStatementAmount(id, total);
+    await updateBillingStatementAmount(id, total);
     setTotalAmount(total);
   }, [items]);
 
@@ -89,7 +89,6 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
     if (result.success) {
       setItems((prevItems) => prevItems.filter((item) => item.id !== idItem));
       toast.success(result.message);
-      console.log("totalAmount", totalAmount);
     } else toast.error(result.message);
   }
   async function updateItem(idItem: string, desc: string, amount: number) {
@@ -108,7 +107,6 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
     await getBillingStatement(id).then((res) => {
       if (res.success) {
         setBillingStatementInitialData(res.data as billing_statement);
-        console.log(res.data);
         setIsChekedItemsAmount(res.data?.showItemAmount!);
         setDate(new Date(res.data?.payDate!));
         setLoading(false);

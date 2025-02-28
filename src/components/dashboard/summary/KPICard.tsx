@@ -11,8 +11,10 @@ function KPICard({ title, value }: props) {
       <CardHeader>
         <CardTitle className="text-xl">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex h-full items-center justify-center text-5xl">
-        {value}
+      <CardContent className="flex h-full w-full items-center justify-center px-6 text-5xl">
+        <span className="text-ellipsis" title={value as string}>
+          {value}
+        </span>
       </CardContent>
     </Card>
   );

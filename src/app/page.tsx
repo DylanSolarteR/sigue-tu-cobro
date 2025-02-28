@@ -2,7 +2,7 @@ import { Button, Card } from "@/components/ui/";
 import { SpotlightBorder } from "@/components/SpotlightBorder";
 import { HydrateClient } from "@/trpc/server";
 import Link from "next/link";
-import Stonks from "@/media/svg/Stonks.svg";
+import Stonks from "@/media/svg/Stonks.svg?url";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 
