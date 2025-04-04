@@ -13,12 +13,12 @@ import {
   billing_statement,
   billing_statement_item,
 } from "@/types/billing-statement";
-import { NumeroALetras } from "@/lib/numeroALetras";
+import { convertirNumeroALetras } from "@/lib/numeroALetras";
 import { useEffect, useState } from "react";
 
 export const styles = StyleSheet.create({
   page: {
-    paddingVertical: 40,
+    paddingVertical: 100,
     paddingHorizontal: 80,
     fontSize: 12,
     fontFamily: "Helvetica",
@@ -53,12 +53,15 @@ export const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     marginTop: 5,
-    marginLeft: 15, // Sangría para los conceptos
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 5,
+  },
+  bulletpoint: {
+    textAlign: "right",
+    paddingRight: 10,
   },
   description: {
     flex: 2,
@@ -67,7 +70,7 @@ export const styles = StyleSheet.create({
   },
   amountColumn: {
     flex: 1,
-    textAlign: "left",
+    textAlign: "right",
   },
   signatureSection: {
     marginTop: 40,
@@ -124,8 +127,8 @@ export const BillingStatementPDF: React.FC<{
               : ""}
           </Text>
           <Text style={styles.amount}>
-            La suma de ${data.amount?.toLocaleString()} (
-            {NumeroALetras(data.amount as number)}).
+            La suma de ${data.amount?.toLocaleString('es-CO')} (
+            {convertirNumeroALetras(data.amount as number)}).
           </Text>
         </View>
 
@@ -137,8 +140,8 @@ export const BillingStatementPDF: React.FC<{
               (item) =>
                 item.desc && (
                   <View style={styles.row} key={item.id}>
+                    <Text style={styles.bulletpoint}>{"•   "}</Text>
                     <Text style={styles.description}>
-                      {"•   "}
                       {item.desc}
                     </Text>
                     {data.showItemAmount && (
@@ -164,7 +167,7 @@ export const BillingStatementPDF: React.FC<{
           <View style={styles.signatureLine} />
           <Text>{data.creditor.name}</Text>
           <Text>
-            {DocTypeAdapter(data.creditor.docType) +
+            {data.creditor.docType +
               ": " +
               data.creditor.docNumber}
           </Text>
