@@ -41,7 +41,6 @@ export const billingStatementItemRouter = createTRPCRouter({
                 amount: input.amount,
                 isActive: true,
             }).$returningId()
-
             return result[0]?.id;
         }),
         update: privateProcedure.input(z.object({

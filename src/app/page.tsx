@@ -30,9 +30,9 @@ export default async function Home() {
               </Link>
               <p className="flex w-full text-center text-xl 2xl:hidden">
                 Lamentablemente por el momento la aplicación no esta optimizada
-                para dispositivos moviles 😅, ofrezco mis mas sinceras
-                disculpas. Estan invitados a probarla en sus computadores de
-                escritorio o portatiles. 😁
+                para dispositivos moviles, ofrezco mis mas sinceras disculpas.
+                Estan invitados a probarla en sus computadores de escritorio o
+                portatiles.
               </p>
             </article>
             <article className="order-2 hidden h-full w-full items-center justify-center self-center py-10 2xl:flex 2xl:py-20">

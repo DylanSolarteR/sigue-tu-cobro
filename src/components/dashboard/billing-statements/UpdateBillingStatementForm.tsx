@@ -74,10 +74,13 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
 
   const [items, setItems] = useState<billing_statement_item[]>([]);
 
-  useMemo(async () => {
+  useEffect(() => {
     const total = items.reduce((acc, item) => acc + item.amount, 0);
-    await updateBillingStatementAmount(id, total);
     setTotalAmount(total);
+  
+    updateBillingStatementAmount(id, total).catch((err) => {
+      console.error("Error actualizando el total:", err);
+    });
   }, [items]);
 
   function addItem(item: billing_statement_item) {
@@ -128,6 +131,7 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
   useEffect(() => {
     init();
   }, []);
+
   return loading ? (
     <Loading />
   ) : bsExists ? (
@@ -270,7 +274,9 @@ function ItemBuilder({
     if (state.success) {
       addToList(state.data as billing_statement_item);
     }
-  }, [state.success]);
+  }, [state]);
+
+
 
   return (
     <form
@@ -331,7 +337,8 @@ function ItemList({
   return (
     <div className="flex h-full w-full flex-col space-y-4 rounded-lg border p-8">
       <h2 className="text-2xl">Items</h2>
-      <div className="flex flex-row flex-wrap items-start justify-start gap-4">
+      {items.length > 0 ? (
+        <div className="flex flex-row flex-wrap items-start justify-start gap-4">
         {items.map((item) => (
           <Item
             key={item.id}
@@ -339,8 +346,11 @@ function ItemList({
             deleteItem={() => deleteItem(item.id!)}
             updateItem={updateItem}
           />
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground brightness-75">No hay items</p>
+      )}
     </div>
   );
 }

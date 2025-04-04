@@ -7,11 +7,16 @@
 - [x] create and style landing page.
 - [x] create dashboard page.
 - [x] integrate with clerk.
-- [ ] add functionality to dashboard page.
-- [ ] create billing statement page.
-- [ ] allow users to create billing statement
-- [ ] create clients page.
-- [ ] allow users to manage clients
-- [ ] create collector page.
-- [ ] allow users to manage creditors
+- [x] add functionality to dashboard page.
+- [x] create billing statement page.
+- [x] allow users to create billing statement
+- [x] create clients page.
+- [x] allow users to manage clients
+- [x] create collector page.
+- [x] allow users to manage creditors
 - [x] create config page.
+- [ ] make the site responsive
+- [ ] test bugs
+    - [x] fix item creation
+    - [ ] fix update sync with changed values in billing statements
+    - [ ] change margins and align text to the right in the table in the pdf
