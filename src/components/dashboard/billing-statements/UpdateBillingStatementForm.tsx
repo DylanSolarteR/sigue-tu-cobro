@@ -131,6 +131,7 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
   useEffect(() => {
     init();
   }, []);
+  
   return loading ? (
     <Loading />
   ) : bsExists ? (
@@ -273,7 +274,9 @@ function ItemBuilder({
     if (state.success) {
       addToList(state.data as billing_statement_item);
     }
-  }, [state.success]);
+  }, [state]);
+
+
 
   return (
     <form
