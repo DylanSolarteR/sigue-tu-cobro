@@ -17,6 +17,6 @@
 - [x] create config page.
 - [ ] make the site responsive
 - [ ] test bugs
-    - [ ] fix item creation
-    - [ ] fix update sync with changed values
+    - [x] fix item creation
+    - [ ] fix update sync with changed values in billing statements
     - [ ] change margins and align text to the right in the table in the pdf

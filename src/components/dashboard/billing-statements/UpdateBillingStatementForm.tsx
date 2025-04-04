@@ -131,7 +131,7 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
   useEffect(() => {
     init();
   }, []);
-  
+
   return loading ? (
     <Loading />
   ) : bsExists ? (
@@ -337,7 +337,8 @@ function ItemList({
   return (
     <div className="flex h-full w-full flex-col space-y-4 rounded-lg border p-8">
       <h2 className="text-2xl">Items</h2>
-      <div className="flex flex-row flex-wrap items-start justify-start gap-4">
+      {items.length > 0 ? (
+        <div className="flex flex-row flex-wrap items-start justify-start gap-4">
         {items.map((item) => (
           <Item
             key={item.id}
@@ -345,8 +346,11 @@ function ItemList({
             deleteItem={() => deleteItem(item.id!)}
             updateItem={updateItem}
           />
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground brightness-75">No hay items</p>
+      )}
     </div>
   );
 }
