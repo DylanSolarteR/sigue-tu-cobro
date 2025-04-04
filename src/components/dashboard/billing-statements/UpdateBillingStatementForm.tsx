@@ -40,6 +40,7 @@ import {
 } from "@/actions/billing-statement.item.api";
 import { DatePicker } from "@/components/DatePicker";
 import { toast } from "sonner";
+import { ClassRegistry } from "node_modules/superjson/dist/class-registry";
 
 const initialState: ActionResponse<billing_statement> = {
   success: false,
@@ -201,11 +202,20 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
               <Checkbox
                 id="showItemAmount"
                 name="showItemAmount"
-                checked={isChekedItemsAmount}
+                checked={state.input?.showItemAmount ?? isChekedItemsAmount}
                 onCheckedChange={(e) =>
-                  setIsChekedItemsAmount(!isChekedItemsAmount)
+                  {
+                    // if (state.input?.showItemAmount) {
+                    //   console.log("state.input", state.input)
+                    //   state.input.showItemAmount = undefined
+                    // }
+                    setIsChekedItemsAmount(!isChekedItemsAmount)
+                    if (state.input) {
+                      state.input.showItemAmount = !state.input.showItemAmount
+                    }
+                  }
                 }
-                value={isChekedItemsAmount ? 1 : 0}
+                value={state.input?.showItemAmount ?? isChekedItemsAmount ? 1 : 0}
                 aria-describedby="showItemAmount-error"
                 className="border-accent"
               />

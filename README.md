@@ -18,5 +18,6 @@
 - [ ] make the site responsive
 - [ ] test bugs
     - [x] fix item creation
-    - [ ] fix update sync with changed values in billing statements
+    - [x] fix checkbox sync with updating values in billing statements
     - [ ] change margins and align text to the right in the table in the pdf
+- [ ] change clerk keys to production
