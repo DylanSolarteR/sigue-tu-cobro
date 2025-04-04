@@ -22,3 +22,4 @@
     - [x] change margins and align text to the right in the table in the pdf.
     - [x] fix the grammar errors with the amount spelling in the pdf.
 - [ ] change clerk keys to production.
+- [ ] make a 404 page.
