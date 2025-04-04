@@ -74,10 +74,13 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
 
   const [items, setItems] = useState<billing_statement_item[]>([]);
 
-  useMemo(async () => {
+  useEffect(() => {
     const total = items.reduce((acc, item) => acc + item.amount, 0);
-    await updateBillingStatementAmount(id, total);
     setTotalAmount(total);
+  
+    updateBillingStatementAmount(id, total).catch((err) => {
+      console.error("Error actualizando el total:", err);
+    });
   }, [items]);
 
   function addItem(item: billing_statement_item) {
