@@ -21,7 +21,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={geologica.className}>
+    <html
+      lang="es"
+      className={geologica.className + " h-screen overflow-hidden"}
+    >
+      <head>
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <meta name="theme-color" content="#0D0D0D" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className="h-full min-h-screen">
         <TRPCReactProvider>
           <ClerkProvider

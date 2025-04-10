@@ -78,7 +78,7 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
   useEffect(() => {
     const total = items.reduce((acc, item) => acc + item.amount, 0);
     setTotalAmount(total);
-  
+
     updateBillingStatementAmount(id, total).catch((err) => {
       console.error("Error actualizando el total:", err);
     });
@@ -136,8 +136,8 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
   return loading ? (
     <Loading />
   ) : bsExists ? (
-    <Card className="mx-auto flex h-full w-full max-w-full flex-col overflow-auto bg-transparent">
-      <CardHeader>
+    <Card className="mx-auto flex h-full w-full max-w-full flex-col overflow-y-auto bg-transparent">
+      <CardHeader className="flex flex-col items-start justify-start gap-2">
         <CardTitle className="text-xl">
           Información de la cuenta de cobro
         </CardTitle>
@@ -145,15 +145,15 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
           Por favor cambie la información de la cuenta de cobro a actualizar.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex h-full flex-col gap-4">
-          <ItemBuilder idBillingStatement={id} addToList={addItem} />
-          <ItemList
-            items={items}
-            deleteItem={deleteItem}
-            updateItem={updateItem}
-          />
-        </div>
+      <CardContent className="flex h-full flex-col gap-4">
+        <ItemBuilder idBillingStatement={id} addToList={addItem} />
+
+        <ItemList
+          items={items}
+          deleteItem={deleteItem}
+          updateItem={updateItem}
+        />
+
         {state?.message && (
           <Alert
             variant={state.success ? "default" : "destructive"}
@@ -162,7 +162,7 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
             <AlertDescription>{state.message}</AlertDescription>
           </Alert>
         )}
-        <form action={action} className="w-full space-y-6" autoComplete="on">
+        <form action={action} className="w-full space-y-6 py-4">
           <div className="w-full space-y-4">
             <div className="flex w-full items-center justify-evenly space-x-4">
               <div className="mb-2 space-y-2">
@@ -203,19 +203,15 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
                 id="showItemAmount"
                 name="showItemAmount"
                 checked={state.input?.showItemAmount ?? isChekedItemsAmount}
-                onCheckedChange={(e) =>
-                  {
-                    // if (state.input?.showItemAmount) {
-                    //   console.log("state.input", state.input)
-                    //   state.input.showItemAmount = undefined
-                    // }
-                    setIsChekedItemsAmount(!isChekedItemsAmount)
-                    if (state.input) {
-                      state.input.showItemAmount = !state.input.showItemAmount
-                    }
+                onCheckedChange={(e) => {
+                  setIsChekedItemsAmount(!isChekedItemsAmount);
+                  if (state.input) {
+                    state.input.showItemAmount = !state.input.showItemAmount;
                   }
+                }}
+                value={
+                  (state.input?.showItemAmount ?? isChekedItemsAmount) ? 1 : 0
                 }
-                value={state.input?.showItemAmount ?? isChekedItemsAmount ? 1 : 0}
                 aria-describedby="showItemAmount-error"
                 className="border-accent"
               />
@@ -286,8 +282,6 @@ function ItemBuilder({
     }
   }, [state]);
 
-
-
   return (
     <form
       action={action}
@@ -306,7 +300,11 @@ function ItemBuilder({
       <Input
         id="desc"
         name="desc"
-        placeholder="Ej: Servicio de diseño web"
+        placeholder="Servicio prestado, producto vendido, etc."
+        autoComplete="off"
+        minLength={2}
+        maxLength={50}
+        required
         className="placeholder:brightness-50"
         defaultValue={state.input?.desc ?? ""}
       />
@@ -320,6 +318,10 @@ function ItemBuilder({
         className="placeholder:brightness-50"
         id="amount"
         name="amount"
+        autoComplete="off"
+        minLength={2}
+        maxLength={50}
+        required
         placeholder="Ej: 100000"
         onKeyDown={priceInput}
       />
@@ -349,17 +351,19 @@ function ItemList({
       <h2 className="text-2xl">Items</h2>
       {items.length > 0 ? (
         <div className="flex flex-row flex-wrap items-start justify-start gap-4">
-        {items.map((item) => (
-          <Item
-            key={item.id}
-            item={item}
-            deleteItem={() => deleteItem(item.id!)}
-            updateItem={updateItem}
-          />
+          {items.map((item) => (
+            <Item
+              key={item.id}
+              item={item}
+              deleteItem={() => deleteItem(item.id!)}
+              updateItem={updateItem}
+            />
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground brightness-75">No hay items</p>
+        <p className="text-sm text-muted-foreground brightness-75">
+          No hay items
+        </p>
       )}
     </div>
   );
