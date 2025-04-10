@@ -85,6 +85,11 @@ function SidebarDashboard() {
                       order: 2,
                       fontSize: "1.25rem",
                     },
+                    userButtonTrigger: {
+                      "&:focus": {
+                        boxShadow: "none",
+                      },
+                    },
                   },
                 }}
               />
