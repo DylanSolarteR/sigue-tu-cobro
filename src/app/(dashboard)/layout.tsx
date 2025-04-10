@@ -1,4 +1,3 @@
-import Return from "@/components/dashboard/Return";
 import SidebarDashboard from "@/components/SidebarDashboard";
 
 export default function DashboardLayout({
@@ -10,9 +9,6 @@ export default function DashboardLayout({
         <SidebarDashboard />
         <div className="flex h-full w-full flex-row items-center justify-center gap-6">
           <main className="wrap flex h-full max-h-[50rem] w-fit max-w-[70rem] flex-col items-center justify-center gap-2">
-            <div className="flex w-full items-center justify-between">
-              <Return />
-            </div>
             {children}
           </main>
         </div>
