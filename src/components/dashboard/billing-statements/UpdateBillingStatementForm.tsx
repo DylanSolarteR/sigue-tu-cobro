@@ -162,7 +162,7 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
             <AlertDescription>{state.message}</AlertDescription>
           </Alert>
         )}
-        <form action={action} className="w-full space-y-6" autoComplete="on">
+        <form action={action} className="w-full space-y-6 py-4">
           <div className="w-full space-y-4">
             <div className="flex w-full items-center justify-evenly space-x-4">
               <div className="mb-2 space-y-2">
