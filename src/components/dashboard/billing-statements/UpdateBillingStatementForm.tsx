@@ -146,15 +146,13 @@ function UpdateBillingStatmenteForm({ id }: { id: string }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex h-full flex-col gap-4">
-        <div className="flex h-full flex-col gap-4">
-          <ItemBuilder idBillingStatement={id} addToList={addItem} />
+        <ItemBuilder idBillingStatement={id} addToList={addItem} />
 
-          <ItemList
-            items={items}
-            deleteItem={deleteItem}
-            updateItem={updateItem}
-          />
-        </div>
+        <ItemList
+          items={items}
+          deleteItem={deleteItem}
+          updateItem={updateItem}
+        />
 
         {state?.message && (
           <Alert
@@ -302,7 +300,11 @@ function ItemBuilder({
       <Input
         id="desc"
         name="desc"
-        placeholder="Ej: Servicio de diseño web"
+        placeholder="Servicio prestado, producto vendido, etc."
+        autoComplete="off"
+        minLength={2}
+        maxLength={50}
+        required
         className="placeholder:brightness-50"
         defaultValue={state.input?.desc ?? ""}
       />
@@ -316,6 +318,10 @@ function ItemBuilder({
         className="placeholder:brightness-50"
         id="amount"
         name="amount"
+        autoComplete="off"
+        minLength={2}
+        maxLength={50}
+        required
         placeholder="Ej: 100000"
         onKeyDown={priceInput}
       />
