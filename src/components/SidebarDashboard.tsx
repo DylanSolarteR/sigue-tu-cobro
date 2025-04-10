@@ -8,6 +8,7 @@ import {
   SidebarGroup,
   SidebarMenuButton,
   SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 
@@ -28,6 +29,8 @@ function SidebarDashboard() {
     <Sidebar variant="floating" collapsible="icon" className="rounded-full">
       <SidebarContent className="flex">
         <SidebarGroup className="flex flex-col items-center justify-start">
+          <SidebarTrigger className="mr-4 mt-4 scale-150 self-end rounded-lg hover:bg-[#10473A]" />
+
           <SidebarCard
             title={"Resumen"}
             active_href={path}

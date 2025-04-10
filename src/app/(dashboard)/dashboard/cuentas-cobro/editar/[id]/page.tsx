@@ -24,7 +24,7 @@ async function UpdateBillingStatement(props: {
           </div>
         </div>
       </section>
-      <section className="flex items-center justify-center overflow-auto rounded-lg bg-muted md:h-full md:max-h-[80%] md:w-[70rem] md:max-w-full">
+      <section className="flex items-center justify-center rounded-lg bg-muted md:h-full md:max-h-[80%] md:w-[70rem] md:max-w-full">
         <UpdateBillingStatmenteForm id={id} />
       </section>
     </>
