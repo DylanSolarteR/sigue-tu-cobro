@@ -303,7 +303,7 @@ function ItemBuilder({
         placeholder="Servicio prestado, producto vendido, etc."
         autoComplete="off"
         minLength={2}
-        maxLength={50}
+        maxLength={150}
         required
         className="placeholder:brightness-50"
         defaultValue={state.input?.desc ?? ""}
