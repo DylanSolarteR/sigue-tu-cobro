@@ -1,4 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../../ui";
 
 interface props {
   title: string;
@@ -12,9 +20,14 @@ function KPICard({ title, value }: props) {
         <CardTitle className="text-xl">{title}</CardTitle>
       </CardHeader>
       <CardContent className="flex h-full w-full items-center justify-center px-6 text-5xl">
-        <span className="text-ellipsis" title={value as string}>
-          {value}
-        </span>
+        <Tooltip>
+          <TooltipTrigger className="w-full text-center">
+            <p className="truncate">{value}</p>
+          </TooltipTrigger>
+          <TooltipContent className="bg-background">
+            <p>{value}</p>
+          </TooltipContent>
+        </Tooltip>
       </CardContent>
     </Card>
   );

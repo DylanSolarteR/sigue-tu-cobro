@@ -347,7 +347,12 @@ function ItemList({
   updateItem: (id: string, desc: string, amount: number) => void;
 }) {
   return (
-    <div className="flex h-full w-full flex-col space-y-4 rounded-lg border p-8">
+    <div
+      className={
+        `flex max-h-[50rem] w-full flex-col space-y-4 overflow-y-auto rounded-lg border p-8` +
+        (items.length !== 0 ? " min-h-72" : " min-h-fit")
+      }
+    >
       <h2 className="text-2xl">Items</h2>
       {items.length > 0 ? (
         <div className="flex flex-row flex-wrap items-start justify-start gap-4">
