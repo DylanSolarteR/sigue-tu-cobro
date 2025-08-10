@@ -60,7 +60,7 @@ export const billingStatementRouter = createTRPCRouter({
                         eq(billing_statement.isActive, true),
                         eq(billing_statement.ownerId, ctx.user.userId as string)
                     )
-                ).orderBy(desc(billing_statement.updatedAt));
+                ).orderBy(desc(billing_statement.createdAt));
             return billingStatements;
         }),
         getOne: privateProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }): Promise<billing_statement_type> => {

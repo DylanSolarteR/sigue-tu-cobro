@@ -7,6 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { Toaster } from "@/components/Toaster";
+import { TooltipProvider } from "@/components/ui";
 
 const geologica = localFont({ src: "../fonts/Geologica.woff2" });
 
@@ -42,12 +43,14 @@ export default function RootLayout({
               },
             }}
           >
-            <SidebarProvider>
-              <div className="max-w-screen h-full min-h-screen w-full">
-                {children}
-              </div>
-              <Toaster />
-            </SidebarProvider>
+            <TooltipProvider>
+              <SidebarProvider>
+                <div className="max-w-screen h-full min-h-screen w-full">
+                  {children}
+                </div>
+                <Toaster />
+              </SidebarProvider>
+            </TooltipProvider>
           </ClerkProvider>
         </TRPCReactProvider>
       </body>
