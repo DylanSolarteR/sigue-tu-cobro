@@ -15,11 +15,11 @@
 - [x] create collector page.
 - [x] allow users to manage creditors
 - [x] create config page.
-- [ ] make the site responsive.
-- [x] test, find and fix bugs.
-    - [x] fix item creation.
-    - [x] fix checkbox sync with updating values in billing statements.
-    - [x] change margins and align text to the right in the table in the pdf.
-    - [x] fix the grammar errors with the amount spelling in the pdf.
-- [ ] change clerk keys to production.
+- [x] manual tests, find and fix bugs.
+  - [x] fix item creation.
+  - [x] fix checkbox sync with updating values in billing statements.
+  - [x] change margins and align text to the right in the table in the pdf.
+  - [x] fix the grammar errors with the amount spelling in the pdf.
 - [ ] make a 404 page.
+- [ ] make the site responsive.
+- [ ] make automated tests and pass every one.
