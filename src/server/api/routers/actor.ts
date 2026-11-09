@@ -8,11 +8,11 @@ const actorSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
     docType: z.enum(["CC", "CE", "NIT"], {
-        errorMap: () => ({ message: 'Tipo de documento invalido.' })
+        error: 'Tipo de documento invalido.'
     }),
     docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
     type: z.enum(["client", "creditor"], {
-        errorMap: () => ({ message: 'Tipo de actor invalido.' })
+        error: 'Tipo de actor invalido.'
     }),
     expeditionPlace: z.string().optional(),
     telephone: z.string().optional(),
@@ -148,7 +148,7 @@ export const actorRouter = createTRPCRouter({
                     id: z.string(),
                     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
                     docType: z.enum(["CC", "CE", "NIT"], {
-                        errorMap: () => ({ message: 'Seleccione un tipo de documento.' })
+                        error: 'Seleccione un tipo de documento.'
                     }),
                     docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
                     expeditionPlace: z.string().optional(),

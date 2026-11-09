@@ -97,7 +97,7 @@ export async function createBillingStatement(prevState: ActionResponse<billing_s
             return {
                 success: false,
                 message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
+                errors: z.flattenError(validatedData.error).fieldErrors,
                 input: rawData,
             }
         }
@@ -149,7 +149,7 @@ export async function updateBillingStatement(prevState: ActionResponse<billing_s
             return {
                 success: false,
                 message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
+                errors: z.flattenError(validatedData.error).fieldErrors,
                 input: rawData,
             }
         }

@@ -1,0 +1,10 @@
+import { fileURLToPath } from "node:url";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
+  esbuild: { jsx: "automatic" },
+  test: {
+    include: ["src/{app,server}/tests/{unit,components,integration}/**/*.test.{ts,tsx}"],
+  },
+});

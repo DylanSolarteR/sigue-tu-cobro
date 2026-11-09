@@ -5,7 +5,7 @@ import localFont from "next/font/local";
 import { TRPCReactProvider } from "@/trpc/react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+import { dark } from "@clerk/ui/themes";
 import { Toaster } from "@/components/Toaster";
 import { TooltipProvider } from "@/components/ui";
 
@@ -35,10 +35,10 @@ export default function RootLayout({
         <TRPCReactProvider>
           <ClerkProvider
             appearance={{
-              baseTheme: dark,
+              theme: dark,
               variables: {
                 colorPrimary: "#319678",
-                colorText: "white",
+                colorForeground: "white",
                 colorBackground: "#0D0D0D",
               },
             }}

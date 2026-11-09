@@ -1,7 +1,6 @@
 "use client";
-import UseAnimations from "react-useanimations";
 import { Button } from "./ui/button";
-import menu2 from "react-useanimations/lib/menu2";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -17,14 +16,14 @@ function Navbar() {
       <nav className="flex h-full w-full flex-col items-center justify-between gap-2 md:my-6 md:flex-row">
         <div className="flex w-full items-center justify-between gap-2">
           <h1 className="text-lg font-bold md:text-3xl">SigueTuCobro</h1>
-          <button onClick={() => setShowCollapse(!ShowCollapse)}>
-            <UseAnimations
-              animation={menu2}
-              size={56}
-              speed={3}
-              strokeColor="white"
-              className="flex md:hidden"
-            />
+          <button
+            type="button"
+            className="flex md:hidden"
+            aria-label={ShowCollapse ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={ShowCollapse}
+            onClick={() => setShowCollapse(!ShowCollapse)}
+          >
+            {ShowCollapse ? <X size={56} /> : <Menu size={56} />}
           </button>
         </div>
         {/* Buttons */}

@@ -8,7 +8,7 @@ const actorSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
     docType: z.enum(["CC", "CE", "NIT"], {
-        errorMap: () => ({ message: 'Seleccione un tipo de documento.' })
+        error: 'Seleccione un tipo de documento.'
     }),
     docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
     type: z.enum(["client", "creditor"]),
@@ -113,7 +113,7 @@ export async function createClient(prevState: ActionResponse<Actor> | null, form
             return {
                 success: false,
                 message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
+                errors: z.flattenError(validatedData.error).fieldErrors,
                 input: rawData,
             }
         }
@@ -157,7 +157,7 @@ export async function createCreditor(prevState: ActionResponse<Actor> | null, fo
             return {
                 success: false,
                 message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
+                errors: z.flattenError(validatedData.error).fieldErrors,
                 input: rawData,
             }
         }
@@ -208,7 +208,7 @@ export async function updateClientById(prevState: ActionResponse<Actor> | null, 
             return {
                 success: false,
                 message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
+                errors: z.flattenError(validatedData.error).fieldErrors,
                 input: rawData,
             }
         }
@@ -259,7 +259,7 @@ export async function updateCreditorById(prevState: ActionResponse<Actor> | null
             return {
                 success: false,
                 message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
+                errors: z.flattenError(validatedData.error).fieldErrors,
                 input: rawData,
             }
         }

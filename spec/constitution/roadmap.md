@@ -17,6 +17,11 @@ Este índice refleja evidencia de código y el TODO del README; su numeración o
 
 - [009 · Página 404](../features/009-pagina-404/spec.md).
 - [010 · Adaptación responsive](../features/010-responsive/spec.md).
-- [011 · Pruebas automatizadas](../features/011-pruebas-automatizadas/spec.md).
+- [011 · Pruebas automatizadas](../features/011-pruebas-automatizadas/spec.md): base de pruebas implementada; E2E y lint aplazados hasta después de lógica y UI/UX.
 
 No se asigna prioridad entre pendientes porque el README no la establece.
+
+## Modernización acordada
+
+- [012 · Modernización](../features/012-modernizacion/spec.md): base técnica actualizada y pruebas iniciales; siguen el nuevo flujo, identidad y componentes, y experiencia adaptable. Las etapas se completarán y revisarán por separado.
+- [013 · Flujo de cobro por ítems](../features/013-flujo-cobro-items/spec.md): siguiente etapa, pendiente de implementación y validación.

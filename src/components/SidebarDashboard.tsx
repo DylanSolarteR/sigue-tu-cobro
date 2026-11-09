@@ -10,7 +10,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 
 import {
   ChartNoAxesCombined,
@@ -69,7 +69,7 @@ function SidebarDashboard() {
             className="flex h-10 flex-row items-center justify-start gap-4 rounded-lg py-10 selection:bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent"
             tooltip={"Perfil"}
           >
-            <SignedIn>
+            <Show when="signed-in">
               <UserButton
                 afterSwitchSessionUrl="/dashboard/resume"
                 fallback={<CircleUser className="min-h-8 min-w-8" />}
@@ -93,7 +93,7 @@ function SidebarDashboard() {
                   },
                 }}
               />
-            </SignedIn>
+            </Show>
           </SidebarMenuButton>
         </SidebarGroup>
       </SidebarFooter>
