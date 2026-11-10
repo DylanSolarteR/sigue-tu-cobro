@@ -1,254 +1,366 @@
-﻿{
-    "schemaVersion":  2,
-    "generatedAt":  "2026-11-09T15:27:55.9358679-05:00",
-    "title":  "Design System: SigueTuCobro",
-    "extensions":  {
-                       "colorMeta":  {
-                                         "primary":  {
-                                                         "role":  "primary",
-                                                         "displayName":  "Verde financiero profundo",
-                                                         "canonical":  "hsl(173 35% 9%)",
-                                                         "tonalRamp":  [
-                                                                           "oklch(15% .02 175)",
-                                                                           "oklch(25% .03 175)",
-                                                                           "oklch(35% .04 175)",
-                                                                           "oklch(45% .05 175)",
-                                                                           "oklch(55% .05 175)",
-                                                                           "oklch(70% .04 175)",
-                                                                           "oklch(85% .02 175)",
-                                                                           "oklch(95% .01 175)"
-                                                                       ]
-                                                     },
-                                         "secondary":  {
-                                                           "role":  "secondary",
-                                                           "displayName":  "Verde de superficie",
-                                                           "canonical":  "hsl(166 40% 8%)",
-                                                           "tonalRamp":  [
-                                                                             "oklch(15% .02 165)",
-                                                                             "oklch(25% .03 165)",
-                                                                             "oklch(35% .04 165)",
-                                                                             "oklch(45% .05 165)",
-                                                                             "oklch(55% .05 165)",
-                                                                             "oklch(70% .04 165)",
-                                                                             "oklch(85% .02 165)",
-                                                                             "oklch(95% .01 165)"
-                                                                         ]
-                                                       },
-                                         "accent":  {
-                                                        "role":  "primary",
-                                                        "displayName":  "Verde de acento",
-                                                        "canonical":  "hsl(162 51% 39%)",
-                                                        "tonalRamp":  [
-                                                                          "oklch(15% .02 165)",
-                                                                          "oklch(25% .04 165)",
-                                                                          "oklch(35% .06 165)",
-                                                                          "oklch(45% .08 165)",
-                                                                          "oklch(55% .1 165)",
-                                                                          "oklch(70% .08 165)",
-                                                                          "oklch(85% .04 165)",
-                                                                          "oklch(95% .01 165)"
-                                                                      ]
-                                                    },
-                                         "background":  {
-                                                            "role":  "neutral",
-                                                            "displayName":  "Fondo carbón",
-                                                            "canonical":  "hsl(0 0% 5%)",
-                                                            "tonalRamp":  [
-                                                                              "oklch(15% 0 0)",
-                                                                              "oklch(25% 0 0)",
-                                                                              "oklch(35% 0 0)",
-                                                                              "oklch(45% 0 0)",
-                                                                              "oklch(55% 0 0)",
-                                                                              "oklch(70% 0 0)",
-                                                                              "oklch(85% 0 0)",
-                                                                              "oklch(95% 0 0)"
-                                                                          ]
-                                                        },
-                                         "foreground":  {
-                                                            "tonalRamp":  [
-                                                                              "oklch(15% 0 0)",
-                                                                              "oklch(25% 0 0)",
-                                                                              "oklch(35% 0 0)",
-                                                                              "oklch(45% 0 0)",
-                                                                              "oklch(55% 0 0)",
-                                                                              "oklch(70% 0 0)",
-                                                                              "oklch(85% 0 0)",
-                                                                              "oklch(95% 0 0)"
-                                                                          ],
-                                                            "displayName":  "foreground",
-                                                            "canonical":  "hsl(0 0% 100%)",
-                                                            "role":  "neutral"
-                                                        },
-                                         "card":  {
-                                                      "tonalRamp":  [
-                                                                        "oklch(15% 0 0)",
-                                                                        "oklch(25% 0 0)",
-                                                                        "oklch(35% 0 0)",
-                                                                        "oklch(45% 0 0)",
-                                                                        "oklch(55% 0 0)",
-                                                                        "oklch(70% 0 0)",
-                                                                        "oklch(85% 0 0)",
-                                                                        "oklch(95% 0 0)"
-                                                                    ],
-                                                      "displayName":  "card",
-                                                      "canonical":  "hsl(0 0% 3.9%)",
-                                                      "role":  "neutral"
-                                                  },
-                                         "sidebar-active":  {
-                                                                "tonalRamp":  [
-                                                                                  "oklch(15% .02 175)",
-                                                                                  "oklch(25% .03 175)",
-                                                                                  "oklch(35% .04 175)",
-                                                                                  "oklch(45% .05 175)",
-                                                                                  "oklch(55% .05 175)",
-                                                                                  "oklch(70% .04 175)",
-                                                                                  "oklch(85% .02 175)",
-                                                                                  "oklch(95% .01 175)"
-                                                                              ],
-                                                                "displayName":  "sidebar-active",
-                                                                "canonical":  "#10473A",
-                                                                "role":  "secondary"
-                                                            },
-                                         "card-foreground":  {
-                                                                 "tonalRamp":  [
-                                                                                   "oklch(15% 0 0)",
-                                                                                   "oklch(25% 0 0)",
-                                                                                   "oklch(35% 0 0)",
-                                                                                   "oklch(45% 0 0)",
-                                                                                   "oklch(55% 0 0)",
-                                                                                   "oklch(70% 0 0)",
-                                                                                   "oklch(85% 0 0)",
-                                                                                   "oklch(95% 0 0)"
-                                                                               ],
-                                                                 "displayName":  "card-foreground",
-                                                                 "canonical":  "hsl(0 0% 98%)",
-                                                                 "role":  "neutral"
-                                                             },
-                                         "border":  {
-                                                        "tonalRamp":  [
-                                                                          "oklch(15% 0 0)",
-                                                                          "oklch(25% 0 0)",
-                                                                          "oklch(35% 0 0)",
-                                                                          "oklch(45% 0 0)",
-                                                                          "oklch(55% 0 0)",
-                                                                          "oklch(70% 0 0)",
-                                                                          "oklch(85% 0 0)",
-                                                                          "oklch(95% 0 0)"
-                                                                      ],
-                                                        "displayName":  "border",
-                                                        "canonical":  "hsl(0 0% 14.9%)",
-                                                        "role":  "neutral"
-                                                    },
-                                         "muted":  {
-                                                       "tonalRamp":  [
-                                                                         "oklch(15% 0 0)",
-                                                                         "oklch(25% 0 0)",
-                                                                         "oklch(35% 0 0)",
-                                                                         "oklch(45% 0 0)",
-                                                                         "oklch(55% 0 0)",
-                                                                         "oklch(70% 0 0)",
-                                                                         "oklch(85% 0 0)",
-                                                                         "oklch(95% 0 0)"
-                                                                     ],
-                                                       "displayName":  "muted",
-                                                       "canonical":  "hsl(0 0% 8%)",
-                                                       "role":  "neutral"
-                                                   },
-                                         "destructive":  {
-                                                             "tonalRamp":  [
-                                                                               "oklch(15% .02 25)",
-                                                                               "oklch(25% .04 25)",
-                                                                               "oklch(35% .06 25)",
-                                                                               "oklch(45% .08 25)",
-                                                                               "oklch(55% .1 25)",
-                                                                               "oklch(70% .08 25)",
-                                                                               "oklch(85% .04 25)",
-                                                                               "oklch(95% .01 25)"
-                                                                           ],
-                                                             "displayName":  "destructive",
-                                                             "canonical":  "hsl(0 62.8% 30.6%)",
-                                                             "role":  "tertiary"
-                                                         }
-                                     },
-                       "breakpoints":  [
-                                           {
-                                               "name":  "md",
-                                               "value":  "768px"
-                                           },
-                                           {
-                                               "name":  "2xl",
-                                               "value":  "1536px"
-                                           }
-                                       ],
-                       "motion":  [
-                                      {
-                                          "name":  "spotlight",
-                                          "value":  "opacity 500ms",
-                                          "purpose":  "Transición del borde iluminado en la portada."
-                                      }
-                                  ]
-                   },
-    "components":  [
-                       {
-                           "name":  "Botón principal",
-                           "kind":  "button",
-                           "refersTo":  "button-primary",
-                           "description":  "Acción principal compacta.",
-                           "html":  "\u003cbutton class=\"ds-primary\"\u003eGuardar\u003c/button\u003e",
-                           "css":  ".ds-primary{background:hsl(var(--primary));color:hsl(var(--primary-foreground));border:0;border-radius:calc(var(--radius) - 2px);height:2.25rem;padding:.5rem 1rem;font-size:.875rem;font-weight:500;transition:background-color .15s}.ds-primary:hover{background:hsl(var(--primary)/.9)}.ds-primary:focus-visible{outline:1px solid hsl(var(--ring))}.ds-primary:disabled{opacity:.5}"
-                       },
-                       {
-                           "name":  "Botón secundario",
-                           "kind":  "button",
-                           "refersTo":  "button-secondary",
-                           "description":  "Acción secundaria compacta.",
-                           "html":  "\u003cbutton class=\"ds-secondary\"\u003eAnterior\u003c/button\u003e",
-                           "css":  ".ds-secondary{background:hsl(var(--secondary));color:hsl(var(--secondary-foreground));border:0;border-radius:calc(var(--radius) - 2px);height:2.25rem;padding:.5rem 1rem;font-size:.875rem;font-weight:500;transition:background-color .15s}.ds-secondary:hover{background:hsl(var(--secondary)/.8)}.ds-secondary:focus-visible{outline:1px solid hsl(var(--ring))}"
-                       },
-                       {
-                           "name":  "Campo de texto",
-                           "kind":  "input",
-                           "refersTo":  "input",
-                           "description":  "Campo compacto con borde y foco visible.",
-                           "html":  "\u003cinput class=\"ds-input\" aria-label=\"Nombre\" placeholder=\"Nombre\"\u003e",
-                           "css":  ".ds-input{height:2.25rem;padding:.25rem .75rem;border:1px solid hsl(var(--input));border-radius:calc(var(--radius) - 2px);background:transparent;color:hsl(var(--foreground));font-size:1rem;box-shadow:0 1px 2px 0 rgb(0 0 0 / .05)}.ds-input::placeholder{color:hsl(var(--muted-foreground))}.ds-input:focus-visible{outline:1px solid hsl(var(--ring))}.ds-input:disabled{opacity:.5}@media(min-width:768px){.ds-input{font-size:.875rem}}"
-                       },
-                       {
-                           "name":  "Tarjeta",
-                           "kind":  "card",
-                           "refersTo":  "card",
-                           "description":  "Contenedor para contenido relacionado.",
-                           "html":  "\u003cdiv class=\"ds-card\"\u003e\u003cstrong\u003eResumen\u003c/strong\u003e\u003cp\u003eInformación de la cuenta\u003c/p\u003e\u003c/div\u003e",
-                           "css":  ".ds-card{background:hsl(var(--card));color:hsl(var(--card-foreground));border:1px solid hsl(var(--border));border-radius:.75rem;padding:1.5rem;box-shadow:0 1px 3px 0 rgb(0 0 0 / .1),0 1px 2px -1px rgb(0 0 0 / .1)}.ds-card p{font-size:.875rem}"
-                       },
-                       {
-                           "name":  "Navegación activa",
-                           "kind":  "nav",
-                           "description":  "Opción seleccionada del panel lateral.",
-                           "html":  "\u003cnav\u003e\u003ca class=\"ds-nav\" href=\"#\" aria-current=\"page\"\u003eResumen\u003c/a\u003e\u003c/nav\u003e",
-                           "css":  ".ds-nav{display:flex;align-items:center;min-height:4rem;padding:0 1rem;background:#10473A;color:white;border-radius:1.5rem;font-size:1.25rem;text-decoration:none}.ds-nav:hover{background:#10473A}.ds-nav:focus-visible{outline:1px solid hsl(var(--sidebar-ring))}"
-                       }
-                   ],
-    "narrative":  {
-                      "northStar":  "Un espacio de trabajo financiero claro y sobrio",
-                      "overview":  "La interfaz combina una base oscura con verde financiero profundo para presentar la información de gestión con claridad. La dirección acordada es moderna y dinámica, sin perder la sobriedad propia de un espacio de trabajo financiero.\n\nLas capas sutiles, las sombras discretas y las formas suaves buscan transmitir claridad y confianza. La portada admite un tratamiento más expresivo mediante degradados e iluminación; el panel prioriza la lectura de datos y la ejecución de tareas.",
-                      "keyCharacteristics":  [
-                                                 "Superficies oscuras y texto claro.",
-                                                 "Verde profundo para acciones y estados, con un acento más luminoso.",
-                                                 "Geologica como tipografía local de la aplicación.",
-                                                 "Controles compactos y contenedores de bordes suaves."
-                                             ],
-                      "rules":  [
-
-                                ],
-                      "dos":  [
-                                  "Do reutilizar los colores semánticos y los componentes existentes para mantener coherencia.",
-                                  "Do distinguir la navegación activa y conservar los estados de foco y deshabilitado.",
-                                  "Do mantener el contenido operativo legible sobre las superficies oscuras."
-                              ],
-                      "donts":  [
-                                    "Don\u0027t convertir la limitación móvil actual en un requisito permanente.",
-                                    "Don\u0027t extender automáticamente los efectos luminosos de la portada a todo el panel."
-                                ]
-                  }
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T21:11:30.334918+00:00",
+  "title": "Design System: SigueTuCobro",
+  "extensions": {
+    "colorMeta": {
+      "fondo-carbon": {
+        "role": "neutral",
+        "displayName": "Carbón de fondo",
+        "canonical": "#0b1512",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "superficie-carbon": {
+        "role": "neutral",
+        "displayName": "Carbón de superficie",
+        "canonical": "#1b201f",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "superficie-campo": {
+        "role": "neutral",
+        "displayName": "Carbón de campo",
+        "canonical": "#101815",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "borde-campo": {
+        "role": "neutral",
+        "displayName": "Borde definido",
+        "canonical": "#52645d",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "seleccion-fondo": {
+        "role": "neutral",
+        "displayName": "Superficie seleccionada",
+        "canonical": "#25332d",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "primario": {
+        "role": "primary",
+        "displayName": "Verde de acción",
+        "canonical": "#319678",
+        "tonalRamp": [
+          "oklch(15% 0.020 160)",
+          "oklch(25% 0.050 160)",
+          "oklch(35% 0.080 160)",
+          "oklch(45% 0.090 160)",
+          "oklch(55% 0.090 160)",
+          "oklch(70% 0.080 160)",
+          "oklch(85% 0.040 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "acento-menta": {
+        "role": "primary",
+        "displayName": "Menta claro",
+        "canonical": "#74d5a7",
+        "tonalRamp": [
+          "oklch(15% 0.020 160)",
+          "oklch(25% 0.050 160)",
+          "oklch(35% 0.080 160)",
+          "oklch(45% 0.090 160)",
+          "oklch(55% 0.090 160)",
+          "oklch(70% 0.080 160)",
+          "oklch(85% 0.040 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "tinta-oscura": {
+        "role": "neutral",
+        "displayName": "Tinta oscura",
+        "canonical": "#10231a",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "texto-principal": {
+        "role": "neutral",
+        "displayName": "Texto principal",
+        "canonical": "#edf5ef",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "texto-secundario": {
+        "role": "neutral",
+        "displayName": "Texto secundario",
+        "canonical": "#c1d3c8",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "papel-claro": {
+        "role": "neutral",
+        "displayName": "Papel claro",
+        "canonical": "#e8f1e9",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "aviso": {
+        "role": "semantic",
+        "displayName": "Ámbar de aviso",
+        "canonical": "#e8c47d",
+        "tonalRamp": [
+          "oklch(15% 0.020 85)",
+          "oklch(25% 0.050 85)",
+          "oklch(35% 0.080 85)",
+          "oklch(45% 0.090 85)",
+          "oklch(55% 0.090 85)",
+          "oklch(70% 0.080 85)",
+          "oklch(85% 0.040 85)",
+          "oklch(95% 0.015 85)"
+        ]
+      },
+      "error": {
+        "role": "semantic",
+        "displayName": "Rojo de error",
+        "canonical": "#ef9999",
+        "tonalRamp": [
+          "oklch(15% 0.020 25)",
+          "oklch(25% 0.050 25)",
+          "oklch(35% 0.080 25)",
+          "oklch(45% 0.090 25)",
+          "oklch(55% 0.090 25)",
+          "oklch(70% 0.080 25)",
+          "oklch(85% 0.040 25)",
+          "oklch(95% 0.015 25)"
+        ]
+      },
+      "pendiente-fondo": {
+        "role": "semantic",
+        "displayName": "Fondo pendiente",
+        "canonical": "#4b3e28",
+        "tonalRamp": [
+          "oklch(15% 0.015 85)",
+          "oklch(25% 0.015 85)",
+          "oklch(35% 0.015 85)",
+          "oklch(45% 0.015 85)",
+          "oklch(55% 0.015 85)",
+          "oklch(70% 0.015 85)",
+          "oklch(85% 0.015 85)",
+          "oklch(95% 0.015 85)"
+        ]
+      },
+      "pendiente-texto": {
+        "role": "semantic",
+        "displayName": "Texto pendiente",
+        "canonical": "#f8dfaa",
+        "tonalRamp": [
+          "oklch(15% 0.015 85)",
+          "oklch(25% 0.015 85)",
+          "oklch(35% 0.015 85)",
+          "oklch(45% 0.015 85)",
+          "oklch(55% 0.015 85)",
+          "oklch(70% 0.015 85)",
+          "oklch(85% 0.015 85)",
+          "oklch(95% 0.015 85)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Titular de portada",
+        "purpose": "Titular principal de la portada."
+      },
+      "headline": {
+        "displayName": "Encabezado",
+        "purpose": "Títulos del panel."
+      },
+      "body": {
+        "displayName": "Texto",
+        "purpose": "Contenido y descripciones."
+      },
+      "label": {
+        "displayName": "Etiqueta",
+        "purpose": "Etiquetas y navegación."
+      }
+    },
+    "shadows": [
+      {
+        "name": "calendar-xl",
+        "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+        "purpose": "Calendario desplegable; sombra XL de Tailwind."
+      },
+      {
+        "name": "selection-glow",
+        "value": "0 0 8px #74d5a7",
+        "purpose": "Punto de selección activo."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón de portada",
+      "kind": "button",
+      "refersTo": "boton-portada",
+      "description": "Acción destacada de la portada.",
+      "html": "<button class=\"ds-landing\">Crear mi cuenta</button>",
+      "css": ".ds-landing{min-height:3.5rem;border:0;border-radius:.5rem;background:#74d5a7;color:#10231a;padding:0 1.75rem;font-size:1rem;font-weight:600;cursor:pointer}.ds-landing:hover{background:#9be4bd}.ds-landing:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}"
+    },
+    {
+      "name": "Botón principal del panel",
+      "kind": "button",
+      "description": "Acción principal con el color del tema.",
+      "html": "<button class=\"ds-primary\">Marcar pagada</button>",
+      "css": ".ds-primary{min-height:2.75rem;border:0;border-radius:.75rem;background:var(--color-primary,#319678);color:var(--color-primary-content,#06130f);padding:0 1rem;font-weight:600;cursor:pointer}.ds-primary:hover{filter:brightness(1.1)}.ds-primary:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}.ds-primary:disabled{opacity:.5}"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "description": "Acción secundaria delineada del panel.",
+      "html": "<button class=\"ds-secondary\">Seleccionar página</button>",
+      "css": ".ds-secondary{min-height:2.75rem;border:1px solid #52605a;border-radius:.75rem;background:transparent;color:#edf5ef;padding:0 1rem;font-weight:600;cursor:pointer}.ds-secondary:hover{background:#25332d}.ds-secondary:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}.ds-secondary:disabled{opacity:.5}"
+    },
+    {
+      "name": "Campo monetario",
+      "kind": "input",
+      "refersTo": "campo",
+      "description": "Entrada de moneda con borde visible y teclado numérico.",
+      "html": "<label class=\"ds-label\" for=\"ds-amount\">Valor</label><div class=\"ds-money\"><span aria-hidden=\"true\">$</span><input id=\"ds-amount\" inputmode=\"numeric\" value=\"1.234.567\"></div>",
+      "css": ".ds-label{display:block;margin-bottom:.5rem;color:#d8e6df;font-size:.875rem;font-weight:500}.ds-money{display:flex;align-items:center;gap:.5rem;border:1px solid #52645d;border-radius:1rem;background:#101815;padding:0 1rem;color:#b4c9be}.ds-money:focus-within{border-color:#74d5a7;box-shadow:0 0 0 2px #74d5a740}.ds-money input{width:100%;min-height:3rem;border:0;outline:0;background:transparent;color:#edf5ef;font-size:1rem}"
+    },
+    {
+      "name": "Etiqueta pendiente",
+      "kind": "chip",
+      "refersTo": "etiqueta-pendiente",
+      "description": "Estado de cuenta pendiente, visible con texto.",
+      "html": "<span class=\"ds-pending\">Pendiente</span>",
+      "css": ".ds-pending{display:inline-flex;border-radius:9999px;padding:.25rem .75rem;background:#4b3e28;color:#f8dfaa;font-size:.75rem;font-weight:600}"
+    },
+    {
+      "name": "Cuenta seleccionada",
+      "kind": "card",
+      "refersTo": "cuenta-seleccionada",
+      "description": "Fila seleccionada con borde y punto luminosos.",
+      "html": "<article class=\"ds-card\"><strong>Cuenta de cobro</strong><span class=\"ds-indicator\"><span class=\"ds-dot\"></span> Seleccionada</span></article>",
+      "css": ".ds-card{display:flex;justify-content:space-between;align-items:center;gap:1rem;border:1px solid #74d5a7;border-radius:1rem;background:#25332d;padding:1rem;color:#edf5ef}.ds-indicator{display:flex;align-items:center;gap:.5rem;font-size:.875rem}.ds-dot{width:.625rem;height:.625rem;border-radius:9999px;background:#b7ffda;box-shadow:0 0 8px #74d5a7}"
+    },
+    {
+      "name": "Navegación activa",
+      "kind": "nav",
+      "description": "Enlace activo en la navegación del panel.",
+      "html": "<nav><a class=\"ds-nav\" href=\"#\" aria-current=\"page\">Resumen</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;min-height:2.75rem;border-radius:.75rem;padding:.75rem 1rem;background:#143d34;color:white;font-size:.875rem;font-weight:500;text-decoration:none}.ds-nav:hover{background:#172a25}.ds-nav:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}"
+    },
+    {
+      "name": "Fecha",
+      "kind": "input",
+      "refersTo": "campo",
+      "description": "Disparador del calendario personalizado.",
+      "html": "<span class=\"ds-label\">Fecha de pago</span><button class=\"ds-date\" type=\"button\" aria-expanded=\"false\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M16 3v4M8 3v4M3 10h18\"/></svg><span>Seleccionar fecha</span></button>",
+      "css": ".ds-label{display:block;margin-bottom:.5rem;color:#d8e6df;font-size:.875rem;font-weight:500}.ds-date{display:flex;align-items:center;gap:.75rem;min-height:3rem;width:100%;border:1px solid #52645d;border-radius:1rem;background:#101815;color:#edf5ef;padding:0 1rem;text-align:left;cursor:pointer}.ds-date svg{color:#74d5a7}.ds-date:hover{border-color:#87bba5}.ds-date:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Mesa de trabajo serena",
+    "overview": "La interfaz debe sentirse clara y tranquila, con espacio suficiente para leer y actuar. El carbón sostiene la superficie y el verde menta señala las acciones y los estados importantes. Los botones, las tarjetas y los campos tienen una presencia suave y bien definida.\n\nLa profundidad deseada usa capas y sombras suaves frecuentes. La implementación actual es principalmente plana: combina superficies y bordes, con sombra en el calendario y un halo en la selección. Las sombras adicionales son una dirección visual acordada, no una capacidad ya implementada.",
+    "keyCharacteristics": [
+      "Contraste legible y jerarquía sencilla.",
+      "Superficies oscuras neutras con acentos verdes.",
+      "Controles redondeados con estados visibles.",
+      "Datos accesibles y composición adaptable."
+    ],
+    "rules": [],
+    "dos": [
+      "**Do** usar superficies contrastadas y etiquetas para distinguir campos y estados.",
+      "**Do** mantener los controles utilizables con teclado y en pantallas pequeñas.",
+      "**Do** combinar una indicación visual con texto o una etiqueta accesible."
+    ],
+    "donts": [
+      "**Don't** volver invisibles los campos sobre el fondo ni eliminar el foco visible.",
+      "**Don't** llenar las tarjetas de tonos verdes que compitan entre sí.",
+      "**Don't** añadir textos decorativos sobre cada título ni representar una fecha prevista como fecha efectiva de pago."
+    ]
+  }
 }
