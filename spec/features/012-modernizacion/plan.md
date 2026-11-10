@@ -3,9 +3,10 @@
 ## Orden acordado
 
 1. Pruebas y base técnica: Vitest y Playwright, pruebas iniciales y actualización gradual de dependencias. La feature 011 contiene el detalle de pruebas.
-2. [Flujo de cobro](../013-flujo-cobro-items/spec.md): ítems previos, selección por cliente, estados, cálculos, migración conservadora y adaptación del PDF y resumen.
+2. [Flujo de cobro](../013-flujo-cobro-items/spec.md): ítems previos, selección por cliente, estados, cálculos y adaptación del PDF y resumen.
 3. Identidad y componentes: conservar los colores actuales como punto de partida, sustituir shadcn por daisyUI y rediseñar la landing, las páginas de acceso de Clerk y la estructura visual completa del dashboard. Descartar las disposiciones actuales del dashboard y el login.
 4. Experiencia y adaptación: reducir pasos, simplificar el cambio de estado y verificar los recorridos en móvil, tableta y escritorio. Complementar la feature 010.
+5. Validación final y datos históricos: ejecutar E2E, revisar lint y verificar concurrencia y aislamiento reales; ensayar la restauración del respaldo y la migración antes de trasladar datos históricos.
 
 Antes de cada etapa se detallarán su spec, plan, tareas y criterios verificables; se desarrollará y revisará por separado. La actualización de dependencias exige comprobar versiones y compatibilidades antes de instalarlas.
 

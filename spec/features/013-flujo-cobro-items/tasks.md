@@ -10,7 +10,7 @@
 
 ## Avance de implementación
 
-Se prepararon el nuevo flujo, pruebas de dominio y componentes, y un borrador de migración. En la verificación local pasaron 37 pruebas, typecheck y build. La migración, la recuperación y la concurrencia siguen sin ensayarse. La fase permanece pendiente de validación e integración.
+Se prepararon el nuevo flujo, pruebas de dominio y componentes, y un borrador de migración. La migración, la recuperación y la concurrencia siguen sin ensayarse; se verificarán en la etapa final después de los cambios de interfaz.
 
 Por decisión posterior se creó un respaldo SQL local de las tres tablas originales y se crearon vacías las tablas `stc_actor_table_v2`, `stc_billing_statement_table_v2` y `stc_billing_statement_item_table_v2`. Las originales no fueron alteradas y el código de esta rama apunta a v2. Dos lecturas consecutivas del respaldo coincidieron, pero no garantizan una instantánea atómica ni se ha ensayado su restauración. Las tablas comparten el mismo workspace y no constituyen aislamiento de infraestructura. Los ensayos y el traslado de datos históricos quedan pendientes; no ejecutar el borrador de backfill hasta revisarlo para los nombres v2.
 

@@ -23,5 +23,5 @@ No se asigna prioridad entre pendientes porque el README no la establece.
 
 ## Modernización acordada
 
-- [012 · Modernización](../features/012-modernizacion/spec.md): base técnica actualizada y pruebas iniciales; siguen el nuevo flujo, identidad y componentes, y experiencia adaptable. Las etapas se completarán y revisarán por separado.
-- [013 · Flujo de cobro por ítems](../features/013-flujo-cobro-items/spec.md): siguiente etapa, pendiente de implementación y validación.
+- [012 · Modernización](../features/012-modernizacion/spec.md): base técnica y flujo implementados; siguen identidad y componentes, experiencia adaptable y una etapa final para E2E, lint y ensayos de datos.
+- [013 · Flujo de cobro por ítems](../features/013-flujo-cobro-items/spec.md): implementado con pruebas locales; validación real de concurrencia y migración de datos diferidas a la etapa final.
