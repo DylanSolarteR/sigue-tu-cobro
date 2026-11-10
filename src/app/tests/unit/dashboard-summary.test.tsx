@@ -22,7 +22,7 @@ describe("resumen de cuentas", () => {
     expect(html).not.toContain("Tu resumen comienza aquí");
   });
 
-  it("muestra estados y el valor real de cuentas creadas por mes", async () => {
+  it("muestra estados y explica la fecha usada en la evolución", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-15T12:00:00Z"));
     getBillingStatements.mockResolvedValue({ success: true, data: [
@@ -31,7 +31,7 @@ describe("resumen de cuentas", () => {
     ] });
     const html = renderToStaticMarkup(await Statistics());
     expect(html).toContain("$200.000");
-    expect(html).toContain("por fecha de creación");
+    expect(html).toContain("fecha prevista de pago");
     expect(html).toContain("Pagadas");
     expect(html).toContain("Pendientes");
   });
@@ -46,8 +46,8 @@ it("presenta cartera y valores por cliente sin depender del color", async () => 
   ] });
   const html = renderToStaticMarkup(await Statistics());
   expect(html).toContain("Valor pendiente");
-  expect(html).toContain("Valor vencido");
-  expect(html).toContain("Valor de cuentas por cliente");
+  expect(html).not.toContain("Valor vencido");
+  expect(html).toContain("Top 5 clientes por valor de cuentas pagadas");
   expect(html).toContain("Acme");
   expect(html).toContain("$200.000");
 });

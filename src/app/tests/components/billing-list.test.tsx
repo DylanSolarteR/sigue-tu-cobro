@@ -9,6 +9,7 @@ vi.mock("@/actions/billing-statement.api", () => ({
 }));
 vi.mock("@/components/generatePDF", () => ({ default: () => <button>Descargar PDF</button> }));
 vi.mock("@/components/dashboard/billing-statements/UpdateBillingStatementForm", () => ({ default: ({ id }: { id: string }) => <p>Editor {id}</p> }));
+vi.mock("@/components/dashboard/DateField", () => ({ default: ({ id, label, value, onChange, disabled }: { id: string; label: string; value: string; onChange: (value: string) => void; disabled?: boolean }) => <label htmlFor={id}>{label}<input id={id} type="date" value={value} disabled={disabled} onChange={(event) => onChange(event.target.value)} /></label> }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
@@ -36,8 +37,9 @@ it("presenta cada cuenta como una entrada identificable con sus datos y acciones
   const list = await screen.findByRole("list", { name: "Cuentas de cobro" });
   expect(list.textContent).toContain("Cliente largo");
   expect(list.textContent).toContain("Acreedor");
-  expect(screen.getByRole("button", { name: "Editar cuenta de Cliente largo" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Abrir cuenta de Cliente largo" })).toBeTruthy();
   expect(screen.getByRole("button", { name: "Descargar PDF" })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: /editar/i })).toBeNull();
 });
 
 
@@ -47,9 +49,15 @@ it("abre y cierra el editor de la cuenta en contexto", async () => {
   vi.mocked(getBillingStatements).mockResolvedValueOnce({ success: true, message: "", data: [account("1", "Ana")] });
   vi.spyOn(window, "confirm").mockReturnValue(true);
   render(<ListBillingStatements />);
-  fireEvent.click(await screen.findByRole("button", { name: "Editar cuenta de Ana" }));
+  const trigger = await screen.findByRole("button", { name: "Abrir cuenta de Ana" });
+  expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  trigger.focus();
+  fireEvent.keyDown(trigger, { key: "Enter", code: "Enter" });
+  fireEvent.click(trigger);
   expect(screen.getByText("Editor 1")).toBeTruthy();
-  fireEvent.click(screen.getByRole("button", { name: "Cerrar edici\u00f3n de Ana" }));
+  expect((screen.getByLabelText("Fecha prevista de pago desde") as HTMLInputElement).disabled).toBe(true);
+  expect(screen.getByRole("button", { name: "Cerrar cuenta de Ana" }).getAttribute("aria-expanded")).toBe("true");
+  fireEvent.click(screen.getByRole("button", { name: "Cerrar cuenta de Ana" }));
   expect(screen.queryByText("Editor 1")).toBeNull();
   vi.restoreAllMocks();
 });
@@ -173,7 +181,7 @@ it("protege la edicion abierta al intentar abrir otra fila", async () => {
   fireEvent.click(screen.getByText("Bea"));
   expect(screen.getByText("Editor 1")).toBeTruthy();
   expect(screen.queryByText("Editor 2")).toBeNull();
-  fireEvent.click(screen.getByRole("button", { name: "Editar cuenta de Bea" }));
+  fireEvent.click(screen.getByRole("button", { name: "Abrir cuenta de Bea" }));
   expect(confirm).toHaveBeenCalledTimes(2);
   expect(screen.queryByText("Editor 1")).toBeNull();
   expect(screen.getByText("Editor 2")).toBeTruthy();
@@ -194,4 +202,33 @@ it("no abre la fila por el clic posterior a una pulsacion prolongada", async () 
   expect(screen.queryByText("Editor 1")).toBeNull();
   expect(screen.getByRole("button", { name: "Deseleccionar cuenta de Ana" })).toBeTruthy();
   vi.useRealTimers();
+});
+
+
+it("selecciona al mantener pulsado el encabezado sin abrir el editor", async () => {
+  vi.mocked(getBillingStatements).mockResolvedValueOnce({ success: true, message: "", data: [account("1", "Ana")] });
+  render(<ListBillingStatements />);
+  const trigger = await screen.findByRole("button", { name: "Abrir cuenta de Ana" });
+  const event = new Event("pointerdown", { bubbles: true });
+  Object.defineProperties(event, { pointerType: { value: "touch" }, clientX: { value: 0 }, clientY: { value: 0 } });
+  vi.useFakeTimers();
+  fireEvent(trigger, event);
+  act(() => vi.advanceTimersByTime(700));
+  fireEvent.pointerUp(trigger);
+  fireEvent.click(trigger);
+  expect(screen.queryByText("Editor 1")).toBeNull();
+  expect(screen.getByRole("button", { name: "Deseleccionar cuenta de Ana" }).getAttribute("aria-pressed")).toBe("true");
+  vi.useRealTimers();
+});
+
+it("valida el intervalo de fechas y permite corregirlo", async () => {
+  vi.mocked(getBillingStatements).mockResolvedValueOnce({ success: true, message: "", data: [account("1", "Ana", "pending", "2026-02-01")] });
+  render(<ListBillingStatements />);
+  await screen.findByText("Ana");
+  fireEvent.change(screen.getByLabelText("Fecha prevista de pago desde"), { target: { value: "2026-03-01" } });
+  fireEvent.change(screen.getByLabelText("Fecha prevista de pago hasta"), { target: { value: "2026-02-01" } });
+  expect(screen.getByRole("alert").textContent).toContain("fecha inicial");
+  fireEvent.change(screen.getByLabelText("Fecha prevista de pago desde"), { target: { value: "2026-01-01" } });
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByText("Ana")).toBeTruthy();
 });

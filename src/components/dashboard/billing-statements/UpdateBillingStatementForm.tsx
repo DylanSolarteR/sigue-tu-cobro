@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getBillingStatement, saveBillingStatement } from "@/actions/billing-statement.api";
 import { getBillingStatementItems, updateBillingStatementItem } from "@/actions/billing-statement.item.api";
 import { DatePicker } from "@/components/DatePicker";
+import MoneyInput from "@/components/dashboard/MoneyInput";
 import type { billing_statement, billing_statement_item } from "@/types/billing-statement";
 import { calendarDateToCivil, parseBillingDateForCalendar } from "@/lib/billing-date";
 
@@ -72,13 +73,13 @@ export default function UpdateBillingStatementForm({ id, onUpdated, onPdfInvalid
       <h2 className="text-xl font-semibold">Información de la cuenta de cobro</h2>
       {message && <p role="status">{message}</p>}
       <section className="space-y-3"><h3 className="text-lg font-semibold">Ítems de la cuenta</h3>{account.status === "paid" && <p className="text-sm">Para editar los ítems, cambia la cuenta a pendiente y guarda el cambio.</p>}{items.length ? items.map((item) => <ItemEditor key={item.id} item={item} disabled={account.status === "paid"} onSave={editItem} />) : <p>No hay ítems en esta cuenta.</p>}</section>
-      <form onSubmit={(event) => void save(event)} className="space-y-4 rounded-box border border-base-300 bg-base-200 p-4">
-        <div className="space-y-2"><label htmlFor="statement-status" className="font-medium">Estado</label><select id="statement-status" value={status} onChange={(event) => setStatus(event.target.value === "paid" ? "paid" : "pending")} className="select w-full"><option value="pending">Pendiente</option><option value="paid">Pagada</option></select></div>
+      <form onSubmit={(event) => void save(event)} className="space-y-4 rounded-2xl border border-[#40544b] bg-[#141c19] p-4 sm:p-6">
+        <div className="space-y-2"><label htmlFor="statement-status" className="font-medium">Estado</label><select id="statement-status" value={status} onChange={(event) => setStatus(event.target.value === "paid" ? "paid" : "pending")} className="select min-h-12 w-full rounded-2xl border-[#52645d] bg-[#101815]"><option value="pending">Pendiente</option><option value="paid">Pagada</option></select></div>
         <p>Valor total: ${(account.amount ?? 0).toLocaleString("es-CO")}</p>
-        <div className="space-y-2"><p className="font-medium">Fecha de pago</p><DatePicker date={date} setDate={setDate} /></div>
+        <DatePicker date={date} setDate={setDate} />
         <div className="flex items-center gap-2"><input id="show-item-amount" type="checkbox" className="checkbox checkbox-primary" checked={showItemAmount} onChange={(event) => setShowItemAmount(event.target.checked)} /><label htmlFor="show-item-amount">Mostrar valor de los ítems en el PDF</label></div>
-        <div className="space-y-2"><label htmlFor="extra-info" className="font-medium">Información adicional</label><textarea className="textarea w-full" id="extra-info" value={extraInfo} onChange={(event) => setExtraInfo(event.target.value)} maxLength={2000} /></div>
-        <button className="btn btn-primary w-full sm:w-auto" disabled={saving} type="submit">{saving ? "Guardando…" : "Guardar cambios"}</button>
+        <div className="space-y-2"><label htmlFor="extra-info" className="font-medium">Información adicional</label><textarea className="textarea min-h-24 w-full rounded-2xl border-[#52645d] bg-[#101815]" id="extra-info" value={extraInfo} onChange={(event) => setExtraInfo(event.target.value)} maxLength={2000} /></div>
+        <button className="btn btn-primary min-h-12 w-full rounded-xl sm:w-auto" disabled={saving} type="submit">{saving ? "Guardando…" : "Guardar cambios"}</button>
       </form>
     </div>
   );
@@ -95,5 +96,5 @@ function ItemEditor({ item, disabled, onSave }: { item: billing_statement_item; 
     if (!item.id || !description.trim() || !Number.isSafeInteger(value) || value <= 0 || value > 2147483647) { setMessage("Ingrese una descripción y un valor entero mayor que cero."); return; }
     setSaving(true); setMessage(""); await onSave(item.id, description, value); setSaving(false);
   }
-  return <form onSubmit={(event) => void save(event)} className="grid gap-3 rounded-box border border-base-300 p-4 sm:grid-cols-2"><div className="space-y-2"><label className="font-medium" htmlFor={`desc-${item.id}`}>Descripción del ítem {item.desc}</label><input className="input w-full" id={`desc-${item.id}`} value={description} disabled={disabled || saving} maxLength={150} required onChange={(event) => setDescription(event.target.value)} /></div><div className="space-y-2"><label className="font-medium" htmlFor={`amount-${item.id}`}>Valor del ítem {item.desc}</label><input className="input w-full" id={`amount-${item.id}`} type="number" min="1" max="2147483647" step="1" value={amount} disabled={disabled || saving} required onChange={(event) => setAmount(event.target.value)} /></div>{message && <p role="alert">{message}</p>}<button className="btn btn-primary btn-sm w-full sm:w-fit" type="submit" disabled={disabled || saving || (description === item.desc && amount === String(item.amount))}>Guardar ítem</button></form>;
+  return <form onSubmit={(event) => void save(event)} className="grid gap-3 rounded-2xl border border-[#40544b] p-4 sm:grid-cols-2"><div className="space-y-2"><label className="font-medium" htmlFor={`desc-${item.id}`}>Descripción del ítem {item.desc}</label><input className="input w-full rounded-2xl border-[#52645d] bg-[#101815]" id={`desc-${item.id}`} value={description} disabled={disabled || saving} maxLength={150} required onChange={(event) => setDescription(event.target.value)} /></div><div className="space-y-2"><label className="font-medium" htmlFor={`amount-${item.id}`}>Valor del ítem {item.desc}</label><MoneyInput id={`amount-${item.id}`} value={amount} disabled={disabled || saving} required onChange={setAmount} /></div>{message && <p role="alert">{message}</p>}<button className="btn btn-primary btn-sm w-full rounded-xl sm:w-fit" type="submit" disabled={disabled || saving || (description === item.desc && amount === String(item.amount))}>Guardar ítem</button></form>;
 }

@@ -27,7 +27,7 @@ it("recarga los conceptos del PDF despues de guardar en el acordeon", async () =
   render(<ListBillingStatements />);
   await screen.findByRole("button", { name: "Descargar PDF" });
   expect(mocks.items).toHaveBeenCalledTimes(1);
-  fireEvent.click(screen.getByRole("button", { name: "Editar cuenta de Ana" }));
+  fireEvent.click(screen.getByRole("button", { name: "Abrir cuenta de Ana" }));
   fireEvent.click(screen.getByRole("button", { name: "Guardar edicion" }));
   await waitFor(() => expect(mocks.items).toHaveBeenCalledTimes(2));
   expect(mocks.items).toHaveBeenLastCalledWith("1");
