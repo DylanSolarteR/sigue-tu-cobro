@@ -1,9 +1,10 @@
 import { SignUp } from "@clerk/nextjs";
+import AuthLoadingBoundary from "@/components/AuthLoadingBoundary";
 import { AuthLayout } from "@/components/AuthLayout";
 
 function Registro() {
   return (
-    <AuthLayout><SignUp /></AuthLayout>
+    <AuthLayout><AuthLoadingBoundary><SignUp /></AuthLoadingBoundary></AuthLayout>
   );
 }
 

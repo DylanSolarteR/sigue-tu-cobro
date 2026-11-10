@@ -1,22 +1,16 @@
-import CreateAcreedorForm from "@/components/dashboard/creditors/CreateCreditorForm";
+import CreateCreditorForm from "@/components/dashboard/creditors/CreateCreditorForm";
 import Link from "next/link";
 
-function CrearAcreedor() {
+export default function ActorPage() {
   return (
-    <>
-      <section className="w-full rounded-box bg-base-200 py-6">
-        <div className="flex h-full flex-col items-start justify-start gap-4">
-          <h1 className="px-8 text-2xl text-white">Acreedores</h1>
-          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Link href={"/dashboard/acreedores"} className="btn btn-primary btn-sm sm:btn-md">Ver lista de acreedores</Link>
-          </div>
-        </div>
-      </section>
-      <section className="flex items-center justify-center overflow-auto w-full rounded-box bg-base-200 p-4 sm:p-6">
-        <CreateAcreedorForm />
-      </section>
-    </>
+    <section className="w-full max-w-3xl space-y-6">
+      <header className="space-y-4">
+        <Link href="/dashboard/acreedores" className="btn btn-ghost min-h-11 -ml-4">Ver lista de acreedores</Link>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Crear acreedor</h1>
+      </header>
+      <div className="rounded-box border border-base-300 bg-base-200 p-5 sm:p-8">
+        <CreateCreditorForm />
+      </div>
+    </section>
   );
 }
-
-export default CrearAcreedor;

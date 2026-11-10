@@ -12,11 +12,12 @@ export default async function Statistics() {
   const stats = buildDashboardStatistics(response.data);
   const paidPercent = stats.total ? Math.round((stats.paid / stats.total) * 100) : 0;
   const maxAmount = Math.max(...stats.months.map((month) => month.amount), 0);
+  const maxClientAmount = Math.max(...stats.clients.map((client) => client.amount), 0);
   const measures = [
     { label: "Valor de cuentas", value: money(stats.totalAmount), hint: "Total registrado" },
     { label: "Cuentas creadas", value: String(stats.total), hint: "Todas tus cuentas" },
-    { label: "Por cobrar", value: String(stats.pending), hint: "Cuentas pendientes" },
-    { label: "Cobradas", value: String(stats.paid), hint: "Cuentas pagadas" },
+    { label: "Valor pendiente", value: money(stats.pendingAmount), hint: "Cuentas por cobrar" },
+    { label: "Valor vencido", value: money(stats.overdueAmount), hint: "Pendiente con fecha de pago anterior a hoy" },
   ];
   return (
     <div className="space-y-5">
@@ -70,6 +71,26 @@ export default async function Statistics() {
             )}
           </section>
         </div>
+      )}
+      {stats.total > 0 && (
+        <section aria-labelledby="clients-chart-title" className="min-w-0 rounded-2xl border border-base-content/10 bg-base-200 p-6">
+          <h2 id="clients-chart-title" className="text-base font-semibold text-base-content">Valor de cuentas por cliente</h2>
+          <p className="mt-1 text-sm text-base-content/65">Total registrado, incluidas cuentas pagadas y pendientes</p>
+          {stats.clients.length === 0 ? <p className="mt-5 text-sm text-base-content/70">No hay datos de clientes disponibles.</p> : (
+            <ul className="mt-5 space-y-4">
+              {stats.clients.map((client) => (
+                <li key={client.id}>
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm text-base-content">
+                    <span className="min-w-0 break-words">{client.name}</span><strong>{money(client.amount)}</strong>
+                  </div>
+                  <div aria-hidden="true" className="mt-2 h-2 overflow-hidden rounded-full bg-base-300">
+                    <div className="h-full rounded-full bg-[#73d2ae]" style={{ width: `${maxClientAmount > 0 ? Math.max(0, client.amount / maxClientAmount * 100) : 0}%` }} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
     </div>
   );

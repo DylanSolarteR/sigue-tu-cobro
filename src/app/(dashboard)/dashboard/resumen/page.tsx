@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRight, FilePlus2, ListChecks } from "lucide-react";
 import Statistics from "./Statistics";
+import StatisticsSkeleton from "@/components/dashboard/summary/StatisticsSkeleton";
 
 export default function Dashboard() {
   return (
@@ -16,14 +17,13 @@ export default function Dashboard() {
         </Link>
       </header>
 
-      <Suspense fallback={<div role="status" className="rounded-xl border border-[#263c35] bg-[#101f1a] p-6 text-sm text-[#b9c9c2]">Cargando tus estadísticas…</div>}>
+      <Suspense fallback={<StatisticsSkeleton />}>
         <Statistics />
       </Suspense>
 
       <section aria-labelledby="next-steps-title" className="border-t border-[#263c35] pt-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
           <h2 id="next-steps-title" className="text-xl font-semibold text-white">Prepara tu próximo cobro</h2>
-          <p className="text-sm text-[#b9c9c2]">Un flujo sencillo para pasar del trabajo realizado a una cuenta.</p>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <Link href="/dashboard/items" className="group flex items-start gap-4 rounded-xl border border-[#263c35] bg-[#101f1a] p-5 transition-colors hover:border-[#4b806e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6]">

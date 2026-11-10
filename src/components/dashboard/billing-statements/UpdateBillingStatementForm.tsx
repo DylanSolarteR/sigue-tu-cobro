@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { getBillingStatement, saveBillingStatement } from "@/actions/billing-statement.api";
 import { getBillingStatementItems, updateBillingStatementItem } from "@/actions/billing-statement.item.api";
 import { DatePicker } from "@/components/DatePicker";
-import Loading from "@/components/Loading";
 import type { billing_statement, billing_statement_item } from "@/types/billing-statement";
 import { calendarDateToCivil, parseBillingDateForCalendar } from "@/lib/billing-date";
 
-export default function UpdateBillingStatementForm({ id }: { id: string }) {
+export default function UpdateBillingStatementForm({ id, onUpdated, onPdfInvalidated, onItemsRefreshing, onItemsRefreshed }: { id: string; onUpdated?: (account: billing_statement) => void; onPdfInvalidated?: () => void; onItemsRefreshing?: () => void; onItemsRefreshed?: () => void }) {
   const [account, setAccount] = useState<billing_statement | null>(null);
   const [items, setItems] = useState<billing_statement_item[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +28,8 @@ export default function UpdateBillingStatementForm({ id }: { id: string }) {
       const parsedDate = parseBillingDateForCalendar(result.data.payDate);
       if (!parsedDate.ok) { setMessage("La fecha guardada no es válida."); setLoading(false); return; }
       setAccount(result.data); setItems(itemResult.data ?? []);
+      onUpdated?.(result.data);
+      onItemsRefreshed?.();
       setStatus(result.data.status === "paid" ? "paid" : "pending");
       setDate(parsedDate.value); setExtraInfo(result.data.extraInfo);
       setShowItemAmount(Boolean(result.data.showItemAmount)); setLoading(false);
@@ -43,27 +44,34 @@ export default function UpdateBillingStatementForm({ id }: { id: string }) {
     setSaving(true);
     const result = await saveBillingStatement({ id, status, extraInfo, payDate: civilDate.value, showItemAmount });
     setMessage(result.message);
-    if (result.success) setAccount((current) => current ? { ...current, status, extraInfo, payDate: civilDate.value, showItemAmount } : current);
+    if (result.success && account) {
+      const updated = { ...account, status, extraInfo, payDate: civilDate.value, showItemAmount };
+      setAccount(updated);
+      onUpdated?.(updated);
+      onPdfInvalidated?.();
+    }
     setSaving(false);
   }
   async function editItem(itemId: string, desc: string, amount: number) {
     const result = await updateBillingStatementItem(itemId, desc, amount);
     setMessage(result.message);
     if (result.success) {
+      onItemsRefreshing?.();
       const [accountResult, itemResult] = await Promise.all([getBillingStatement(id), getBillingStatementItems(id)]);
-      if (accountResult.success && accountResult.data) setAccount(accountResult.data);
+      if (accountResult.success && accountResult.data) { setAccount(accountResult.data); onUpdated?.(accountResult.data); }
       if (itemResult.success && itemResult.data) setItems(itemResult.data);
+      if (accountResult.success && accountResult.data && itemResult.success && itemResult.data) onItemsRefreshed?.();
       if (!accountResult.success || !itemResult.success) setMessage("Ítem actualizado, pero no se pudieron recargar los datos.");
     }
   }
-  if (loading) return <Loading />;
+  if (loading) return <div role="status" aria-label="Cargando cuenta" className="w-full max-w-4xl space-y-4"><div className="skeleton h-8 w-2/3" /><div className="skeleton h-32 w-full" /><div className="skeleton h-48 w-full" /></div>;
   if (!account) return <p role="alert">{message || "La cuenta no existe."}</p>;
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6">
-      <h1 className="text-2xl font-semibold">Información de la cuenta de cobro</h1>
+    <div className="w-full max-w-4xl space-y-6">
+      <h2 className="text-xl font-semibold">Información de la cuenta de cobro</h2>
       {message && <p role="status">{message}</p>}
-      <section className="space-y-3"><h2 className="text-lg font-semibold">Ítems de la cuenta</h2>{account.status === "paid" && <p className="text-sm">Para editar los ítems, cambia la cuenta a pendiente y guarda el cambio.</p>}{items.length ? items.map((item) => <ItemEditor key={item.id} item={item} disabled={account.status === "paid"} onSave={editItem} />) : <p>No hay ítems en esta cuenta.</p>}</section>
+      <section className="space-y-3"><h3 className="text-lg font-semibold">Ítems de la cuenta</h3>{account.status === "paid" && <p className="text-sm">Para editar los ítems, cambia la cuenta a pendiente y guarda el cambio.</p>}{items.length ? items.map((item) => <ItemEditor key={item.id} item={item} disabled={account.status === "paid"} onSave={editItem} />) : <p>No hay ítems en esta cuenta.</p>}</section>
       <form onSubmit={(event) => void save(event)} className="space-y-4 rounded-box border border-base-300 bg-base-200 p-4">
         <div className="space-y-2"><label htmlFor="statement-status" className="font-medium">Estado</label><select id="statement-status" value={status} onChange={(event) => setStatus(event.target.value === "paid" ? "paid" : "pending")} className="select w-full"><option value="pending">Pendiente</option><option value="paid">Pagada</option></select></div>
         <p>Valor total: ${(account.amount ?? 0).toLocaleString("es-CO")}</p>

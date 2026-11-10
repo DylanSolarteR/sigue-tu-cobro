@@ -19,7 +19,7 @@ export default async function Home() {
         </nav>
       </header>
 
-      <section className="mx-auto grid max-w-[1440px] gap-12 px-5 pb-20 pt-20 sm:px-10 sm:pt-28 lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-end lg:px-16 lg:pb-28 lg:pt-36">
+      <section className="mx-auto max-w-[1440px] px-5 pb-20 pt-20 sm:px-10 sm:pt-28 lg:px-16 lg:pb-28 lg:pt-36">
         <div>
           <h1 className="max-w-4xl text-balance text-[clamp(3.1rem,8vw,7.5rem)] font-semibold leading-[0.98] tracking-[-0.035em]">Tus cobros merecen claridad.</h1>
           <div className="mt-8 h-1 w-20 rounded-full bg-[#74d5a7]" aria-hidden="true" />
@@ -29,14 +29,12 @@ export default async function Home() {
             <a href="#como-funciona" className="inline-flex min-h-14 items-center gap-2 px-2 text-sm font-medium text-[#dcece3] hover:text-white">Conoce cómo funciona <ArrowDown size={16} aria-hidden="true" /></a>
           </div>
         </div>
-        <p className="max-w-[16rem] border-t border-[#597669] pt-5 text-sm leading-relaxed text-[#acc4b5]">Para independientes y pequeños empresarios que quieren dedicar menos tiempo a organizar sus cobros.</p>
       </section>
 
       <section id="como-funciona" className="bg-[#e8f1e9] text-[#142a20]">
         <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-10 lg:px-16 lg:py-28">
-          <div className="grid gap-6 border-b border-[#aabfb0] pb-10 md:grid-cols-2 md:items-end">
+          <div className="border-b border-[#aabfb0] pb-10">
             <h2 className="max-w-xl text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">De lo pendiente a una cuenta lista.</h2>
-            <p className="max-w-sm text-base leading-relaxed text-[#435d4d] md:justify-self-end">Un recorrido sencillo para que cada concepto encuentre su lugar.</p>
           </div>
           <div className="grid md:grid-cols-3">
             {pasos.map(({ title, description, icon: Icon }) => (

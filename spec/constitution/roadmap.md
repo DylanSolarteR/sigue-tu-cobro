@@ -26,3 +26,4 @@ No se asigna prioridad entre pendientes porque el README no la establece.
 - [012 · Modernización](../features/012-modernizacion/spec.md): base técnica y flujo implementados; siguen identidad y componentes, experiencia adaptable y una etapa final para E2E, lint y ensayos de datos.
 - [013 · Flujo de cobro por ítems](../features/013-flujo-cobro-items/spec.md): implementado con pruebas locales; validación real de concurrencia y migración de datos diferidas a la etapa final.
 - [014 · Identidad e interfaz](../features/014-identidad-interfaz/spec.md): rediseño y revisión visual realizados; quedan ajustes que el usuario detallará y dependencias heredadas por retirar.
+- [015 · Experiencia y adaptación](../features/015-experiencia-adaptable/spec.md): ajustes de portada y acceso, renovación de vistas operativas, selección y filtros de cuentas, analíticas acordadas y skeletons. E2E, lint global y ensayos de datos siguen diferidos a la etapa final.

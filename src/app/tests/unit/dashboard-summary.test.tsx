@@ -36,3 +36,18 @@ describe("resumen de cuentas", () => {
     expect(html).toContain("Pendientes");
   });
 });
+
+it("presenta cartera y valores por cliente sin depender del color", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-01-15T12:00:00Z"));
+  getBillingStatements.mockResolvedValue({ success: true, data: [
+    { status: "pending", amount: 50000, payDate: "2026-01-14", client_id: "a", client: { name: "Acme" } },
+    { status: "paid", amount: 150000, payDate: "2026-01-01", client_id: "a", client: { name: "Acme" } },
+  ] });
+  const html = renderToStaticMarkup(await Statistics());
+  expect(html).toContain("Valor pendiente");
+  expect(html).toContain("Valor vencido");
+  expect(html).toContain("Valor de cuentas por cliente");
+  expect(html).toContain("Acme");
+  expect(html).toContain("$200.000");
+});

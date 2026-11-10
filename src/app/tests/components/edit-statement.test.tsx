@@ -16,3 +16,10 @@ it("muestra los ítems pagados bloqueados y no escribe datos al abrir", async ()
   expect(mocks.save).not.toHaveBeenCalled();
   expect(mocks.edit).not.toHaveBeenCalled();
 });
+
+it("reserva espacio accesible mientras carga la cuenta", () => {
+  mocks.get.mockReturnValue(new Promise(() => {}));
+  mocks.list.mockReturnValue(new Promise(() => {}));
+  render(<UpdateForm id="b1" />);
+  expect(screen.getByRole("status", { name: "Cargando cuenta" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
+});

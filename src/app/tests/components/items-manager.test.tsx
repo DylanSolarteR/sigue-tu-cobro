@@ -78,3 +78,16 @@ describe("gestión de ítems pendientes", () => {
     expect(screen.queryByText("No se pudieron cargar los ítems pendientes.")).toBeNull();
   });
 });
+
+it("orienta al usuario antes de seleccionar un cliente", () => {
+  render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
+  expect(screen.getByRole("heading", { name: "Nuevo ítem" })).toBeTruthy();
+  expect(screen.getByText("Selecciona un cliente para ver sus ítems pendientes.")).toBeTruthy();
+});
+
+it("reserva espacio accesible mientras carga los pendientes", () => {
+  actions.list.mockReturnValue(new Promise(() => {}));
+  render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
+  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  expect(screen.getByRole("status", { name: "Cargando items pendientes" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
+});

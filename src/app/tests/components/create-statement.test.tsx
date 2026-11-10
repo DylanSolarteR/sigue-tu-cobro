@@ -73,3 +73,11 @@ it("distingue una carga fallida de una lista sin ítems", async () => {
   expect(await screen.findByRole("alert")).toBeTruthy();
   expect(screen.queryByText(/No hay ítems pendientes/)).toBeNull();
 });
+
+it("reserva espacio accesible mientras carga los conceptos del cliente", () => {
+  mocks.pending.mockReturnValue(new Promise(() => {}));
+  const actor = { id: "c1", name: "Cliente", docType: "CC" as const, docNumber: "1" };
+  render(<ActorForm clientsList={[actor]} creditorsList={[]} />);
+  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  expect(screen.getByRole("status", { name: "Cargando conceptos pendientes" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
+});

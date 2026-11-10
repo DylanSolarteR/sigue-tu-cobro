@@ -4,13 +4,9 @@ import Link from "next/link";
 function Cuentas() {
   return (
     <>
-      <section className="w-full rounded-box bg-base-200 py-6">
-        <div className="flex h-full flex-col items-start justify-start gap-4">
-          <h1 className="px-8 text-2xl text-white">Cuentas de cobro</h1>
-          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Link href={"/dashboard/cuentas-cobro/crear"} className="btn btn-primary btn-sm sm:btn-md">Crear nueva cuenta de cobro</Link>
-          </div>
-        </div>
+      <section className="flex w-full flex-col items-start justify-between gap-5 rounded-box bg-base-200 p-4 sm:flex-row sm:items-end sm:p-6">
+        <div><h1 className="text-2xl font-semibold sm:text-3xl">Cuentas de cobro</h1><p className="mt-2 text-sm text-base-content/70">Consulta tus cuentas y haz seguimiento a su estado.</p></div>
+        <Link href="/dashboard/cuentas-cobro/crear" className="btn btn-primary w-full sm:w-auto">Crear nueva cuenta de cobro</Link>
       </section>
       <section className="w-full rounded-box bg-base-200 p-4 sm:p-6">
         <ListBillingStatements />

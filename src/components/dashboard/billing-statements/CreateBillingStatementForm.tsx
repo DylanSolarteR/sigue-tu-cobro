@@ -6,10 +6,10 @@ async function CreateBillingStatementForm() {
   const creditorsList = await getCreditors();
 
   return (
-    <section className="card w-full border border-base-300 bg-base-200">
-      <div className="card-body">
-        <h2 className="card-title">Información de la cuenta de cobro</h2>
-        <p className="mb-4 text-sm text-base-content/70">Selecciona los datos y conceptos de esta cuenta.</p>
+    <section className="w-full max-w-4xl">
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Información de la cuenta de cobro</h2>
+        <p className="text-sm text-base-content/70">Selecciona los datos y conceptos de esta cuenta.</p>
         <ActorForm clientsList={clientsList} creditorsList={creditorsList} />
       </div>
     </section>

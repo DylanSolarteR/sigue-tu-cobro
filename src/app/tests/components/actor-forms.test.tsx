@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, describe, expect, it, vi } from "vitest";
 import CreateClientForm from "@/components/dashboard/clients/CreateClientForm";
 import UpdateCreditorForm from "@/components/dashboard/creditors/UpdateCreditorForm";
-import { createClient } from "@/actions/actor.api";
+import { createClient, getCreditorById } from "@/actions/actor.api";
 
 vi.mock("@/actions/actor.api", () => ({
   createClient: vi.fn(),
@@ -17,6 +17,13 @@ vi.mock("@/actions/actor.api", () => ({
 afterEach(cleanup);
 
 describe("formularios de clientes y acreedores", () => {
+  it("reserva espacio con un skeleton accesible mientras carga la edición", () => {
+    vi.mocked(getCreditorById).mockImplementationOnce(() => new Promise(() => {}));
+    render(<UpdateCreditorForm id="1" />);
+    const status = screen.getByRole("status", { name: "Cargando información del acreedor" });
+    expect(status.querySelector('[aria-hidden="true"]')).toBeTruthy();
+  });
+
   it("permite seleccionar un tipo de documento mediante un select nativo etiquetado", () => {
     render(<CreateClientForm />);
     const documentType = screen.getByRole("combobox", { name: "Tipo de documento" });
@@ -24,6 +31,12 @@ describe("formularios de clientes y acreedores", () => {
     expect(documentType.getAttribute("name")).toBe("docType");
     expect(documentType.hasAttribute("required")).toBe(true);
     expect(screen.getByRole("textbox", { name: "Nombre completo" }).hasAttribute("required")).toBe(true);
+  });
+
+  it("agrupa los datos de identidad y contacto con etiquetas accesibles", () => {
+    render(<CreateClientForm />);
+    expect(screen.getByRole("group", { name: "Identificación" })).toBeTruthy();
+    expect(screen.getByRole("group", { name: "Contacto" })).toBeTruthy();
   });
 
   it("muestra los datos del acreedor al editar y preserva su documento", async () => {

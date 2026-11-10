@@ -12,4 +12,6 @@ it("presenta el flujo real y permite entrar o registrarse", async () => {
   expect(screen.getAllByRole("link", { name: /iniciar sesión/i }).some((link) => link.getAttribute("href") === "/entrar")).toBe(true);
   expect(screen.getAllByRole("link", { name: /crear.*cuenta/i }).some((link) => link.getAttribute("href") === "/registro")).toBe(true);
   expect(screen.queryByText(/no est[aá] optimizada/i)).toBeNull();
+  expect(screen.queryByText(/para independientes y pequeños empresarios que quieren dedicar menos tiempo/i)).toBeNull();
+  expect(screen.queryByText(/un recorrido sencillo para que cada concepto encuentre su lugar/i)).toBeNull();
 });

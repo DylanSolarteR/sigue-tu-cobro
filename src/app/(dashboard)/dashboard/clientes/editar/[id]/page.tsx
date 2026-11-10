@@ -1,23 +1,17 @@
 import UpdateClientForm from "@/components/dashboard/clients/UpdateClientForm";
 import Link from "next/link";
 
-async function UpdateClient(props: { params: Promise<{ id: string }> }) {
+export default async function ActorPage(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
   return (
-    <>
-      <section className="w-full rounded-box bg-base-200 py-6">
-        <div className="flex h-full flex-col items-start justify-start gap-4">
-          <h1 className="px-8 text-2xl text-white">Clientes</h1>
-          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Link href={"/dashboard/clientes"} className="btn btn-primary btn-sm sm:btn-md">Ver lista de clientes</Link>
-          </div>
-        </div>
-      </section>
-      <section className="flex items-center justify-center overflow-auto w-full rounded-box bg-base-200 p-4 sm:p-6">
+    <section className="w-full max-w-3xl space-y-6">
+      <header className="space-y-4">
+        <Link href="/dashboard/clientes" className="btn btn-ghost min-h-11 -ml-4">Ver lista de clientes</Link>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Editar cliente</h1>
+      </header>
+      <div className="rounded-box border border-base-300 bg-base-200 p-5 sm:p-8">
         <UpdateClientForm id={id} />
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
-
-export default UpdateClient;
