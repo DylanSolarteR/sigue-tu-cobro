@@ -16,7 +16,7 @@ Actualizar la base técnica, facilitar la gestión de cuentas e ítems y renovar
 - [ ] Al eliminar una cuenta pendiente, sus ítems se desvinculan y regresan a `pending`.
 - [ ] Los registros existentes se conservan y migran; `payed` se adapta al modelo actualizado. Se impide el acceso a registros ajenos y la asignación concurrente duplicada.
 - [ ] El PDF y los indicadores reflejan los datos del nuevo flujo. Marcar una cuenta como pagada es accesible desde lista o detalle.
-- [ ] Los componentes migran de shadcn a daisyUI; landing, acceso de Clerk y panel tienen una identidad visual nueva, clara y confiable.
+- [ ] Los componentes migran de shadcn a daisyUI; se rediseñan la landing y la estructura completa del dashboard y del acceso de Clerk, conservando los colores actuales como punto de partida.
 - [ ] Navegación, formularios y tablas permiten completar los recorridos principales en móvil, tableta y escritorio.
 
 ## Alcance y límites

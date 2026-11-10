@@ -14,6 +14,7 @@ import {
   billing_statement_item,
 } from "@/types/billing-statement";
 import { convertirNumeroALetras } from "@/lib/numeroALetras";
+import { formatBillingDate } from "@/lib/billing-date";
 import { useEffect, useState } from "react";
 
 export const styles = StyleSheet.create({
@@ -96,6 +97,7 @@ export const BillingStatementPDF: React.FC<{
   data: billing_statement;
   items: billing_statement_item[];
 }> = ({ data, items }) => {
+  const date = formatBillingDate(data.payDate);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -103,9 +105,7 @@ export const BillingStatementPDF: React.FC<{
         <View style={styles.header}>
           <Text style={styles.title}>CUENTA DE COBRO</Text>
           <Text style={styles.text}>
-            {new Date(data.payDate).toLocaleDateString("es-CO", {
-              dateStyle: "long",
-            })}
+            {date.ok ? date.value : "Fecha no válida"}
           </Text>
           <Text style={styles.text}>{data.client.name.toUpperCase()}</Text>
           <Text style={styles.text}>
@@ -146,7 +146,7 @@ export const BillingStatementPDF: React.FC<{
                     </Text>
                     {data.showItemAmount && (
                       <Text style={styles.amountColumn}>
-                        ${item.amount?.toLocaleString()}
+                        ${item.amount?.toLocaleString("es-CO")}
                       </Text>
                     )}
                   </View>
@@ -183,28 +183,43 @@ export const BillingStatementPDF: React.FC<{
 };
 
 const DownloadPDFButton = ({ data }: { data: billing_statement }) => {
-  const [items, setItems] = useState<billing_statement_item[]>([]);
-
-  async function getItems(idBS: string) {
-    const result = await getBillingStatementItems(idBS);
-    if (result.success) {
-      setItems(result.data!);
-    }
-  }
+  const [result, setResult] = useState<{ id: string; items: billing_statement_item[] | null } | null>(null);
 
   useEffect(() => {
-    getItems(data.id as string);
-  }, []);
+    let active = true;
+    if (!data.id) return;
+    const id = data.id;
+    void getBillingStatementItems(id).then((response) => {
+      if (active) setResult({ id, items: response.success && response.data ? response.data : null });
+    }).catch(() => { if (active) setResult({ id, items: null }); });
+    return () => { active = false; };
+  }, [data.id]);
+
+  if (!data.id) {
+    return <span role="status">No se pudo preparar el PDF.</span>;
+  }
+  if (!result || result.id !== data.id) {
+    return <button type="button" disabled aria-label="Cargando ítems para el PDF"><Download size={24} /></button>;
+  }
+  if (result.items === null) return <span role="status">No se pudo preparar el PDF.</span>;
+  const items = result.items;
+  const date = formatBillingDate(data.payDate);
+  if (!date.ok) return <span role="status">No se pudo preparar el PDF: fecha no válida.</span>;
 
   return (
     <PDFDownloadLink
       document={<BillingStatementPDF data={data} items={items} />}
-      fileName={`Cuenta de cobro ${data.client.name} (${new Date(
-        data.payDate,
-      ).toLocaleString("es-CO", { dateStyle: "long" })}).pdf`}
+      fileName={`Cuenta de cobro ${data.client.name} (${date.value}).pdf`}
+      onClick={(event, instance?: { loading: boolean; error: string | null; url: string | null }) => {
+        if (!instance || instance.loading || instance.error || !instance.url) event.preventDefault();
+      }}
     >
-      {({ loading }) => (
+      {({ loading, error }) => error ? (
+        <span role="status">No se pudo generar el PDF.</span>
+      ) : (
         <button
+          type="button"
+          aria-label={loading ? "Preparando PDF" : "Descargar PDF"}
           className={`flex items-center justify-center ${loading ? "cursor-not-allowed" : "cursor-pointer"} `}
           disabled={loading}
         >

@@ -15,6 +15,7 @@ import { Show, UserButton } from "@clerk/nextjs";
 import {
   ChartNoAxesCombined,
   NotebookText,
+  ListChecks,
   HandCoins,
   Handshake,
   Settings,
@@ -42,6 +43,12 @@ function SidebarDashboard() {
             active_href={path}
             Icon={NotebookText}
             href="/dashboard/cuentas-cobro"
+          />
+          <SidebarCard
+            title={"Ítems"}
+            active_href={path}
+            Icon={ListChecks}
+            href="/dashboard/items"
           />
           <SidebarCard
             title={"Clientes"}

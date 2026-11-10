@@ -90,9 +90,9 @@ export const actorRouter = createTRPCRouter({
             update: privateProcedure
                 .input(z.object({
                     id: z.string(),
-                    name: z.string(),
+                    name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
                     docType: z.enum(["CC", "CE", "NIT"]),
-                    docNumber: z.string(),
+                    docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
                     expeditionPlace: z.string().optional(),
                     telephone: z.string().optional(),
                 })

@@ -75,7 +75,7 @@ export const createCallerFactory = t.createCallerFactory;
 export const createTRPCRouter = t.router;
 const isAuthed = t.middleware(async ({ ctx, next }) => {
   const user = await auth();
-  if (!user) {
+  if (!user?.userId) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "You must be logged in to access this resource",

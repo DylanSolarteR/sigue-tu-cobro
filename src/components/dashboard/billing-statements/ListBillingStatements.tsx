@@ -16,9 +16,11 @@ import { billing_statement } from "@/types/billing-statement";
 import {
   deleteBillingstatement,
   getBillingStatements,
+  updateBillingStatementStatus,
 } from "@/actions/billing-statement.api";
 
 import DownloadPDFButton from "@/components/generatePDF";
+import { formatBillingDate } from "@/lib/billing-date";
 
 function ListBillingStatements() {
   const [billingStatements, setBillingStatements] = useState<
@@ -49,7 +51,7 @@ function ListBillingStatements() {
         const billing_statement = row.original;
         return (
           <div className="text-center text-foreground">
-            {billing_statement.status === "payed" ? "Pagado" : "Pendiente"}
+            {billing_statement.status === "paid" ? "Pagada" : "Pendiente"}
           </div>
         );
       },
@@ -61,11 +63,10 @@ function ListBillingStatements() {
       ),
       cell: ({ row }) => {
         const billing_statement = row.original;
+        const date = formatBillingDate(billing_statement.payDate);
         return (
           <div className="text-center text-foreground">
-            {new Date(billing_statement.payDate).toLocaleString("es-CO", {
-              dateStyle: "long",
-            })}
+            {date.ok ? date.value : "Fecha no válida"}
           </div>
         );
       },
@@ -87,7 +88,13 @@ function ListBillingStatements() {
 
         return (
           <div className="flex flex-row items-center justify-center">
+            {billingS.status === "pending" && (
+              <Button size="sm" onClick={() => void handleMarkPaid(billingS)}>
+                Marcar pagada
+              </Button>
+            )}
             <button
+              aria-label="Editar cuenta"
               onClick={() => {
                 handleEdit(billingS.id as string);
               }}
@@ -131,6 +138,14 @@ function ListBillingStatements() {
 
   function handleEdit(id: string) {
     router.push(`/dashboard/cuentas-cobro/editar/${id}`);
+  }
+
+  async function handleMarkPaid(statement: billing_statement) {
+    if (!statement.id) return;
+    const result = await updateBillingStatementStatus(statement.id, "paid");
+    if (!result.success) { toast.error(result.message); return; }
+    setBillingStatements((current) => current.map((account) => account.id === statement.id ? { ...account, status: "paid" } : account));
+    toast.success("Cuenta marcada como pagada.");
   }
 
   async function handleDelete(id: string) {

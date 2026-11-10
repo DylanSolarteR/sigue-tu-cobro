@@ -1,135 +1,62 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createBillingStatement } from "@/actions/billing-statement.api";
-import { ActionResponse } from "@/types/actionResponses";
-import {
-  Alert,
-  AlertDescription,
-  Button,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  Input,
-} from "@/components/ui";
+import { getPendingItemsByClient } from "@/actions/billing-statement.item.api";
+import { Button, Label } from "@/components/ui";
 import { DatePicker } from "@/components/DatePicker";
-import { billing_statement } from "@/types/billing-statement";
-import { Actor } from "@/types/actor";
+import type { Actor } from "@/types/actor";
+import type { billing_statement_item } from "@/types/billing-statement";
+import { calendarDateToCivil } from "@/lib/billing-date";
 
-const initialState: ActionResponse<billing_statement> = {
-  success: false,
-  message: "",
-};
-function ActorForm(props: { clientsList: Actor[]; creditorsList: Actor[] }) {
-  const { clientsList, creditorsList } = props;
-  const [state, action, isPending] = useActionState(
-    (prevState: ActionResponse<billing_statement>, formData: FormData) =>
-      createBillingStatement(prevState, formData, date.toISOString()),
-    initialState,
-  );
-  const [date, setDate] = useState<Date>(new Date());
+export default function ActorForm({ clientsList, creditorsList }: { clientsList: Actor[]; creditorsList: Actor[] }) {
+  const router = useRouter();
+  const [client, setClient] = useState("");
+  const [creditor, setCreditor] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [items, setItems] = useState<billing_statement_item[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const sequence = useRef(0);
+
+  async function changeClient(clientId: string) {
+    setClient(clientId); setItems([]); setSelected([]); setMessage(""); setLoadFailed(false);
+    const request = ++sequence.current;
+    if (!clientId) { setLoading(false); return; }
+    setLoading(true);
+    const result = await getPendingItemsByClient(clientId);
+    if (request !== sequence.current) return;
+    setItems(result.data ?? []);
+    setLoadFailed(!result.success);
+    if (!result.success) setMessage(result.message);
+    setLoading(false);
+  }
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const civilDate = calendarDateToCivil(date);
+    if (!client || !creditor || !selected.length || !civilDate.ok) { setMessage("Seleccione cliente, acreedor, fecha válida y al menos un ítem pendiente."); return; }
+    setSaving(true); setMessage("");
+    const result = await createBillingStatement({ client_id: client, creditor_id: creditor, payDate: civilDate.value, item_ids: selected });
+    if (result.success && result.data) router.push(`/dashboard/cuentas-cobro/editar/${result.data.id}`);
+    else setMessage(result.message);
+    setSaving(false);
+  }
+
   return (
-    <>
-      {state?.message && (
-        <Alert
-          variant={state.success ? "default" : "destructive"}
-          className={`${state.success ? "border border-green-800" : "bg-background"} mb-4 flex items-center justify-start`}
-        >
-          <AlertDescription>{state.message}</AlertDescription>
-        </Alert>
-      )}
-
-      <form action={action} className="space-y-6" autoComplete="on">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="client">Cliente</Label>
-            <Select name="client">
-              <SelectTrigger>
-                <SelectValue
-                  placeholder="Seleccione un cliente"
-                  aria-describedby="client-error"
-                  className={`${state?.errors?.client_id ? "border-red-500" : ""} placeholder:brightness-50`}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {clientsList.length !== 0 ? (
-                    clientsList.map((client) => (
-                      <SelectItem key={client.id} value={client.id as string}>
-                        {client.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value={"None"}>
-                      {"No hay clientes disponibles, por favor cree uno."}
-                    </SelectItem>
-                  )}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {state?.errors?.client_id && (
-              <p id="client-error" className="text-sm text-red-500">
-                {state.errors.client_id[0]}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="creditor">Acreedor</Label>
-            <Select name="creditor">
-              <SelectTrigger>
-                <SelectValue
-                  placeholder="Seleccione un acreedor"
-                  aria-describedby="creditor-error"
-                  className={`${state?.errors?.creditor_id ? "border-red-500" : ""} placeholder:brightness-50`}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {creditorsList.length !== 0 ? (
-                    creditorsList?.map((creditor) => (
-                      <SelectItem
-                        key={creditor.id}
-                        value={creditor.id as string}
-                      >
-                        {creditor.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value={"None"}>
-                      {"No hay acreedores disponibles, por favor cree uno."}
-                    </SelectItem>
-                  )}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {state?.errors?.creditor_id && (
-              <p id="creditor-error" className="text-sm text-red-500">
-                {state.errors.creditor_id[0]}
-              </p>
-            )}
-          </div>
-          <div className="flex flex-col space-y-2">
-            <Label htmlFor="payDate">Fecha</Label>
-
-            <DatePicker date={date} setDate={setDate} />
-            {state?.errors?.payDate && (
-              <p id="payDate-error" className="text-sm text-red-500">
-                {state.errors.payDate[0]}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Creando..." : "Crear Cuenta de cobro"}
-        </Button>
-      </form>
-    </>
+    <form onSubmit={(event) => void submit(event)} className="space-y-6">
+      <div className="space-y-2"><Label htmlFor="statement-client">Cliente</Label><select id="statement-client" value={client} disabled={saving} onChange={(event) => void changeClient(event.target.value)} className="w-full rounded-md border bg-background p-2"><option value="">Selecciona un cliente</option>{clientsList.filter((item) => item.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></div>
+      <div className="space-y-2"><Label htmlFor="statement-creditor">Acreedor</Label><select id="statement-creditor" value={creditor} disabled={saving} onChange={(event) => setCreditor(event.target.value)} className="w-full rounded-md border bg-background p-2"><option value="">Selecciona un acreedor</option>{creditorsList.filter((item) => item.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></div>
+      <fieldset disabled={saving || loading} className="space-y-3 rounded-md border p-4"><legend className="px-1">Ítems pendientes</legend>{!client ? <p>Selecciona un cliente para ver sus ítems.</p> : loading ? <p>Cargando ítems…</p> : loadFailed ? <Button type="button" variant="outline" onClick={() => void changeClient(client)}>Reintentar carga</Button> : items.length ? items.map((item) => <label key={item.id} className="flex items-center gap-3"><input type="checkbox" checked={selected.includes(item.id ?? "")} onChange={(event) => { if (!item.id) return; const id = item.id; setSelected((previous) => event.target.checked ? [...previous, id] : previous.filter((value) => value !== id)); }} /><span>{item.desc} · ${item.amount.toLocaleString("es-CO")}</span></label>) : <p>No hay ítems pendientes. <Link href="/dashboard/items" className="underline">Crear un ítem</Link></p>}
+      <p className="text-sm">Total seleccionado: ${items.filter((item) => item.id && selected.includes(item.id)).reduce((sum, item) => sum + item.amount, 0).toLocaleString("es-CO")}</p></fieldset>
+      <div className="space-y-2"><Label>Fecha de pago</Label><DatePicker date={date} setDate={setDate} /></div>
+      {message && <p role="alert" className="text-sm text-red-400">{message}</p>}
+      <Button type="submit" className="w-full" disabled={saving || loading || !selected.length}>{saving ? "Creando…" : "Crear cuenta de cobro"}</Button>
+    </form>
   );
 }
-
-export default ActorForm;

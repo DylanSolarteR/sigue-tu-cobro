@@ -1,8 +1,11 @@
 import { z } from "zod";
 
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
-import { actor, billing_statement } from "@/server/db/schema";
-import { eq, and, aliasedTable, desc, sum } from "drizzle-orm";
+import { actor, billing_statement, billing_statement_item } from "@/server/db/schema";
+import { eq, and, aliasedTable, desc, sum, inArray, asc } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { billingDateSchema } from "@/lib/billing-date";
+import { itemStatusForStatement, validateSelection } from "@/server/api/billing-domain";
 import { billing_statement as billing_statement_type } from "@/types/billing-statement";
 
 const billing_statement_Schema = z.object({
@@ -13,7 +16,7 @@ const billing_statement_Schema = z.object({
     extraInfo: z.string().optional(),
     showItemAmount: z.boolean().optional(),
     payDate: z.string(),
-    status: z.enum(["payed", "pending"], { message: "Invalid status" }),
+    status: z.enum(["paid", "pending"], { message: "Invalid status" }),
     isActive: z.boolean().optional(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
@@ -53,8 +56,8 @@ export const billingStatementRouter = createTRPCRouter({
                     createdAt: billing_statement.createdAt,
                 }
             ).from(billing_statement)
-                .innerJoin(client, eq(billing_statement.client_id, client.id))
-                .innerJoin(creditor, eq(billing_statement.creditor_id, creditor.id))
+                .innerJoin(client, and(eq(billing_statement.client_id, client.id), eq(client.ownerId, billing_statement.ownerId), eq(client.type, "client")))
+                .innerJoin(creditor, and(eq(billing_statement.creditor_id, creditor.id), eq(creditor.ownerId, billing_statement.ownerId), eq(creditor.type, "creditor")))
                 .where(
                     and(
                         eq(billing_statement.isActive, true),
@@ -95,8 +98,8 @@ export const billingStatementRouter = createTRPCRouter({
                     createdAt: billing_statement.createdAt,
                 }
             ).from(billing_statement)
-                .innerJoin(client, eq(billing_statement.client_id, client.id))
-                .innerJoin(creditor, eq(billing_statement.creditor_id, creditor.id))
+                .innerJoin(client, and(eq(billing_statement.client_id, client.id), eq(client.ownerId, billing_statement.ownerId), eq(client.type, "client")))
+                .innerJoin(creditor, and(eq(billing_statement.creditor_id, creditor.id), eq(creditor.ownerId, billing_statement.ownerId), eq(creditor.type, "creditor")))
                 .where(
                     and(
                         eq(billing_statement.isActive, true),
@@ -133,7 +136,7 @@ export const billingStatementRouter = createTRPCRouter({
                 and(
                     eq(billing_statement.isActive, true),
                     eq(billing_statement.ownerId, ctx.user.userId as string),
-                    eq(billing_statement.status, "payed")
+                    eq(billing_statement.status, "paid")
                 )
             );
             return count;
@@ -155,49 +158,60 @@ export const billingStatementRouter = createTRPCRouter({
         create: privateProcedure.input(z.object({
             client_id: z.string().nonempty({ message: "El Cliente es requerido" }),
             creditor_id: z.string().nonempty({ message: "El Acreedor es requerido" }),
-            payDate: z.string(),
+            payDate: billingDateSchema,
+            item_ids: z.array(z.string().min(1)).min(1),
         })).mutation(async ({ ctx, input }) => {
-            const result = await ctx.db.insert(billing_statement).values({
-                ownerId: ctx.user.userId as string,
-                client_id: input.client_id,
-                creditor_id: input.creditor_id,
-                payDate: input.payDate,
-                amount: 0,
-                status: "pending",
-                showItemAmount: true,
-                isActive: true,
-            }).$returningId()
-
+            const owner = ctx.user.userId!;
+            return ctx.db.transaction(async (tx) => {
+                const parties = await tx.select({ id: actor.id, type: actor.type }).from(actor).where(and(
+                    eq(actor.ownerId, owner), eq(actor.isActive, true), inArray(actor.id, [input.client_id, input.creditor_id]),
+                ));
+                if (!parties.some(p => p.id === input.client_id && p.type === "client") || !parties.some(p => p.id === input.creditor_id && p.type === "creditor")) {
+                    throw new TRPCError({ code: "BAD_REQUEST", message: "Cliente o acreedor no disponible" });
+                }
+                const items = await tx.select().from(billing_statement_item).where(inArray(billing_statement_item.id, input.item_ids)).orderBy(asc(billing_statement_item.id)).for("update");
+                const selection = validateSelection(items, input.item_ids, owner, input.client_id);
+                if (!selection.ok) throw new TRPCError({ code: "CONFLICT", message: selection.error });
+                const id = crypto.randomUUID();
+                await tx.insert(billing_statement).values({ id, ownerId: owner, client_id: input.client_id, creditor_id: input.creditor_id, payDate: input.payDate, amount: selection.value, status: "pending", showItemAmount: true, isActive: true });
+                await tx.update(billing_statement_item).set({ billing_statement_id: id, status: "added", updatedAt: new Date().toISOString() }).where(and(eq(billing_statement_item.ownerId, owner), inArray(billing_statement_item.id, input.item_ids)));
+                return id;
+            });
         }),
         update: privateProcedure.input(z.object({
             id: z.string(),
-            amount: z.number(),
-            status: z.enum(["payed", "pending"]),
+            status: z.enum(["paid", "pending"]),
             extraInfo: z.string().optional(),
-            payDate: z.string(),
+            payDate: billingDateSchema,
             showItemAmount: z.boolean().optional(),
         })).mutation(async ({ ctx, input }) => {
-            await ctx.db.update(billing_statement).set({
-                amount: input.amount,
-                status: input.status,
-                extraInfo: input.extraInfo ?? "",
-                updatedAt: new Date().toISOString(),
-                payDate: input.payDate,
-                showItemAmount: input.showItemAmount ?? true,
-            }).where(eq(billing_statement.id, input.id));
+            const owner = ctx.user.userId!;
+            await ctx.db.transaction(async (tx) => {
+                const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
+                if (!statement) throw new TRPCError({ code: "NOT_FOUND", message: "Cuenta no encontrada" });
+                await tx.update(billing_statement).set({ status: input.status, extraInfo: input.extraInfo ?? "", updatedAt: new Date().toISOString(), payDate: input.payDate, showItemAmount: input.showItemAmount ?? true }).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner)));
+                await tx.update(billing_statement_item).set({ status: itemStatusForStatement(input.status), updatedAt: new Date().toISOString() }).where(and(eq(billing_statement_item.billing_statement_id, input.id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true)));
+            });
         }),
-        updateAmount: privateProcedure.input(z.object({
-            id: z.string(),
-            amount: z.number(),
-        })).mutation(async ({ ctx, input }) => {
-            await ctx.db.update(billing_statement).set({
-                amount: input.amount,
-            }).where(eq(billing_statement.id, input.id));
+        updateStatus: privateProcedure.input(z.object({ id: z.string().min(1), status: z.enum(["paid", "pending"]) })).mutation(async ({ ctx, input }) => {
+            const owner = ctx.user.userId!;
+            await ctx.db.transaction(async (tx) => {
+                const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
+                if (!statement) throw new TRPCError({ code: "NOT_FOUND", message: "Cuenta no encontrada" });
+                const updatedAt = new Date().toISOString();
+                await tx.update(billing_statement).set({ status: input.status, updatedAt }).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner)));
+                await tx.update(billing_statement_item).set({ status: itemStatusForStatement(input.status), updatedAt }).where(and(eq(billing_statement_item.billing_statement_id, input.id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true)));
+            });
         }),
         delete: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-            await ctx.db.update(billing_statement).set({
-                isActive: false,
-            }).where(eq(billing_statement.id, input.id));
+            const owner = ctx.user.userId!;
+            await ctx.db.transaction(async (tx) => {
+                const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
+                if (!statement) throw new TRPCError({ code: "NOT_FOUND", message: "Cuenta no encontrada" });
+                if (statement.status !== "pending") throw new TRPCError({ code: "CONFLICT", message: "Reabre la cuenta antes de eliminarla" });
+                await tx.update(billing_statement_item).set({ billing_statement_id: null, status: "pending", updatedAt: new Date().toISOString() }).where(and(eq(billing_statement_item.billing_statement_id, input.id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true)));
+                await tx.update(billing_statement).set({ isActive: false, updatedAt: new Date().toISOString() }).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner)));
+            });
         }),
 
     }
