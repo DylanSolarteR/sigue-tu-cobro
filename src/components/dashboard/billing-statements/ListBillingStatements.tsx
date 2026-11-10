@@ -4,10 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trash } from "lucide-react";
 import DateField from "@/components/dashboard/DateField";
 import { toast } from "sonner";
-import { deleteBillingstatement, getBillingStatements, updateBillingStatementStatus } from "@/actions/billing-statement.api";
+import {
+  deleteBillingstatement,
+  getBillingStatements,
+  updateBillingStatementStatus,
+} from "@/actions/billing-statement.api";
 import DownloadPDFButton from "@/components/generatePDF";
 import UpdateBillingStatementForm from "./UpdateBillingStatementForm";
-import { calendarDateToCivil, formatBillingDate, parseBillingDateForCalendar } from "@/lib/billing-date";
+import {
+  calendarDateToCivil,
+  formatBillingDate,
+  parseBillingDateForCalendar,
+} from "@/lib/billing-date";
 import type { billing_statement } from "@/types/billing-statement";
 
 const PAGE_SIZE = 10;
@@ -34,15 +42,29 @@ export default function ListBillingStatements() {
 
   useEffect(() => {
     let active = true;
-    void getBillingStatements().then((result) => {
-      if (!active) return;
-      if (result.success) setAccounts(result.data ?? []);
-      else setError(result.message);
-      setLoading(false);
-    }).catch(() => { if (active) { setError("No se pudieron cargar las cuentas."); setLoading(false); } });
-    return () => { active = false; };
+    void getBillingStatements()
+      .then((result) => {
+        if (!active) return;
+        if (result.success) setAccounts(result.data ?? []);
+        else setError(result.message);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (active) {
+          setError("No se pudieron cargar las cuentas.");
+          setLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, []);
-  useEffect(() => () => { if (hold.current) clearTimeout(hold.current); }, []);
+  useEffect(
+    () => () => {
+      if (hold.current) clearTimeout(hold.current);
+    },
+    [],
+  );
 
   function cancelHold() {
     if (hold.current) clearTimeout(hold.current);
@@ -50,11 +72,21 @@ export default function ListBillingStatements() {
     touchStart.current = null;
   }
   function toggle(id: string) {
-    setSelected((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+    setSelected((current) =>
+      current.includes(id)
+        ? current.filter((value) => value !== id)
+        : [...current, id],
+    );
   }
   function toggleEditor(id: string) {
     if (busy) return;
-    if (expanded !== null && !window.confirm("¿Cerrar la edición actual? Los cambios que no hayas guardado se perderán.")) return;
+    if (
+      expanded !== null &&
+      !window.confirm(
+        "¿Cerrar la edición actual? Los cambios que no hayas guardado se perderán.",
+      )
+    )
+      return;
     setExpanded(expanded === id ? null : id);
   }
   async function markPaid(account: billing_statement) {
@@ -63,19 +95,45 @@ export default function ListBillingStatements() {
     try {
       const result = await updateBillingStatementStatus(account.id, "paid");
       if (!result.success) toast.error(result.message);
-      else { setAccounts((current) => current.map((item) => item.id === account.id ? { ...item, status: "paid" } : item)); toast.success("Cuenta marcada como pagada."); }
-    } catch { toast.error("No se pudo actualizar la cuenta."); }
-    finally { setBusy(false); }
+      else {
+        setAccounts((current) =>
+          current.map((item) =>
+            item.id === account.id ? { ...item, status: "paid" } : item,
+          ),
+        );
+        toast.success("Cuenta marcada como pagada.");
+      }
+    } catch {
+      toast.error("No se pudo actualizar la cuenta.");
+    } finally {
+      setBusy(false);
+    }
   }
   async function remove(account: billing_statement) {
-    if (!account.id || account.status !== "pending" || !window.confirm("¿Eliminar esta cuenta de cobro? Sus ítems volverán a quedar pendientes.")) return;
+    if (
+      !account.id ||
+      account.status !== "pending" ||
+      !window.confirm(
+        "¿Eliminar esta cuenta de cobro? Sus ítems volverán a quedar pendientes.",
+      )
+    )
+      return;
     setBusy(true);
     try {
       const result = await deleteBillingstatement(account.id);
       if (!result.success) toast.error(result.message);
-      else { toast.success(result.message); setAccounts((current) => current.filter((item) => item.id !== account.id)); setSelected((current) => current.filter((id) => id !== account.id)); }
-    } catch { toast.error("No se pudo eliminar la cuenta."); }
-    finally { setBusy(false); }
+      else {
+        toast.success(result.message);
+        setAccounts((current) =>
+          current.filter((item) => item.id !== account.id),
+        );
+        setSelected((current) => current.filter((id) => id !== account.id));
+      }
+    } catch {
+      toast.error("No se pudo eliminar la cuenta.");
+    } finally {
+      setBusy(false);
+    }
   }
   async function batch(action: "paid" | "delete") {
     if (busy || expanded) return;
@@ -84,36 +142,82 @@ export default function ListBillingStatements() {
     let currentAccounts: billing_statement[];
     try {
       const result = await getBillingStatements();
-      if (!result.success || !result.data) throw new Error("No se pudieron verificar las cuentas.");
+      if (!result.success || !result.data)
+        throw new Error("No se pudieron verificar las cuentas.");
       currentAccounts = result.data;
     } catch {
-      setSummary("No se pudieron verificar las cuentas. No se realizó ninguna acción; intenta de nuevo.");
+      setSummary(
+        "No se pudieron verificar las cuentas. No se realizó ninguna acción; intenta de nuevo.",
+      );
       setBusy(false);
       return;
     }
     setAccounts(currentAccounts);
-    const chosen = currentAccounts.filter((account) => account.id && selected.includes(account.id));
+    const chosen = currentAccounts.filter(
+      (account) => account.id && selected.includes(account.id),
+    );
     const eligible = chosen.filter((account) => account.status === "pending");
     const omitted = selected.length - eligible.length;
-    if (!eligible.length) { setSummary("No hay cuentas pendientes seleccionadas; las cuentas no elegibles se omiten."); setBusy(false); return; }
-    if (action === "delete" && !window.confirm(`¿Eliminar ${eligible.length} cuentas pendientes? Sus ítems volverán a quedar pendientes. Se omitirán ${omitted} cuentas no elegibles.`)) { setBusy(false); return; }
+    if (!eligible.length) {
+      setSummary(
+        "No hay cuentas pendientes seleccionadas; las cuentas no elegibles se omiten.",
+      );
+      setBusy(false);
+      return;
+    }
+    if (
+      action === "delete" &&
+      !window.confirm(
+        `¿Eliminar ${eligible.length} cuentas pendientes? Sus ítems volverán a quedar pendientes. Se omitirán ${omitted} cuentas no elegibles.`,
+      )
+    ) {
+      setBusy(false);
+      return;
+    }
     const succeeded: string[] = [];
     for (const account of eligible) {
       if (!account.id) continue;
       try {
-        const result = action === "paid" ? await updateBillingStatementStatus(account.id, "paid") : await deleteBillingstatement(account.id);
+        const result =
+          action === "paid"
+            ? await updateBillingStatementStatus(account.id, "paid")
+            : await deleteBillingstatement(account.id);
         if (result.success) succeeded.push(account.id);
-      } catch { /* Keep failed accounts selected for retry. */ }
+      } catch {
+        /* Keep failed accounts selected for retry. */
+      }
     }
     const failed = eligible.length - succeeded.length;
-    setAccounts((current) => action === "delete" ? current.filter((item) => !item.id || !succeeded.includes(item.id)) : current.map((item) => item.id && succeeded.includes(item.id) ? { ...item, status: "paid" } : item));
+    setAccounts((current) =>
+      action === "delete"
+        ? current.filter((item) => !item.id || !succeeded.includes(item.id))
+        : current.map((item) =>
+            item.id && succeeded.includes(item.id)
+              ? { ...item, status: "paid" }
+              : item,
+          ),
+    );
     setSelected((current) => current.filter((id) => !succeeded.includes(id)));
-    setSummary(`${succeeded.length} ${action === "paid" ? (succeeded.length === 1 ? "actualizada" : "actualizadas") : (succeeded.length === 1 ? "eliminada" : "eliminadas")}; ${failed} ${failed === 1 ? "fallida" : "fallidas"}; ${omitted} ${omitted === 1 ? "omitida" : "omitidas"} por no ser elegibles. Las fallidas siguen seleccionadas para reintentar.`);
+    setSummary(
+      `${succeeded.length} ${action === "paid" ? (succeeded.length === 1 ? "actualizada" : "actualizadas") : succeeded.length === 1 ? "eliminada" : "eliminadas"}; ${failed} ${failed === 1 ? "fallida" : "fallidas"}; ${omitted} ${omitted === 1 ? "omitida" : "omitidas"} por no ser elegibles. Las fallidas siguen seleccionadas para reintentar.`,
+    );
     setBusy(false);
   }
 
-  if (loading) return <div role="status" aria-label="Cargando cuentas" className="space-y-4"><div className="skeleton h-12 w-full" /><div className="skeleton h-36 w-full" /><div className="skeleton h-36 w-full" /></div>;
-  if (error) return <p role="alert" className="alert alert-error">{error}</p>;
+  if (loading)
+    return (
+      <div role="status" aria-label="Cargando cuentas" className="space-y-4">
+        <div className="skeleton h-12 w-full" />
+        <div className="skeleton h-36 w-full" />
+        <div className="skeleton h-36 w-full" />
+      </div>
+    );
+  if (error)
+    return (
+      <p role="alert" className="alert alert-error">
+        {error}
+      </p>
+    );
 
   const invalidRange = Boolean(from && to && from > to);
   const filtered = accounts.filter((account) => {
@@ -121,52 +225,380 @@ export default function ListBillingStatements() {
     if (account.id && account.id === expanded) return true;
     const parsed = parseBillingDateForCalendar(account.payDate);
     const civil = parsed.ok ? calendarDateToCivil(parsed.value) : null;
-    if ((from || to) && (!civil?.ok || (from && civil.value < from) || (to && civil.value > to))) return false;
-    return account.client.name.toLocaleLowerCase("es").includes(query.trim().toLocaleLowerCase("es")) && (status === "all" || account.status === status);
+    if (
+      (from || to) &&
+      (!civil?.ok || (from && civil.value < from) || (to && civil.value > to))
+    )
+      return false;
+    return (
+      account.client.name
+        .toLocaleLowerCase("es")
+        .includes(query.trim().toLocaleLowerCase("es")) &&
+      (status === "all" || account.status === status)
+    );
   });
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount - 1);
-  const visible = invalidRange ? [] : filtered.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+  const visible = invalidRange
+    ? []
+    : filtered.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
   const locked = busy || expanded !== null;
-  return <div className="w-full space-y-5">
-    <fieldset disabled={locked} className="grid gap-4 rounded-2xl border border-[#39403e] bg-[#1b201f] p-4 sm:grid-cols-2 xl:grid-cols-4 sm:p-5">
-      <legend className="px-2 text-sm font-semibold text-[#e4ebe7]">Filtros</legend>
-      <div className="space-y-1"><label htmlFor="billing-search" className="text-sm font-medium">Buscar cliente</label><input id="billing-search" className="input min-h-12 w-full rounded-2xl border-[#52605a] bg-[#151b19] text-[#edf5ef] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#74d5a7]" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} /></div>
-      <div className="space-y-1"><label htmlFor="billing-status" className="text-sm font-medium">Estado</label><select id="billing-status" className="select min-h-12 w-full rounded-2xl border-[#52605a] bg-[#151b19] text-[#edf5ef] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#74d5a7]" value={status} onChange={(event) => { setStatus(event.target.value); setPage(0); }}><option value="all">Todos</option><option value="pending">Pendiente</option><option value="paid">Pagada</option></select></div>
-      <DateField id="billing-from" label="Fecha prevista de pago desde" value={from} disabled={locked} onChange={(value) => { setFrom(value); setPage(0); }} />
-      <DateField id="billing-to" label="Fecha prevista de pago hasta" value={to} disabled={locked} onChange={(value) => { setTo(value); setPage(0); }} />
-    </fieldset>
-    {invalidRange && <p role="alert">La fecha inicial debe ser anterior o igual a la fecha final.</p>}
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="mr-auto text-sm text-base-content/70">{selected.length} seleccionadas</span>
-      <button type="button" className="btn btn-outline min-h-11 rounded-xl" disabled={locked || !visible.some((item) => item.id)} onClick={() => setSelected((current) => Array.from(new Set([...current, ...visible.flatMap((item) => item.id ? [item.id] : [])])))}>Seleccionar página</button>
-      <button type="button" className="btn btn-ghost min-h-11 rounded-xl" disabled={locked || !selected.length} onClick={() => setSelected([])}>Limpiar selección</button>
-      <button type="button" className="btn btn-primary min-h-11 rounded-xl" disabled={locked || !selected.length} onClick={() => void batch("paid")}>Marcar seleccionadas como pagadas</button>
-      <button type="button" className="btn btn-outline min-h-11 rounded-xl" disabled={locked || !selected.length} onClick={() => void batch("delete")}>Eliminar seleccionadas</button>
+  return (
+    <div className="w-full space-y-5">
+      <fieldset
+        disabled={locked}
+        className="grid gap-4 rounded-2xl border border-[#39403e] bg-[#0b1512] p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4"
+      >
+        <legend className="px-2 text-sm font-semibold text-[#e4ebe7]">
+          Filtros
+        </legend>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="billing-search" className="text-sm font-medium">
+            Buscar cliente
+          </label>
+          <input
+            id="billing-search"
+            className="input min-h-12 w-full rounded-2xl border border-[#40544b] bg-[#101815] text-[#edf5ef] outline-0 hover:border-[#87bba5] focus-visible:border-[#87bba5]"
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setPage(0);
+            }}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="billing-status" className="text-sm font-medium">
+            Estado
+          </label>
+          <select
+            id="billing-status"
+            className="select min-h-12 w-full rounded-2xl border border-[#40544b] bg-[#101815] text-[#edf5ef] outline-0 hover:border-[#87bba5] focus-visible:border-[#87bba5]"
+            value={status}
+            onChange={(event) => {
+              setStatus(event.target.value);
+              setPage(0);
+            }}
+          >
+            <option value="all">Todos</option>
+            <option value="pending">Pendiente</option>
+            <option value="paid">Pagada</option>
+          </select>
+        </div>
+        <DateField
+          id="billing-from"
+          label="Fecha prevista de pago desde"
+          value={from}
+          disabled={locked}
+          onChange={(value) => {
+            setFrom(value);
+            setPage(0);
+          }}
+        />
+        <DateField
+          id="billing-to"
+          label="Fecha prevista de pago hasta"
+          value={to}
+          disabled={locked}
+          onChange={(value) => {
+            setTo(value);
+            setPage(0);
+          }}
+        />
+      </fieldset>
+      {invalidRange && (
+        <p role="alert">
+          La fecha inicial debe ser anterior o igual a la fecha final.
+        </p>
+      )}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-base-content/70 mr-auto text-sm">
+          {selected.length} seleccionadas
+        </span>
+        <button
+          type="button"
+          className="btn btn-outline min-h-11 rounded-xl border"
+          disabled={locked || !visible.some((item) => item.id)}
+          onClick={() =>
+            setSelected((current) =>
+              Array.from(
+                new Set([
+                  ...current,
+                  ...visible.flatMap((item) => (item.id ? [item.id] : [])),
+                ]),
+              ),
+            )
+          }
+        >
+          Seleccionar página
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost min-h-11 rounded-xl border"
+          disabled={locked || !selected.length}
+          onClick={() => setSelected([])}
+        >
+          Limpiar selección
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary min-h-11 rounded-xl border"
+          disabled={locked || !selected.length}
+          onClick={() => void batch("paid")}
+        >
+          Marcar seleccionadas como pagadas
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline min-h-11 rounded-xl border"
+          disabled={locked || !selected.length}
+          onClick={() => void batch("delete")}
+        >
+          Eliminar seleccionadas
+        </button>
+      </div>
+      <p className="text-base-content/70 text-sm">
+        Pulsa para abrir; mantén pulsado para seleccionar.
+      </p>
+      {summary && (
+        <p role="status" className="rounded-box bg-base-200 p-4">
+          {summary}
+        </p>
+      )}
+      {visible.length ? (
+        <ul aria-label="Cuentas de cobro" className="space-y-3">
+          {visible.map((account) => {
+            const date = formatBillingDate(account.payDate);
+            const id = account.id;
+            const isSelected = Boolean(id && selected.includes(id));
+            const isOpen = expanded === id;
+            return (
+              <li
+                key={id}
+                className={`space-y-4 rounded-2xl border p-4 sm:p-5 ${isSelected ? "border-[#74d5a7] bg-[#0b1512/50]" : "border-[#39403e] bg-[#0b1512]"}`}
+                onPointerDown={(event) => {
+                  held.current = false;
+                  if (
+                    event.pointerType !== "touch" ||
+                    !id ||
+                    locked ||
+                    ((event.target as HTMLElement).closest(
+                      "button, a, input, select, textarea, [data-billing-editor]",
+                    ) &&
+                      !(event.target as HTMLElement).closest(
+                        "[data-billing-trigger]",
+                      ))
+                  )
+                    return;
+                  cancelHold();
+                  touchStart.current = { x: event.clientX, y: event.clientY };
+                  hold.current = setTimeout(() => {
+                    held.current = true;
+                    toggle(id);
+                    hold.current = null;
+                  }, HOLD_MS);
+                }}
+                onPointerMove={(event) => {
+                  if (
+                    touchStart.current &&
+                    (Math.abs(event.clientX - touchStart.current.x) > 10 ||
+                      Math.abs(event.clientY - touchStart.current.y) > 10)
+                  )
+                    cancelHold();
+                }}
+                onPointerUp={cancelHold}
+                onPointerCancel={cancelHold}
+                onContextMenu={(event) => {
+                  if (touchStart.current) event.preventDefault();
+                }}
+                onClick={(event) => {
+                  if (held.current) {
+                    held.current = false;
+                    event.preventDefault();
+                    return;
+                  }
+                  if (
+                    !id ||
+                    busy ||
+                    (event.target as HTMLElement).closest(
+                      "button, a, input, select, textarea, [data-billing-editor]",
+                    )
+                  )
+                    return;
+                  toggleEditor(id);
+                }}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2>
+                      <button
+                        type="button"
+                        data-billing-trigger
+                        className="flex min-h-11 items-center gap-2 rounded-md text-left text-lg font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#74d5a7]"
+                        aria-label={`${isOpen ? "Cerrar cuenta de" : "Abrir cuenta de"} ${account.client.name}`}
+                        aria-expanded={isOpen}
+                        disabled={busy || !id}
+                        onClick={() => {
+                          if (held.current) {
+                            held.current = false;
+                            return;
+                          }
+                          if (id) toggleEditor(id);
+                        }}
+                      >
+                        <span className="wrap-break-words">
+                          {account.client.name}
+                        </span>
+                        <ChevronDown
+                          size={18}
+                          aria-hidden="true"
+                          className={`shrink-0 ${isOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                    </h2>
+                    <p className="text-base-content/70 wrap-break-words mt-1 text-sm">
+                      Acreedor: {account.creditor.name}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${account.status === "paid" ? "bg-[#294639] text-[#c5f2d9]" : "bg-[#4b3e28] text-[#f8dfaa]"}`}
+                    >
+                      {account.status === "paid" ? "Pagada" : "Pendiente"}
+                    </span>
+                    <button
+                      type="button"
+                      className={`btn not-[]:min-h-11 rounded-xl border-0 ${isSelected ? "btn-primary" : ""}`}
+                      aria-pressed={isSelected}
+                      aria-label={`${isSelected ? "Deseleccionar" : "Seleccionar"} cuenta de ${account.client.name}`}
+                      disabled={!id || locked}
+                      onClick={() => {
+                        if (id) toggle(id);
+                      }}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`h-2.5 w-2.5 rounded-full ${isSelected ? "bg-[#b7ffda] shadow-[0_0_8px_#74d5a7]" : "border border-current"}`}
+                      />
+                      {isSelected ? "" : ""}
+                    </button>
+                  </div>
+                </div>
+                <dl className="flex flex-wrap gap-x-10 gap-y-3 text-sm">
+                  <div>
+                    <dt className="text-base-content/70">
+                      Fecha prevista de pago
+                    </dt>
+                    <dd className="mt-1">
+                      {date.ok ? date.value : "Fecha no válida"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-base-content/70">Valor total</dt>
+                    <dd className="mt-1 font-semibold tabular-nums">
+                      ${(account.amount ?? 0).toLocaleString("es-CO")}
+                    </dd>
+                  </div>
+                </dl>
+                <div className="border-base-300 flex flex-wrap items-center gap-2 border-t pt-4">
+                  {account.status === "pending" && (
+                    <button
+                      type="button"
+                      className="btn btn-primary min-h-11 rounded-xl border"
+                      disabled={locked}
+                      onClick={() => void markPaid(account)}
+                    >
+                      Marcar pagada
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-ghost min-h-11 min-w-11 rounded-xl"
+                    disabled={locked || account.status !== "pending"}
+                    aria-label={`Eliminar cuenta de ${account.client.name}`}
+                    onClick={() => void remove(account)}
+                  >
+                    <Trash size={18} aria-hidden="true" />
+                  </button>
+                  {id && pdfBlocked.includes(id) ? (
+                    <span role="status">
+                      Actualiza la cuenta para preparar el PDF.
+                    </span>
+                  ) : (
+                    <DownloadPDFButton
+                      key={id ? (pdfVersions[id] ?? 0) : 0}
+                      data={account}
+                    />
+                  )}
+                </div>
+                {isOpen && id && (
+                  <div
+                    data-billing-editor
+                    className="border-base-300 border-t pt-5"
+                  >
+                    <UpdateBillingStatementForm
+                      id={id}
+                      onUpdated={(updated) =>
+                        setAccounts((current) =>
+                          current.map((item) =>
+                            item.id === id ? updated : item,
+                          ),
+                        )
+                      }
+                      onPdfInvalidated={() =>
+                        setPdfVersions((current) => ({
+                          ...current,
+                          [id]: (current[id] ?? 0) + 1,
+                        }))
+                      }
+                      onItemsRefreshing={() =>
+                        setPdfBlocked((current) =>
+                          current.includes(id) ? current : [...current, id],
+                        )
+                      }
+                      onItemsRefreshed={() => {
+                        setPdfBlocked((current) =>
+                          current.filter((item) => item !== id),
+                        );
+                        setPdfVersions((current) => ({
+                          ...current,
+                          [id]: (current[id] ?? 0) + 1,
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="rounded-box border-base-300 bg-base-100 text-base-content/70 border px-4 py-8 text-center">
+          {accounts.length
+            ? "No hay cuentas que coincidan con los filtros."
+            : "No hay cuentas de cobro registradas."}
+        </p>
+      )}
+      <div className="flex items-center justify-end gap-3">
+        <button
+          type="button"
+          className="btn btn-outline min-h-11 rounded-xl"
+          disabled={locked || safePage === 0}
+          onClick={() => setPage(safePage - 1)}
+        >
+          Anterior
+        </button>
+        <span className="text-base-content/70 text-sm">
+          {safePage + 1} de {pageCount}
+        </span>
+        <button
+          type="button"
+          className="btn btn-outline min-h-11 rounded-xl"
+          disabled={locked || safePage + 1 >= pageCount}
+          onClick={() => setPage(safePage + 1)}
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
-    <p className="text-sm text-base-content/70">Pulsa para abrir; mantén pulsado para seleccionar.</p>
-    {summary && <p role="status" className="rounded-box bg-base-200 p-4">{summary}</p>}
-    {visible.length ? <ul aria-label="Cuentas de cobro" className="space-y-3">
-      {visible.map((account) => {
-        const date = formatBillingDate(account.payDate);
-        const id = account.id;
-        const isSelected = Boolean(id && selected.includes(id));
-        const isOpen = expanded === id;
-        return <li key={id} className={`space-y-4 rounded-2xl border p-4 sm:p-5 ${isSelected ? "border-[#74d5a7] bg-[#25332d]" : "border-[#39403e] bg-[#1b201f]"}`}
-          onPointerDown={(event) => { held.current = false; if (event.pointerType !== "touch" || !id || locked || ((event.target as HTMLElement).closest("button, a, input, select, textarea, [data-billing-editor]") && !(event.target as HTMLElement).closest("[data-billing-trigger]"))) return; cancelHold(); touchStart.current = { x: event.clientX, y: event.clientY }; hold.current = setTimeout(() => { held.current = true; toggle(id); hold.current = null; }, HOLD_MS); }}
-          onPointerMove={(event) => { if (touchStart.current && (Math.abs(event.clientX - touchStart.current.x) > 10 || Math.abs(event.clientY - touchStart.current.y) > 10)) cancelHold(); }}
-          onPointerUp={cancelHold} onPointerCancel={cancelHold} onContextMenu={(event) => { if (touchStart.current) event.preventDefault(); }}
-          onClick={(event) => { if (held.current) { held.current = false; event.preventDefault(); return; } if (!id || busy || (event.target as HTMLElement).closest("button, a, input, select, textarea, [data-billing-editor]")) return; toggleEditor(id); }}>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0"><h2><button type="button" data-billing-trigger className="flex min-h-11 items-center gap-2 rounded-md text-left text-lg font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#74d5a7]" aria-label={`${isOpen ? "Cerrar cuenta de" : "Abrir cuenta de"} ${account.client.name}`} aria-expanded={isOpen} disabled={busy || !id} onClick={() => { if (held.current) { held.current = false; return; } if (id) toggleEditor(id); }}><span className="break-words">{account.client.name}</span><ChevronDown size={18} aria-hidden="true" className={`shrink-0 ${isOpen ? "rotate-180" : ""}`} /></button></h2><p className="mt-1 break-words text-sm text-base-content/70">Acreedor: {account.creditor.name}</p></div>
-            <div className="flex items-center gap-2"><span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${account.status === "paid" ? "bg-[#294639] text-[#c5f2d9]" : "bg-[#4b3e28] text-[#f8dfaa]"}`}>{account.status === "paid" ? "Pagada" : "Pendiente"}</span><button type="button" className={`btn min-h-11 rounded-xl ${isSelected ? "btn-primary" : "btn-outline"}`} aria-pressed={isSelected} aria-label={`${isSelected ? "Deseleccionar" : "Seleccionar"} cuenta de ${account.client.name}`} disabled={!id || locked} onClick={() => { if (id) toggle(id); }}><span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${isSelected ? "bg-[#b7ffda] shadow-[0_0_8px_#74d5a7]" : "border border-current"}`} />{isSelected ? "Seleccionada" : "Seleccionar"}</button></div>
-          </div>
-          <dl className="flex flex-wrap gap-x-10 gap-y-3 text-sm"><div><dt className="text-base-content/70">Fecha prevista de pago</dt><dd className="mt-1">{date.ok ? date.value : "Fecha no válida"}</dd></div><div><dt className="text-base-content/70">Valor total</dt><dd className="mt-1 font-semibold tabular-nums">${(account.amount ?? 0).toLocaleString("es-CO")}</dd></div></dl>
-          <div className="flex flex-wrap items-center gap-2 border-t border-base-300 pt-4">{account.status === "pending" && <button type="button" className="btn btn-primary min-h-11 rounded-xl" disabled={locked} onClick={() => void markPaid(account)}>Marcar pagada</button>}<button type="button" className="btn btn-ghost min-h-11 rounded-xl min-w-11" disabled={locked || account.status !== "pending"} aria-label={`Eliminar cuenta de ${account.client.name}`} onClick={() => void remove(account)}><Trash size={18} aria-hidden="true" /></button>{id && pdfBlocked.includes(id) ? <span role="status">Actualiza la cuenta para preparar el PDF.</span> : <DownloadPDFButton key={id ? pdfVersions[id] ?? 0 : 0} data={account} />}</div>
-          {isOpen && id && <div data-billing-editor className="border-t border-base-300 pt-5"><UpdateBillingStatementForm id={id} onUpdated={(updated) => setAccounts((current) => current.map((item) => item.id === id ? updated : item))} onPdfInvalidated={() => setPdfVersions((current) => ({ ...current, [id]: (current[id] ?? 0) + 1 }))} onItemsRefreshing={() => setPdfBlocked((current) => current.includes(id) ? current : [...current, id])} onItemsRefreshed={() => { setPdfBlocked((current) => current.filter((item) => item !== id)); setPdfVersions((current) => ({ ...current, [id]: (current[id] ?? 0) + 1 })); }} /></div>}
-        </li>;
-      })}
-    </ul> : <p className="rounded-box border border-base-300 bg-base-100 px-4 py-8 text-center text-base-content/70">{accounts.length ? "No hay cuentas que coincidan con los filtros." : "No hay cuentas de cobro registradas."}</p>}
-    <div className="flex items-center justify-end gap-3"><button type="button" className="btn btn-outline min-h-11 rounded-xl" disabled={locked || safePage === 0} onClick={() => setPage(safePage - 1)}>Anterior</button><span className="text-sm text-base-content/70">{safePage + 1} de {pageCount}</span><button type="button" className="btn btn-outline min-h-11 rounded-xl" disabled={locked || safePage + 1 >= pageCount} onClick={() => setPage(safePage + 1)}>Siguiente</button></div>
-  </div>;
+  );
 }
