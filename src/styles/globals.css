@@ -1,6 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+@plugin "daisyui" {
+  themes: false;
+  exclude: join;
+}
+@plugin "daisyui/theme" {
+  name: "sigue";
+  default: true;
+  color-scheme: dark;
+  --color-base-100: #0d1312;
+  --color-base-200: #101d1a;
+  --color-base-300: #193029;
+  --color-base-content: #f4f7f5;
+  --color-primary: #319678;
+  --color-primary-content: #06130f;
+  --color-secondary: #18483a;
+  --color-secondary-content: #f4f7f5;
+  --color-accent: #73d2ae;
+  --color-accent-content: #06130f;
+  --color-neutral: #233730;
+  --color-neutral-content: #f4f7f5;
+  --color-info: #8ecde0;
+  --color-info-content: #10222a;
+  --color-success: #7fd4a7;
+  --color-success-content: #102719;
+  --color-warning: #e8c47d;
+  --color-warning-content: #2b2009;
+  --color-error: #ef9999;
+  --color-error-content: #311010;
+}
 
 @layer base {
   :root {

@@ -22,6 +22,21 @@ it("permite seleccionar ítems del cliente y abre la cuenta creada", async () =>
   await waitFor(() => expect(mocks.push).toHaveBeenCalledWith("/dashboard/cuentas-cobro/editar/b1"));
 });
 
+it("mantiene deshabilitada la creación hasta seleccionar un ítem pendiente", async () => {
+  mocks.pending.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
+  const actor = { id: "c1", name: "Cliente", docType: "CC" as const, docNumber: "1" };
+  render(<ActorForm clientsList={[actor]} creditorsList={[{ ...actor, id: "a1", name: "Acreedor" }]} />);
+  const submit = screen.getByRole("button", { name: "Crear cuenta de cobro" }) as HTMLButtonElement;
+  expect(submit.disabled).toBe(true);
+  fireEvent.click(submit);
+  expect(mocks.create).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  fireEvent.click(await screen.findByLabelText(/Servicio/));
+  expect(submit.disabled).toBe(false);
+  fireEvent.click(screen.getByLabelText(/Servicio/));
+  expect(submit.disabled).toBe(true);
+});
+
 it("descarta la respuesta tardía del cliente anterior y su selección", async () => {
   let resolveFirst!: (value: unknown) => void;
   mocks.pending.mockImplementation((id: string) => id === "c1"

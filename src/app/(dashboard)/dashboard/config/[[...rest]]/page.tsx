@@ -1,12 +1,11 @@
 import { UserProfile } from "@clerk/nextjs";
-import { Skeleton } from "@/components/ui";
 
 function Config() {
   return (
     <>
       <UserProfile
         fallback={
-          <Skeleton className="flex h-full w-[55rem] flex-col items-center justify-center gap-2"></Skeleton>
+          <div className="skeleton min-h-96 w-full max-w-4xl" role="status" aria-label="Cargando configuración" />
         }
       />
     </>

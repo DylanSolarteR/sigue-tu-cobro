@@ -1,28 +1,19 @@
 "use server";
-import { Button } from "@/components/ui";
 import ListClients from "@/components/dashboard/clients/ListClients";
 import Link from "next/link";
 
 async function Clientes() {
   return (
     <>
-      <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-[70rem] md:max-w-full">
+      <section className="w-full rounded-box bg-base-200 py-6">
         <div className="flex h-full flex-col items-start justify-start gap-4">
           <h1 className="px-8 text-2xl text-white">Clientes</h1>
           <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Link href={"/dashboard/clientes/crear"}>
-              <Button
-                size={"xl"}
-                variant={"outline"}
-                className="bg-primary drop-shadow-lg hover:brightness-110"
-              >
-                Crear nuevo cliente
-              </Button>
-            </Link>
+            <Link href={"/dashboard/clientes/crear"} className="btn btn-primary btn-sm sm:btn-md">Crear nuevo cliente</Link>
           </div>
         </div>
       </section>
-      <section className="flex rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full">
+      <section className="flex w-full rounded-box bg-base-200 p-4 sm:p-6">
         <ListClients />
       </section>
     </>

@@ -1,19 +1,15 @@
 import { type Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
-import fluid, { extract, screens, fontSize } from 'fluid-tailwind'
+import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
-	darkMode: ["class"],
-	content: {
-		files: ["./src/**/*.tsx"],
-		extract
-	},
+	darkMode: "class",
+	content: ["./src/**/*.{ts,tsx}"],
 	theme: {
 		extend: {
 			fontFamily: {
 				sans: [
 					'var(--font-geist-sans)',
-					...fontFamily.sans
+					...defaultTheme.fontFamily.sans
 				]
 			},
 			borderRadius: {
@@ -94,5 +90,5 @@ export default {
 
 		}
 	},
-	plugins: [fluid, require("tailwindcss-animate")],
+	plugins: [require("tailwindcss-animate")],
 } satisfies Config;

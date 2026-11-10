@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { getBillingStatement, saveBillingStatement } from "@/actions/billing-statement.api";
 import { getBillingStatementItems, updateBillingStatementItem } from "@/actions/billing-statement.item.api";
-import { Button, Input, Label, Textarea } from "@/components/ui";
 import { DatePicker } from "@/components/DatePicker";
 import Loading from "@/components/Loading";
 import type { billing_statement, billing_statement_item } from "@/types/billing-statement";
@@ -61,17 +60,17 @@ export default function UpdateBillingStatementForm({ id }: { id: string }) {
   if (!account) return <p role="alert">{message || "La cuenta no existe."}</p>;
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6 p-6">
+    <div className="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6">
       <h1 className="text-2xl font-semibold">Información de la cuenta de cobro</h1>
       {message && <p role="status">{message}</p>}
       <section className="space-y-3"><h2 className="text-lg font-semibold">Ítems de la cuenta</h2>{account.status === "paid" && <p className="text-sm">Para editar los ítems, cambia la cuenta a pendiente y guarda el cambio.</p>}{items.length ? items.map((item) => <ItemEditor key={item.id} item={item} disabled={account.status === "paid"} onSave={editItem} />) : <p>No hay ítems en esta cuenta.</p>}</section>
-      <form onSubmit={(event) => void save(event)} className="space-y-4 rounded-lg border p-4">
-        <div className="space-y-2"><Label htmlFor="statement-status">Estado</Label><select id="statement-status" value={status} onChange={(event) => setStatus(event.target.value === "paid" ? "paid" : "pending")} className="w-full rounded-md border bg-background p-2"><option value="pending">Pendiente</option><option value="paid">Pagada</option></select></div>
+      <form onSubmit={(event) => void save(event)} className="space-y-4 rounded-box border border-base-300 bg-base-200 p-4">
+        <div className="space-y-2"><label htmlFor="statement-status" className="font-medium">Estado</label><select id="statement-status" value={status} onChange={(event) => setStatus(event.target.value === "paid" ? "paid" : "pending")} className="select w-full"><option value="pending">Pendiente</option><option value="paid">Pagada</option></select></div>
         <p>Valor total: ${(account.amount ?? 0).toLocaleString("es-CO")}</p>
-        <div className="space-y-2"><Label>Fecha de pago</Label><DatePicker date={date} setDate={setDate} /></div>
-        <div className="flex items-center gap-2"><input id="show-item-amount" type="checkbox" checked={showItemAmount} onChange={(event) => setShowItemAmount(event.target.checked)} /><Label htmlFor="show-item-amount">Mostrar valor de los ítems en el PDF</Label></div>
-        <div className="space-y-2"><Label htmlFor="extra-info">Información adicional</Label><Textarea id="extra-info" value={extraInfo} onChange={(event) => setExtraInfo(event.target.value)} maxLength={2000} /></div>
-        <Button disabled={saving} type="submit">{saving ? "Guardando…" : "Guardar cambios"}</Button>
+        <div className="space-y-2"><p className="font-medium">Fecha de pago</p><DatePicker date={date} setDate={setDate} /></div>
+        <div className="flex items-center gap-2"><input id="show-item-amount" type="checkbox" className="checkbox checkbox-primary" checked={showItemAmount} onChange={(event) => setShowItemAmount(event.target.checked)} /><label htmlFor="show-item-amount">Mostrar valor de los ítems en el PDF</label></div>
+        <div className="space-y-2"><label htmlFor="extra-info" className="font-medium">Información adicional</label><textarea className="textarea w-full" id="extra-info" value={extraInfo} onChange={(event) => setExtraInfo(event.target.value)} maxLength={2000} /></div>
+        <button className="btn btn-primary w-full sm:w-auto" disabled={saving} type="submit">{saving ? "Guardando…" : "Guardar cambios"}</button>
       </form>
     </div>
   );
@@ -88,5 +87,5 @@ function ItemEditor({ item, disabled, onSave }: { item: billing_statement_item; 
     if (!item.id || !description.trim() || !Number.isSafeInteger(value) || value <= 0 || value > 2147483647) { setMessage("Ingrese una descripción y un valor entero mayor que cero."); return; }
     setSaving(true); setMessage(""); await onSave(item.id, description, value); setSaving(false);
   }
-  return <form onSubmit={(event) => void save(event)} className="grid gap-3 rounded-md border p-4 sm:grid-cols-2"><div className="space-y-2"><Label htmlFor={`desc-${item.id}`}>Descripción del ítem {item.desc}</Label><Input id={`desc-${item.id}`} value={description} disabled={disabled || saving} maxLength={150} required onChange={(event) => setDescription(event.target.value)} /></div><div className="space-y-2"><Label htmlFor={`amount-${item.id}`}>Valor del ítem {item.desc}</Label><Input id={`amount-${item.id}`} type="number" min="1" max="2147483647" step="1" value={amount} disabled={disabled || saving} required onChange={(event) => setAmount(event.target.value)} /></div>{message && <p role="alert">{message}</p>}<Button type="submit" disabled={disabled || saving || (description === item.desc && amount === String(item.amount))}>Guardar ítem</Button></form>;
+  return <form onSubmit={(event) => void save(event)} className="grid gap-3 rounded-box border border-base-300 p-4 sm:grid-cols-2"><div className="space-y-2"><label className="font-medium" htmlFor={`desc-${item.id}`}>Descripción del ítem {item.desc}</label><input className="input w-full" id={`desc-${item.id}`} value={description} disabled={disabled || saving} maxLength={150} required onChange={(event) => setDescription(event.target.value)} /></div><div className="space-y-2"><label className="font-medium" htmlFor={`amount-${item.id}`}>Valor del ítem {item.desc}</label><input className="input w-full" id={`amount-${item.id}`} type="number" min="1" max="2147483647" step="1" value={amount} disabled={disabled || saving} required onChange={(event) => setAmount(event.target.value)} /></div>{message && <p role="alert">{message}</p>}<button className="btn btn-primary btn-sm w-full sm:w-fit" type="submit" disabled={disabled || saving || (description === item.desc && amount === String(item.amount))}>Guardar ítem</button></form>;
 }

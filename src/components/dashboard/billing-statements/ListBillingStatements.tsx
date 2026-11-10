@@ -1,172 +1,65 @@
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/dashboard/datatable/Datatable";
-import { useEffect, useState } from "react";
-import Loading from "@/components/Loading";
-import { Edit, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui";
-import { toast } from "sonner";
-import { billing_statement } from "@/types/billing-statement";
-import {
-  deleteBillingstatement,
-  getBillingStatements,
-  updateBillingStatementStatus,
-} from "@/actions/billing-statement.api";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Edit, Trash } from "lucide-react";
+import { toast } from "sonner";
+import { deleteBillingstatement, getBillingStatements, updateBillingStatementStatus } from "@/actions/billing-statement.api";
 import DownloadPDFButton from "@/components/generatePDF";
 import { formatBillingDate } from "@/lib/billing-date";
+import type { billing_statement } from "@/types/billing-statement";
 
-function ListBillingStatements() {
-  const [billingStatements, setBillingStatements] = useState<
-    billing_statement[]
-  >([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+const PAGE_SIZE = 10;
 
-  const columns: ColumnDef<billing_statement>[] = [
-    {
-      accessorKey: "client.name",
-      header: () => (
-        <div className="text-center text-xl text-foreground">Cliente</div>
-      ),
-    },
-    {
-      accessorKey: "creditor.name",
-      header: () => (
-        <div className="text-center text-xl text-foreground">Acreedor</div>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: () => (
-        <div className="text-center text-xl text-foreground">Estado</div>
-      ),
-      cell: ({ row }) => {
-        const billing_statement = row.original;
-        return (
-          <div className="text-center text-foreground">
-            {billing_statement.status === "paid" ? "Pagada" : "Pendiente"}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "payDate",
-      header: () => (
-        <div className="text-center text-xl text-foreground">{"Fecha"}</div>
-      ),
-      cell: ({ row }) => {
-        const billing_statement = row.original;
-        const date = formatBillingDate(billing_statement.payDate);
-        return (
-          <div className="text-center text-foreground">
-            {date.ok ? date.value : "Fecha no válida"}
-          </div>
-        );
-      },
-    },
+export default function ListBillingStatements() {
+  const [accounts, setAccounts] = useState<billing_statement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
 
-    {
-      accessorKey: "amount",
-      header: () => (
-        <div className="text-center text-xl text-foreground">Valor total</div>
-      ),
-    },
-    {
-      accessorKey: "actions",
-      header: () => (
-        <div className="text-center text-xl text-foreground">Acciones</div>
-      ),
-      cell: ({ row }) => {
-        const billingS = row.original;
-
-        return (
-          <div className="flex flex-row items-center justify-center">
-            {billingS.status === "pending" && (
-              <Button size="sm" onClick={() => void handleMarkPaid(billingS)}>
-                Marcar pagada
-              </Button>
-            )}
-            <button
-              aria-label="Editar cuenta"
-              onClick={() => {
-                handleEdit(billingS.id as string);
-              }}
-            >
-              <Edit size={24} />
-            </button>
-            <Popover>
-              <PopoverTrigger>
-                <Trash size={24} />
-              </PopoverTrigger>
-              <PopoverContent className="flex flex-col gap-4 rounded-lg bg-background p-4 text-center">
-                <p>¿Estás seguro de eliminar esta cuenta de cobro?</p>
-                <Button
-                  onClick={() => {
-                    handleDelete(billingS.id as string);
-                  }}
-                >
-                  Eliminar
-                </Button>
-              </PopoverContent>
-            </Popover>
-            <DownloadPDFButton data={billingS} />
-          </div>
-        );
-      },
-    },
-  ];
-
-  async function CallForClients() {
-    const result = await getBillingStatements();
-    if (!result.success) {
-      toast.error(result.message);
-      return;
-    }
-    setBillingStatements(result.data!);
-    setLoading(false);
-  }
   useEffect(() => {
-    CallForClients();
+    let active = true;
+    void getBillingStatements().then((result) => {
+      if (!active) return;
+      if (result.success) setAccounts(result.data ?? []);
+      else setError(result.message);
+      setLoading(false);
+    }).catch(() => { if (active) { setError("No se pudieron cargar las cuentas."); setLoading(false); } });
+    return () => { active = false; };
   }, []);
 
-  function handleEdit(id: string) {
-    router.push(`/dashboard/cuentas-cobro/editar/${id}`);
+  async function markPaid(account: billing_statement) {
+    if (!account.id) return;
+    setBusy(account.id);
+    try {
+      const result = await updateBillingStatementStatus(account.id, "paid");
+      if (!result.success) toast.error(result.message);
+      else { setAccounts((current) => current.map((item) => item.id === account.id ? { ...item, status: "paid" } : item)); toast.success("Cuenta marcada como pagada."); }
+    } catch { toast.error("No se pudo actualizar la cuenta."); }
+    finally { setBusy(null); }
   }
 
-  async function handleMarkPaid(statement: billing_statement) {
-    if (!statement.id) return;
-    const result = await updateBillingStatementStatus(statement.id, "paid");
-    if (!result.success) { toast.error(result.message); return; }
-    setBillingStatements((current) => current.map((account) => account.id === statement.id ? { ...account, status: "paid" } : account));
-    toast.success("Cuenta marcada como pagada.");
+  async function remove(account: billing_statement) {
+    if (!account.id || !window.confirm("¿Eliminar esta cuenta de cobro?")) return;
+    setBusy(account.id);
+    try {
+      const result = await deleteBillingstatement(account.id);
+      if (!result.success) toast.error(result.message);
+      else { toast.success(result.message); setAccounts((current) => current.filter((item) => item.id !== account.id)); setPage((current) => Math.min(current, Math.max(0, Math.ceil((accounts.length - 1) / PAGE_SIZE) - 1))); }
+    } catch { toast.error("No se pudo eliminar la cuenta."); }
+    finally { setBusy(null); }
   }
 
-  async function handleDelete(id: string) {
-    const result = await deleteBillingstatement(id);
-    if (!result.success) {
-      toast.error(result.message);
-    } else {
-      toast.success(result.message);
-      location.reload();
-    }
-  }
+  if (loading) return <p role="status" className="text-base-content/70">Cargando cuentas…</p>;
+  if (error) return <p role="alert" className="alert alert-error">{error}</p>;
 
-  return (
-    <div className="flex h-full min-h-full w-full min-w-full items-center justify-center">
-      {loading ? (
-        <Loading />
-      ) : (
-        <DataTable columns={columns} data={billingStatements}></DataTable>
-      )}
-    </div>
-  );
+  const pageCount = Math.max(1, Math.ceil(accounts.length / PAGE_SIZE));
+  const visible = accounts.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  return <div className="w-full space-y-4">
+    <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100"><table className="table w-full"><thead><tr><th scope="col">Cliente</th><th scope="col">Acreedor</th><th scope="col">Estado</th><th scope="col">Fecha</th><th scope="col">Valor total</th><th scope="col">Acciones</th></tr></thead><tbody>
+      {visible.length ? visible.map((account) => { const date = formatBillingDate(account.payDate); return <tr key={account.id}><td>{account.client.name}</td><td>{account.creditor.name}</td><td><span className={`badge ${account.status === "paid" ? "badge-success" : "badge-warning"}`}>{account.status === "paid" ? "Pagada" : "Pendiente"}</span></td><td>{date.ok ? date.value : "Fecha no válida"}</td><td>${(account.amount ?? 0).toLocaleString("es-CO")}</td><td><div className="flex flex-wrap items-center gap-2">{account.status === "pending" && <button type="button" className="btn btn-primary btn-sm" disabled={busy !== null} onClick={() => void markPaid(account)}>Marcar pagada</button>}<Link href={`/dashboard/cuentas-cobro/editar/${account.id}`} className="btn btn-ghost btn-sm" aria-label={`Editar cuenta de ${account.client.name}`}><Edit size={18} aria-hidden="true" /></Link><button type="button" className="btn btn-ghost btn-sm" disabled={busy !== null} aria-label={`Eliminar cuenta de ${account.client.name}`} onClick={() => void remove(account)}><Trash size={18} aria-hidden="true" /></button><DownloadPDFButton data={account} /></div></td></tr>; }) : <tr><td colSpan={6} className="py-8 text-center">No hay cuentas de cobro registradas.</td></tr>}
+    </tbody></table></div>
+    <div className="flex items-center justify-end gap-3"><button type="button" className="btn btn-outline btn-sm" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Anterior</button><span className="text-sm text-base-content/70">{page + 1} de {pageCount}</span><button type="button" className="btn btn-outline btn-sm" disabled={page + 1 >= pageCount} onClick={() => setPage((value) => value + 1)}>Siguiente</button></div>
+  </div>;
 }
-
-export default ListBillingStatements;

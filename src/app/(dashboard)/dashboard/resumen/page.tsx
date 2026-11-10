@@ -1,127 +1,43 @@
-import { Button, SidebarTrigger } from "@/components/ui";
-import Link from "next/link";
-import Statistics from "./Statistics";
 import { Suspense } from "react";
-import Loading from "@/components/Loading";
+import Link from "next/link";
+import { ArrowRight, FilePlus2, ListChecks } from "lucide-react";
+import Statistics from "./Statistics";
 
-function Dashboard() {
+export default function Dashboard() {
   return (
-    <>
-      <SidebarTrigger className="mr-4 mt-4 hidden scale-150 self-end rounded-lg hover:bg-[#10473A] md:flex" />
-      <div className="flex flex-col items-center gap-2 overflow-y-auto px-4 py-4 md:justify-center md:px-0">
-        <section className="grid h-full w-full grid-cols-1 items-center justify-center gap-3 md:grid md:h-[16rem] md:w-[70rem] md:max-w-[70rem] md:grid-flow-col md:grid-cols-4 md:items-center md:justify-between md:gap-3">
-          <Suspense
-            fallback={
-              <div className="flex h-full w-full items-center justify-center">
-                <Loading />
-              </div>
-            }
-          >
-            <Statistics />
-          </Suspense>
-        </section>
-        <section className="grid h-full max-h-[30rem] w-full items-center justify-center gap-3 md:grid-cols-4">
-          <div className="h-full grow overflow-auto rounded-lg bg-muted md:col-span-3">
-            <div className="px-8 py-4">
-              <h2 className="mb-4 text-xl font-bold">Como empezar</h2>
-              <ol className="list-inside list-decimal space-y-2 font-normal">
-                <li>
-                  <span className="font-semibold">
-                    Crear Cliente y Acreedor
-                  </span>{" "}
-                  🧑‍💼
-                  <p>Para crear un cliente y acreedor, sigue estos pasos:</p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">clientes</span>.
-                    </li>
-                    <li>
-                      Haz clic en{" "}
-                      <span className="text-accent">"Nuevo Cliente"</span>.
-                    </li>
-                    <li>Rellena los datos del cliente y guarda.</li>
-                    <li>Repite el proceso para crear un acreedor.</li>
-                  </ul>
-                </li>
-                <li>
-                  <span className="font-semibold">Crear Cuenta de Cobro</span>{" "}
-                  📝
-                  <p>Para crear una cuenta de cobro, sigue estos pasos:</p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">cuentas de cobro</span>.
-                    </li>
-                    <li>
-                      Haz clic en{" "}
-                      <span className="text-accent">
-                        "Nueva Cuenta de Cobro"
-                      </span>
-                      .
-                    </li>
-                    <li>Selecciona el cliente y acreedor.</li>
-                    <li>Rellena los detalles de la cuenta y guarda.</li>
-                  </ul>
-                </li>
-                <li>
-                  <span className="font-semibold">
-                    Editar la cuenta de cobro
-                  </span>{" "}
-                  ✏️
-                  <p>
-                    Para editar una cuenta de cobro existente, sigue estos
-                    pasos:
-                  </p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">cuentas de cobro</span>.
-                    </li>
-                    <li>Selecciona la cuenta que deseas editar.</li>
-                    <li>
-                      Haz clic en <span className="text-accent">"Editar"</span>.
-                    </li>
-                    <li>Realiza los cambios necesarios y guarda.</li>
-                  </ul>
-                </li>
-                <li>
-                  <span className="font-semibold">
-                    Descargar la cuenta de cobro (Opcional)
-                  </span>{" "}
-                  📥
-                  <p>Para descargar una cuenta de cobro, sigue estos pasos:</p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">cuentas de cobro</span>.
-                    </li>
-                    <li>
-                      Haz clic en el icono de{" "}
-                      <span className="text-accent">descarga</span> de la cuenta
-                      que deseas descargar.
-                    </li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-          </div>
-          <div className="flex h-full w-[17rem] flex-col items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-secondary to-accent p-2">
-            {/* <h2></h2> */}
-            <p className="text-bold text-center text-2xl">
-              Crea una nueva cuenta de cobro en unos pocos clicks
-            </p>
-            <Link
-              href={"/dashboard/cuentas-cobro"}
-              className="hover:drop-shadow-xl"
-            >
-              <Button size={"xl"}>Crear nueva</Button>
-            </Link>
-          </div>
-        </section>
-      </div>
-    </>
+    <div className="w-full space-y-10 pb-8">
+      <header className="flex flex-col gap-5 border-b border-[#263c35] pb-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="max-w-2xl space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Tu resumen</h1>
+          <p className="text-sm leading-6 text-[#b9c9c2] sm:text-base">Organiza tus cobros y consulta cómo avanzan en un solo lugar.</p>
+        </div>
+        <Link href="/dashboard/cuentas-cobro/crear" className="inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-xl bg-[#4fc69c] px-5 text-sm font-semibold text-[#092019] transition-colors hover:bg-[#72d9b2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a4f2d3]">
+          <FilePlus2 size={19} aria-hidden="true" /> Crear cuenta de cobro
+        </Link>
+      </header>
+
+      <Suspense fallback={<div role="status" className="rounded-xl border border-[#263c35] bg-[#101f1a] p-6 text-sm text-[#b9c9c2]">Cargando tus estadísticas…</div>}>
+        <Statistics />
+      </Suspense>
+
+      <section aria-labelledby="next-steps-title" className="border-t border-[#263c35] pt-8">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+          <h2 id="next-steps-title" className="text-xl font-semibold text-white">Prepara tu próximo cobro</h2>
+          <p className="text-sm text-[#b9c9c2]">Un flujo sencillo para pasar del trabajo realizado a una cuenta.</p>
+        </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <Link href="/dashboard/items" className="group flex items-start gap-4 rounded-xl border border-[#263c35] bg-[#101f1a] p-5 transition-colors hover:border-[#4b806e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6]">
+            <ListChecks size={21} className="mt-1 shrink-0 text-[#75d4b6]" aria-hidden="true" />
+            <span className="min-w-0 flex-1"><span className="block font-medium text-white">Registra tus ítems pendientes</span><span className="mt-1 block text-sm leading-6 text-[#b9c9c2]">Agrega cada concepto y relaciónalo con un cliente.</span></span>
+            <ArrowRight size={18} className="mt-1 shrink-0 text-[#b9c9c2] transition-transform group-hover:translate-x-1" aria-hidden="true" />
+          </Link>
+          <Link href="/dashboard/cuentas-cobro" className="group flex items-start gap-4 rounded-xl border border-[#263c35] bg-[#101f1a] p-5 transition-colors hover:border-[#4b806e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6]">
+            <FilePlus2 size={21} className="mt-1 shrink-0 text-[#75d4b6]" aria-hidden="true" />
+            <span className="min-w-0 flex-1"><span className="block font-medium text-white">Consulta tus cuentas</span><span className="mt-1 block text-sm leading-6 text-[#b9c9c2]">Revisa tus cobros, descarga el PDF o marca una cuenta como pagada.</span></span>
+            <ArrowRight size={18} className="mt-1 shrink-0 text-[#b9c9c2] transition-transform group-hover:translate-x-1" aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+    </div>
   );
 }
-
-export default Dashboard;
