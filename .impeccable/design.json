@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T21:11:30.334918+00:00",
+  "generatedAt": "2026-11-10T23:15:09.624892+00:00",
   "title": "Design System: SigueTuCobro",
   "extensions": {
     "colorMeta": {
@@ -22,7 +22,7 @@
       "superficie-carbon": {
         "role": "neutral",
         "displayName": "Carbón de superficie",
-        "canonical": "#1b201f",
+        "canonical": "#0b1512",
         "tonalRamp": [
           "oklch(15% 0.015 160)",
           "oklch(25% 0.015 160)",
@@ -52,7 +52,7 @@
       "borde-campo": {
         "role": "neutral",
         "displayName": "Borde definido",
-        "canonical": "#52645d",
+        "canonical": "#40544b",
         "tonalRamp": [
           "oklch(15% 0.015 160)",
           "oklch(25% 0.015 160)",
@@ -67,7 +67,7 @@
       "seleccion-fondo": {
         "role": "neutral",
         "displayName": "Superficie seleccionada",
-        "canonical": "#25332d",
+        "canonical": "rgb(11 21 18 / 0.5)",
         "tonalRamp": [
           "oklch(15% 0.015 160)",
           "oklch(25% 0.015 160)",
@@ -228,6 +228,36 @@
           "oklch(85% 0.015 85)",
           "oklch(95% 0.015 85)"
         ]
+      },
+      "superficie-secundaria": {
+        "role": "neutral",
+        "displayName": "Superficie secundaria",
+        "canonical": "#1b201f",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
+      },
+      "borde-foco": {
+        "role": "neutral",
+        "displayName": "Borde de foco",
+        "canonical": "#87bba5",
+        "tonalRamp": [
+          "oklch(15% 0.015 160)",
+          "oklch(25% 0.015 160)",
+          "oklch(35% 0.015 160)",
+          "oklch(45% 0.015 160)",
+          "oklch(55% 0.015 160)",
+          "oklch(70% 0.015 160)",
+          "oklch(85% 0.015 160)",
+          "oklch(95% 0.015 160)"
+        ]
       }
     },
     "typographyMeta": {
@@ -300,7 +330,7 @@
       "kind": "button",
       "description": "Acción secundaria delineada del panel.",
       "html": "<button class=\"ds-secondary\">Seleccionar página</button>",
-      "css": ".ds-secondary{min-height:2.75rem;border:1px solid #52605a;border-radius:.75rem;background:transparent;color:#edf5ef;padding:0 1rem;font-weight:600;cursor:pointer}.ds-secondary:hover{background:#25332d}.ds-secondary:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}.ds-secondary:disabled{opacity:.5}"
+      "css": ".ds-secondary{min-height:2.75rem;border:1px solid #40544b;border-radius:.75rem;background:transparent;color:#edf5ef;padding:0 1rem;font-weight:600;cursor:pointer}.ds-secondary:hover{background:#25332d}.ds-secondary:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}.ds-secondary:disabled{opacity:.5}"
     },
     {
       "name": "Campo monetario",
@@ -308,7 +338,7 @@
       "refersTo": "campo",
       "description": "Entrada de moneda con borde visible y teclado numérico.",
       "html": "<label class=\"ds-label\" for=\"ds-amount\">Valor</label><div class=\"ds-money\"><span aria-hidden=\"true\">$</span><input id=\"ds-amount\" inputmode=\"numeric\" value=\"1.234.567\"></div>",
-      "css": ".ds-label{display:block;margin-bottom:.5rem;color:#d8e6df;font-size:.875rem;font-weight:500}.ds-money{display:flex;align-items:center;gap:.5rem;border:1px solid #52645d;border-radius:1rem;background:#101815;padding:0 1rem;color:#b4c9be}.ds-money:focus-within{border-color:#74d5a7;box-shadow:0 0 0 2px #74d5a740}.ds-money input{width:100%;min-height:3rem;border:0;outline:0;background:transparent;color:#edf5ef;font-size:1rem}"
+      "css": ".ds-label{display:block;margin-bottom:.5rem;color:#d8e6df;font-size:.875rem;font-weight:500}.ds-money{display:flex;align-items:center;gap:.5rem;border:1px solid #40544b;border-radius:1rem;background:#101815;padding:0 1rem;color:#b4c9be}.ds-money:focus-within{border-color:#74d5a7;box-shadow:0 0 0 2px #74d5a740}.ds-money input{width:100%;min-height:3rem;border:0;outline:0;background:transparent;color:#edf5ef;font-size:1rem}"
     },
     {
       "name": "Etiqueta pendiente",
@@ -324,7 +354,7 @@
       "refersTo": "cuenta-seleccionada",
       "description": "Fila seleccionada con borde y punto luminosos.",
       "html": "<article class=\"ds-card\"><strong>Cuenta de cobro</strong><span class=\"ds-indicator\"><span class=\"ds-dot\"></span> Seleccionada</span></article>",
-      "css": ".ds-card{display:flex;justify-content:space-between;align-items:center;gap:1rem;border:1px solid #74d5a7;border-radius:1rem;background:#25332d;padding:1rem;color:#edf5ef}.ds-indicator{display:flex;align-items:center;gap:.5rem;font-size:.875rem}.ds-dot{width:.625rem;height:.625rem;border-radius:9999px;background:#b7ffda;box-shadow:0 0 8px #74d5a7}"
+      "css": ".ds-card{display:flex;justify-content:space-between;align-items:center;gap:1rem;border:1px solid #74d5a7;border-radius:1rem;background:rgb(11 21 18 / 0.5);padding:1rem;color:#edf5ef}.ds-indicator{display:flex;align-items:center;gap:.5rem;font-size:.875rem}.ds-dot{width:.625rem;height:.625rem;border-radius:9999px;background:#b7ffda;box-shadow:0 0 8px #74d5a7}"
     },
     {
       "name": "Navegación activa",
@@ -339,7 +369,7 @@
       "refersTo": "campo",
       "description": "Disparador del calendario personalizado.",
       "html": "<span class=\"ds-label\">Fecha de pago</span><button class=\"ds-date\" type=\"button\" aria-expanded=\"false\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M16 3v4M8 3v4M3 10h18\"/></svg><span>Seleccionar fecha</span></button>",
-      "css": ".ds-label{display:block;margin-bottom:.5rem;color:#d8e6df;font-size:.875rem;font-weight:500}.ds-date{display:flex;align-items:center;gap:.75rem;min-height:3rem;width:100%;border:1px solid #52645d;border-radius:1rem;background:#101815;color:#edf5ef;padding:0 1rem;text-align:left;cursor:pointer}.ds-date svg{color:#74d5a7}.ds-date:hover{border-color:#87bba5}.ds-date:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}"
+      "css": ".ds-label{display:block;margin-bottom:.5rem;color:#d8e6df;font-size:.875rem;font-weight:500}.ds-date{display:flex;align-items:center;gap:.75rem;min-height:3rem;width:100%;border:1px solid #40544b;border-radius:1rem;background:#101815;color:#edf5ef;padding:0 1rem;text-align:left;cursor:pointer}.ds-date svg{color:#74d5a7}.ds-date:hover{border-color:#87bba5}.ds-date:focus-visible{outline:2px solid #74d5a7;outline-offset:2px;}"
     }
   ],
   "narrative": {

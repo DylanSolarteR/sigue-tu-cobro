@@ -3,10 +3,12 @@ name: SigueTuCobro
 description: Sistema visual para organizar y seguir cuentas de cobro con claridad.
 colors:
   fondo-carbon: "#0b1512"
-  superficie-carbon: "#1b201f"
+  superficie-carbon: "#0b1512"
   superficie-campo: "#101815"
-  borde-campo: "#52645d"
-  seleccion-fondo: "#25332d"
+  superficie-secundaria: "#1b201f"
+  borde-foco: "#87bba5"
+  borde-campo: "#40544b"
+  seleccion-fondo: "rgb(11 21 18 / 0.5)"
   primario: "#319678"
   acento-menta: "#74d5a7"
   tinta-oscura: "#10231a"
@@ -91,7 +93,7 @@ La profundidad deseada usa capas y sombras suaves frecuentes. La implementación
 
 ## Colors
 
-El fondo carbón y las superficies neutras hacen sitio al verde menta sin multiplicar tonos verdes en cada tarjeta. El tema de daisyUI define un primario distinto del menta aplicado directamente a algunos controles; se conservan ambos valores porque el código usa los dos.
+El fondo carbón y las superficies neutras hacen sitio al verde menta sin multiplicar tonos verdes en cada tarjeta. El tema de daisyUI define un primario distinto del menta aplicado directamente a algunos controles; se conservan ambos valores porque el código usa los dos. Los componentes comunes utilizan tokens semánticos `stc` de color, tipografía y espaciado definidos en el CSS global.
 
 ### Primary
 - **Verde de acción:** primario del tema de daisyUI.
@@ -126,7 +128,7 @@ La escala observada va de esquinas suaves a redondeadas: `0.5rem` en acciones de
 ## Components
 
 ### Botones
-Priorizar una acción principal reconocible y opciones secundarias discretas. Usar alturas mínimas de `2.75rem` o `3rem` según el componente, esquinas redondeadas y foco visible. La portada usa un botón menta claro; el panel también emplea el primario del tema.
+Priorizar una acción principal reconocible y opciones secundarias discretas. Usar alturas mínimas de `2.75rem` o `3rem` según el componente, esquinas redondeadas y foco visible mediante cambios de borde o superficie, sin anillos decorativos. La portada usa un botón menta claro; el panel también emplea el primario del tema.
 
 ### Campos y calendario
 Las entradas tienen fondo oscuro diferenciado, borde visible y etiquetas. El campo monetario muestra `$`, usa teclado numérico, separa miles con puntos y comunica caracteres inválidos. El calendario propio presenta mes, navegación y días seleccionables; el foco y los nombres accesibles forman parte del control.

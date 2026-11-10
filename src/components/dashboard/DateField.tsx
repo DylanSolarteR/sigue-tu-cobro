@@ -45,7 +45,7 @@ export default function DateField({
         if (event.key === "Escape") setOpen(false);
       }}
     >
-      <span className="block text-sm font-medium text-[#d8e6df]">{label}</span>
+      <span className="block text-stc-label font-medium text-[var(--color-stc-label)]">{label}</span>
       <button
         id={id}
         type="button"
@@ -56,12 +56,12 @@ export default function DateField({
           if (!open) setMonth(firstMonth(value));
           setOpen(!open);
         }}
-        className="flex min-h-12 w-full items-center gap-3 rounded-2xl border border-[#52645d] bg-[#101815] px-4 text-left text-sm text-[#edf5ef] hover:border-[#87bba5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#74d5a7] disabled:opacity-50"
+        className="flex min-h-12 w-full items-center gap-3 rounded-2xl border border-stc-border bg-stc-field px-4 text-left text-stc-label text-stc-text hover:border-stc-focus focus-visible:border-stc-focus focus-visible:bg-[var(--color-stc-date-focus)] disabled:opacity-50"
       >
         <CalendarDays
           size={18}
           aria-hidden="true"
-          className="shrink-0 text-[#74d5a7]"
+          className="shrink-0 text-stc-accent"
         />
         <span className="flex-1">
           {formatted?.ok ? formatted.value : "Seleccionar fecha"}
@@ -69,7 +69,7 @@ export default function DateField({
       </button>
       {open && (
         <div
-          className="absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-3rem))] rounded-2xl border border-[#40544b] bg-[#0b1512] p-4 shadow-xl"
+          className="absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-3rem))] rounded-2xl border border-stc-border bg-stc-bg p-4 shadow-xl"
           role="group"
           aria-label={`Calendario: ${label}`}
         >
@@ -80,24 +80,24 @@ export default function DateField({
               onClick={() =>
                 setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))
               }
-              className="rounded-xl p-2 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#74d5a7]"
+              className="rounded-xl p-2 hover:bg-white/10 focus-visible:bg-[var(--color-stc-day-hover)]"
             >
               <ChevronLeft size={18} />
             </button>
-            <strong className="text-[#edf5ef] capitalize">{title}</strong>
+            <strong className="text-stc-text capitalize">{title}</strong>
             <button
               type="button"
               aria-label="Mes siguiente"
               onClick={() =>
                 setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))
               }
-              className="rounded-xl p-2 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#74d5a7]"
+              className="rounded-xl p-2 hover:bg-white/10 focus-visible:bg-[var(--color-stc-day-hover)]"
             >
               <ChevronRight size={18} />
             </button>
           </div>
           <div
-            className="mt-3 grid grid-cols-7 text-center text-xs text-[#a9bdb2]"
+            className="mt-3 grid grid-cols-7 text-center text-xs text-[var(--color-stc-date-muted)]"
             aria-hidden="true"
           >
             {["L", "M", "M", "J", "V", "S", "D"].map((day, index) => (
@@ -129,7 +129,7 @@ export default function DateField({
                     onChange(key);
                     setOpen(false);
                   }}
-                  className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl text-sm focus-visible:outline-2 focus-visible:outline-[#74d5a7] ${value === key ? "bg-[#74d5a7] font-semibold text-[#10231b]" : "text-[#e2eee8] hover:bg-[#355146]"}`}
+                  className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl text-stc-label focus-visible:bg-[var(--color-stc-day-hover)] ${value === key ? "bg-stc-accent font-semibold text-[var(--color-stc-date-ink)]" : "text-[var(--color-stc-date-text)] hover:bg-[var(--color-stc-day-hover)]"}`}
                 >
                   {day}
                 </button>
@@ -143,7 +143,7 @@ export default function DateField({
                 onChange("");
                 setOpen(false);
               }}
-              className="mt-3 flex items-center gap-1 text-sm text-[#b5c9be] hover:text-white"
+              className="mt-3 flex items-center gap-1 text-stc-label text-[var(--color-stc-date-clear)] hover:text-white"
             >
               <X size={15} /> Limpiar fecha
             </button>

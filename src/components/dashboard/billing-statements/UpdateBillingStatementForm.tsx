@@ -142,7 +142,7 @@ export default function UpdateBillingStatementForm({
       <div
         role="status"
         aria-label="Cargando cuenta"
-        className="w-full max-w-4xl space-y-4"
+        className="w-full max-w-4xl space-y-stc-group"
       >
         <div className="skeleton h-8 w-2/3" />
         <div className="skeleton h-32 w-full" />
@@ -157,11 +157,11 @@ export default function UpdateBillingStatementForm({
         Información de la cuenta de cobro
       </h2>
       {message && <p role="status">{message}</p>}
-      <div className="flex w-full flex-col gap-4 px-6">
+      <div className="flex w-full flex-col gap-stc-group px-6">
         <section className="flex w-full flex-col gap-2">
           <h3 className="w-full text-lg font-semibold">Ítems de la cuenta</h3>
           {account.status === "paid" && (
-            <p className="text-sm">
+            <p className="text-stc-label">
               Para editar los ítems, cambia la cuenta a pendiente y guarda el
               cambio.
             </p>
@@ -181,7 +181,7 @@ export default function UpdateBillingStatementForm({
         </section>
         <form
           onSubmit={(event) => void save(event)}
-          className="flex w-full flex-col gap-4 rounded-2xl border border-[#40544b] sm:p-6"
+          className="flex w-full flex-col gap-stc-group rounded-2xl border border-stc-border sm:p-6"
         >
           <div className="flex w-full flex-col gap-2">
             <label htmlFor="statement-status" className="font-medium">
@@ -193,7 +193,7 @@ export default function UpdateBillingStatementForm({
               onChange={(event) =>
                 setStatus(event.target.value === "paid" ? "paid" : "pending")
               }
-              className="select min-h-12 w-full rounded-2xl border border-[#52645d] bg-[#101815] outline-0 hover:border-[#87bba5] focus-visible:border-[#87bba5]"
+              className="select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
             >
               <option value="pending">Pendiente</option>
               <option value="paid">Pagada</option>
@@ -209,7 +209,7 @@ export default function UpdateBillingStatementForm({
               checked={showItemAmount}
               onChange={(event) => setShowItemAmount(event.target.checked)}
             />
-            <label htmlFor="show-item-amount" className="text-sm">
+            <label htmlFor="show-item-amount" className="text-stc-label">
               Mostrar valor de los ítems en el PDF
             </label>
           </div>
@@ -218,7 +218,7 @@ export default function UpdateBillingStatementForm({
               Información adicional
             </label>
             <textarea
-              className="textarea foucs:border-[] min-h-24 w-full rounded-2xl border border-[#52645d] bg-[#101815] outline-0 hover:border-[#87bba5] focus-visible:border-[#87bba5]"
+              className="textarea min-h-24 w-full rounded-2xl border border-stc-border bg-stc-field outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
               id="extra-info"
               value={extraInfo}
               onChange={(event) => setExtraInfo(event.target.value)}
@@ -272,14 +272,14 @@ function ItemEditor({
   return (
     <form
       onSubmit={(event) => void save(event)}
-      className="grid w-full gap-3 rounded-2xl border border-[#40544b] p-4 sm:grid-cols-2"
+      className="grid w-full gap-3 rounded-2xl border border-stc-border p-4 sm:grid-cols-2"
     >
       <div className="space-y-2">
         <label className="font-medium" htmlFor={`desc-${item.id}`}>
           Descripción del ítem {item.desc}
         </label>
         <input
-          className="input min-h-12 w-full rounded-2xl border border-[#52645d] bg-[#101815] text-base outline-0"
+          className="input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-base outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
           id={`desc-${item.id}`}
           value={description}
           disabled={disabled || saving}

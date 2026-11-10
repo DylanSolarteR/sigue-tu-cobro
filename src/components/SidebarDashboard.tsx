@@ -23,7 +23,7 @@ function NavigationLinks({ pathname, onNavigate }: { pathname: string; onNavigat
         return (
           <li key={href}>
             <Link href={href} onClick={onNavigate} aria-current={active ? "page" : undefined}
-              className={`flex min-h-11 items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6] ${active ? "bg-[#143d34] text-white" : "text-[#c1ccc8] hover:bg-[#172a25] hover:text-white"}`}>
+              className={`flex min-h-11 items-center gap-3 rounded-xl px-4 py-3 text-stc-label font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6] ${active ? "bg-[#143d34] text-white" : "text-[#c1ccc8] hover:bg-[#172a25] hover:text-white"}`}>
               <Icon size={19} aria-hidden="true" /><span>{title}</span>
             </Link>
           </li>

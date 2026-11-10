@@ -19,14 +19,14 @@ export default function MoneyInput({
   const display = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 rounded-2xl border border-[#52645d] bg-[#101815] px-4 text-[#b4c9be] hover:border-[#87bba5] focus-visible:border-[#87bba5]">
+      <div className="flex items-center gap-2 rounded-2xl border border-stc-border bg-stc-field px-4 text-[var(--color-stc-money-prefix)] hover:border-stc-focus focus-within:border-stc-focus">
         <span aria-hidden="true">$</span>
         <input
           id={id}
           type="text"
           inputMode="numeric"
           autoComplete="off"
-          className="min-h-12 w-full bg-transparent text-base text-[#edf5ef] outline-none"
+          className="min-h-12 w-full bg-transparent text-base text-stc-text outline-none"
           value={display}
           disabled={disabled}
           required={required}
@@ -44,7 +44,7 @@ export default function MoneyInput({
         />
       </div>
       {error && (
-        <p id={`${id}-error`} role="alert" className="text-sm text-[#ffb4a6]">
+        <p id={`${id}-error`} role="alert" className="text-stc-label text-stc-error">
           Usa únicamente números.
         </p>
       )}

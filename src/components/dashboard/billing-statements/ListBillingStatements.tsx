@@ -206,7 +206,7 @@ export default function ListBillingStatements() {
 
   if (loading)
     return (
-      <div role="status" aria-label="Cargando cuentas" className="space-y-4">
+      <div role="status" aria-label="Cargando cuentas" className="space-y-stc-group">
         <div className="skeleton h-12 w-full" />
         <div className="skeleton h-36 w-full" />
         <div className="skeleton h-36 w-full" />
@@ -247,18 +247,18 @@ export default function ListBillingStatements() {
     <div className="w-full space-y-5">
       <fieldset
         disabled={locked}
-        className="grid gap-4 rounded-2xl border border-[#39403e] bg-[#0b1512] p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4"
+        className="grid gap-stc-group rounded-2xl border border-[var(--color-stc-divider)] bg-stc-bg p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4"
       >
-        <legend className="px-2 text-sm font-semibold text-[#e4ebe7]">
+        <legend className="px-2 text-stc-label font-semibold text-[var(--color-stc-filter-title)]">
           Filtros
         </legend>
         <div className="flex flex-col gap-2">
-          <label htmlFor="billing-search" className="text-sm font-medium">
+          <label htmlFor="billing-search" className="text-stc-label font-medium">
             Buscar cliente
           </label>
           <input
             id="billing-search"
-            className="input min-h-12 w-full rounded-2xl border border-[#40544b] bg-[#101815] text-[#edf5ef] outline-0 hover:border-[#87bba5] focus-visible:border-[#87bba5]"
+            className="input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-stc-text outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -267,12 +267,12 @@ export default function ListBillingStatements() {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="billing-status" className="text-sm font-medium">
+          <label htmlFor="billing-status" className="text-stc-label font-medium">
             Estado
           </label>
           <select
             id="billing-status"
-            className="select min-h-12 w-full rounded-2xl border border-[#40544b] bg-[#101815] text-[#edf5ef] outline-0 hover:border-[#87bba5] focus-visible:border-[#87bba5]"
+            className="select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-stc-text outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
             value={status}
             onChange={(event) => {
               setStatus(event.target.value);
@@ -311,7 +311,7 @@ export default function ListBillingStatements() {
         </p>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-base-content/70 mr-auto text-sm">
+        <span className="text-base-content/70 mr-auto text-stc-label">
           {selected.length} seleccionadas
         </span>
         <button
@@ -356,7 +356,7 @@ export default function ListBillingStatements() {
           Eliminar seleccionadas
         </button>
       </div>
-      <p className="text-base-content/70 text-sm">
+      <p className="text-base-content/70 text-stc-label">
         Pulsa para abrir; mantén pulsado para seleccionar.
       </p>
       {summary && (
@@ -374,7 +374,7 @@ export default function ListBillingStatements() {
             return (
               <li
                 key={id}
-                className={`space-y-4 rounded-2xl border p-4 sm:p-5 ${isSelected ? "border-[#74d5a7] bg-[#0b1512/50]" : "border-[#39403e] bg-[#0b1512]"}`}
+                className={`space-y-stc-group rounded-2xl border p-4 sm:p-5 ${isSelected ? "border-[var(--color-stc-accent)] bg-stc-bg/50" : "border-[var(--color-stc-divider)] bg-stc-bg"}`}
                 onPointerDown={(event) => {
                   held.current = false;
                   if (
@@ -433,7 +433,7 @@ export default function ListBillingStatements() {
                       <button
                         type="button"
                         data-billing-trigger
-                        className="flex min-h-11 items-center gap-2 rounded-md text-left text-lg font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#74d5a7]"
+                        className="flex min-h-11 items-center gap-2 rounded-md text-left text-lg font-semibold border border-transparent focus-visible:border-stc-focus focus-visible:bg-stc-field focus-visible:outline-none"
                         aria-label={`${isOpen ? "Cerrar cuenta de" : "Abrir cuenta de"} ${account.client.name}`}
                         aria-expanded={isOpen}
                         disabled={busy || !id}
@@ -455,13 +455,13 @@ export default function ListBillingStatements() {
                         />
                       </button>
                     </h2>
-                    <p className="text-base-content/70 wrap-break-words mt-1 text-sm">
+                    <p className="text-base-content/70 wrap-break-words mt-1 text-stc-label">
                       Acreedor: {account.creditor.name}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${account.status === "paid" ? "bg-[#294639] text-[#c5f2d9]" : "bg-[#4b3e28] text-[#f8dfaa]"}`}
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${account.status === "paid" ? "bg-[var(--color-stc-paid-surface)] text-[var(--color-stc-paid-text)]" : "bg-[var(--color-stc-pending-surface)] text-[var(--color-stc-warning)]"}`}
                     >
                       {account.status === "paid" ? "Pagada" : "Pendiente"}
                     </span>
@@ -477,13 +477,13 @@ export default function ListBillingStatements() {
                     >
                       <span
                         aria-hidden="true"
-                        className={`h-2.5 w-2.5 rounded-full ${isSelected ? "bg-[#b7ffda] shadow-[0_0_8px_#74d5a7]" : "border border-current"}`}
+                        className={`h-2.5 w-2.5 rounded-full ${isSelected ? "bg-[var(--color-stc-selected-dot)] shadow-[0_0_8px_var(--color-stc-accent)]" : "border border-current"}`}
                       />
                       {isSelected ? "" : ""}
                     </button>
                   </div>
                 </div>
-                <dl className="flex flex-wrap gap-x-10 gap-y-3 text-sm">
+                <dl className="flex flex-wrap gap-x-10 gap-y-3 text-stc-label">
                   <div>
                     <dt className="text-base-content/70">
                       Fecha prevista de pago
@@ -587,7 +587,7 @@ export default function ListBillingStatements() {
         >
           Anterior
         </button>
-        <span className="text-base-content/70 text-sm">
+        <span className="text-base-content/70 text-stc-label">
           {safePage + 1} de {pageCount}
         </span>
         <button

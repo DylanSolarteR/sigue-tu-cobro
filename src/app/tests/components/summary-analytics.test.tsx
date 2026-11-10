@@ -42,3 +42,59 @@ it("muestra solo los cinco clientes con mayor valor pagado", () => {
   expect(ranking.textContent).toContain("Cliente 6");
   expect(ranking.textContent).not.toContain("Cliente 1");
 });
+
+it("permite consultar cada nodo con puntero, toque y teclado sin bloquear la gráfica", () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-02-15T12:00:00Z"));
+  render(<SummaryAnalytics statements={[{ status: "paid", amount: 500, payDate: "2026-02-01", client_id: "a", client: { name: "Alfa" } }]} />);
+
+  expect(screen.queryByText("Ver valores de la gráfica")).toBeNull();
+  const datos = screen.getByLabelText("Datos de la gráfica");
+  expect(datos.className).toContain("sr-only");
+  expect(datos.textContent).toContain("$500");
+  const nodo = screen.getByRole("button", { name: /feb.*2026.*\$500/i });
+  fireEvent.mouseEnter(nodo);
+  expect(screen.getByTestId("chart-value").textContent).toContain("$500");
+  fireEvent.mouseLeave(nodo);
+  expect(screen.queryByTestId("chart-value")).toBeNull();
+  fireEvent.click(nodo);
+  expect(screen.getByTestId("chart-value").textContent).toContain("$500");
+  fireEvent.focus(nodo);
+  expect(screen.getByTestId("chart-value").textContent).toContain("$500");
+  fireEvent.keyDown(nodo, { key: "Escape" });
+  expect(screen.queryByTestId("chart-value")).toBeNull();
+  fireEvent.blur(nodo);
+  fireEvent.focus(nodo);
+  expect(screen.getByTestId("chart-value").textContent).toContain("$500");
+  fireEvent.change(screen.getByLabelText("Cliente de la gráfica"), { target: { value: "a" } });
+  expect(screen.getByTestId("chart-value").textContent).toContain("$500");
+  fireEvent.change(screen.getByLabelText("Período"), { target: { value: "3" } });
+  expect(screen.getByLabelText("Datos de la gráfica").querySelectorAll("li")).toHaveLength(3);
+});
+
+it("ubica el valor junto a los nodos extremos dentro de la zona visible desplazada", () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-02-15T12:00:00Z"));
+  render(<SummaryAnalytics statements={[]} />);
+  const datos = screen.getByLabelText("Datos de la gráfica");
+  const meses = Array.from(datos.querySelectorAll("li"));
+  const primero = screen.getByRole("button", { name: new RegExp(meses[0]!.textContent!.split(":")[0]!, "i") });
+  const ultimo = screen.getByRole("button", { name: /feb.*2026/i });
+  const zona = screen.getByTestId("chart-scroll");
+  Object.defineProperty(zona, "clientWidth", { configurable: true, value: 200 });
+
+  fireEvent.mouseEnter(primero);
+  let valor = screen.getByTestId("chart-value");
+  expect(valor.parentElement).toBe(primero.parentElement);
+  expect(parseFloat(valor.style.left)).toBeGreaterThanOrEqual(0);
+  expect(parseFloat(valor.style.left) + parseFloat(valor.style.width)).toBeLessThanOrEqual(200);
+  fireEvent.mouseLeave(primero);
+
+  zona.scrollLeft = 280;
+  fireEvent.scroll(zona);
+  fireEvent.focus(ultimo);
+  valor = screen.getByTestId("chart-value");
+  expect(parseFloat(valor.style.left)).toBeGreaterThanOrEqual(280);
+  expect(parseFloat(valor.style.left) + parseFloat(valor.style.width)).toBeLessThanOrEqual(480);
+  expect(valor.className).toContain("pointer-events-none");
+});

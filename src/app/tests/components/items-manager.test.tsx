@@ -55,8 +55,8 @@ describe("gestión de ítems pendientes", () => {
     fireEvent.change(screen.getByLabelText("Valor"), { target: { value: "50000" } });
     fireEvent.click(screen.getByRole("button", { name: "Crear ítem" }));
     expect(await screen.findByText("No se pudo crear")).toBeTruthy();
-    expect((screen.getByLabelText("Descripción") as HTMLInputElement).value).toBe("Servicio");
-    expect((screen.getByRole("button", { name: "Crear ítem" }) as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.getByLabelText<HTMLInputElement>("Descripción").value).toBe("Servicio");
+    expect(screen.getByRole<HTMLButtonElement>("button", { name: "Crear ítem" }).disabled).toBe(false);
   });
   it("no elimina el ítem si se cancela la confirmación", async () => {
     actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
@@ -86,8 +86,31 @@ it("orienta al usuario antes de seleccionar un cliente", () => {
 });
 
 it("reserva espacio accesible mientras carga los pendientes", () => {
-  actions.list.mockReturnValue(new Promise(() => {}));
+  actions.list.mockReturnValue(new Promise(() => { /* La carga permanece pendiente durante la prueba. */ }));
   render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
   fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
   expect(screen.getByRole("status", { name: "Cargando items pendientes" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
+});
+
+it("formatea valores y rechaza letras al crear y editar", async () => {
+  actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 50000 }] });
+  render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
+  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  const createAmount = screen.getByLabelText<HTMLInputElement>("Valor");
+  fireEvent.change(createAmount, { target: { value: "1234567" } });
+  expect(createAmount.value).toBe("1.234.567");
+  fireEvent.change(createAmount, { target: { value: "1.234.567a" } });
+  expect(createAmount.value).toBe("1.234.567");
+  expect(screen.getByRole("alert").textContent).toContain("únicamente números");
+  const editAmount = await screen.findByLabelText<HTMLInputElement>("Valor de Servicio");
+  expect(editAmount.value).toBe("50.000");
+  fireEvent.change(editAmount, { target: { value: "75000" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar ítem" }));
+  await waitFor(() => expect(actions.update).toHaveBeenCalledWith("i1", "Servicio", 75000));
+});
+
+it("ofrece una ruta para crear un cliente cuando no hay clientes", () => {
+  render(<ItemsManager clients={[]} />);
+  expect(screen.getByRole("link", { name: /crear cliente/i }).getAttribute("href")).toBe("/dashboard/clientes/crear");
+  expect(screen.getByRole<HTMLButtonElement>("button", { name: "Crear ítem" }).disabled).toBe(true);
 });
