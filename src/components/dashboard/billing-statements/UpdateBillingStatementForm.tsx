@@ -4,11 +4,10 @@ import SelectField from "@/components/dashboard/SelectField";
 
 import { useEffect, useState } from "react";
 import {
-  getBillingStatement,
+  getBillingStatementDetails,
   saveBillingStatement,
 } from "@/actions/billing-statement.api";
 import {
-  getBillingStatementItems,
   updateBillingStatementItem,
 } from "@/actions/billing-statement.item.api";
 import { DatePicker } from "@/components/DatePicker";
@@ -48,35 +47,28 @@ export default function UpdateBillingStatementForm({
   useEffect(() => {
     let active = true;
     void (async () => {
-      const [result, itemResult] = await Promise.all([
-        getBillingStatement(id),
-        getBillingStatementItems(id),
-      ]);
+      const result = await getBillingStatementDetails(id);
       if (!active) return;
       if (!result.success || !result.data) {
         setMessage(result.message);
         setLoading(false);
         return;
       }
-      if (!itemResult.success) {
-        setMessage(itemResult.message);
-        setLoading(false);
-        return;
-      }
-      const parsedDate = parseBillingDateForCalendar(result.data.payDate);
+      const { account: loadedAccount, items: loadedItems } = result.data;
+      const parsedDate = parseBillingDateForCalendar(loadedAccount.payDate);
       if (!parsedDate.ok) {
         setMessage("La fecha guardada no es válida.");
         setLoading(false);
         return;
       }
-      setAccount(result.data);
-      setItems(itemResult.data ?? []);
-      onUpdated?.(result.data);
+      setAccount(loadedAccount);
+      setItems(loadedItems);
+      onUpdated?.(loadedAccount);
       onItemsRefreshed?.();
-      setStatus(result.data.status === "paid" ? "paid" : "pending");
+      setStatus(loadedAccount.status === "paid" ? "paid" : "pending");
       setDate(parsedDate.value);
-      setExtraInfo(result.data.extraInfo);
-      setShowItemAmount(Boolean(result.data.showItemAmount));
+      setExtraInfo(loadedAccount.extraInfo);
+      setShowItemAmount(Boolean(loadedAccount.showItemAmount));
       setLoading(false);
     })();
     return () => {
@@ -119,24 +111,15 @@ export default function UpdateBillingStatementForm({
     setMessage(result.message);
     if (result.success) {
       onItemsRefreshing?.();
-      const [accountResult, itemResult] = await Promise.all([
-        getBillingStatement(id),
-        getBillingStatementItems(id),
-      ]);
-      if (accountResult.success && accountResult.data) {
-        setAccount(accountResult.data);
-        onUpdated?.(accountResult.data);
-      }
-      if (itemResult.success && itemResult.data) setItems(itemResult.data);
-      if (
-        accountResult.success &&
-        accountResult.data &&
-        itemResult.success &&
-        itemResult.data
-      )
+      const details = await getBillingStatementDetails(id);
+      if (details.success && details.data) {
+        setAccount(details.data.account);
+        onUpdated?.(details.data.account);
+        setItems(details.data.items);
         onItemsRefreshed?.();
-      if (!accountResult.success || !itemResult.success)
+      } else {
         setMessage("Ítem actualizado, pero no se pudieron recargar los datos.");
+      }
     }
   }
   if (loading)

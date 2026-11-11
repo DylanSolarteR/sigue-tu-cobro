@@ -11,8 +11,9 @@ function Config() {
           Administra tu perfil y los datos de acceso a tu cuenta.
         </p>
       </header>
-      <div className="w-full min-w-0 overflow-x-auto">
+      <div className="flex w-full min-w-0 justify-center">
         <UserProfile
+          appearance={{ elements: { rootBox: { width: "100%", maxWidth: "none" }, cardBox: { width: "100%", maxWidth: "none" }, card: { width: "100%", maxWidth: "none" } } }}
           fallback={
             <div
               className="skeleton min-h-96 w-full rounded-2xl"

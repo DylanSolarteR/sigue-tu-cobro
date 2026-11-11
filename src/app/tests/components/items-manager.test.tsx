@@ -173,3 +173,14 @@ it("mantiene etiquetas breves y nombres accesibles para ítems largos, sin fondo
     expect(element.getAttribute("class") ?? "").not.toMatch(/(?:focus|focus-visible|focus-within)[^\s]*:bg-/);
   }
 });
+
+it("pagina muchos conceptos y permite acceder al último", async () => {
+  actions.list.mockResolvedValue({ success: true, data: Array.from({ length: 26 }, (_, index) => ({ id: `i${index}`, desc: `Concepto ${index + 1}`, amount: 100 })) });
+  render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
+  selectClient();
+  expect(await screen.findByRole("button", { name: /Concepto 1 / })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: /Concepto 26 / })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Siguiente página de ítems" }));
+  expect(screen.getByRole("button", { name: /Concepto 26 / })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: /Concepto 1 / })).toBeNull();
+});

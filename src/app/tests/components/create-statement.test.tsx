@@ -126,3 +126,20 @@ it("permite reintentar la carga fallida de ítems", async () => {
   expect(await screen.findByLabelText(/Servicio/)).toBeTruthy();
   expect(screen.queryByRole("alert")).toBeNull();
 });
+
+it("conserva selección y total de conceptos entre páginas", async () => {
+  mocks.pending.mockResolvedValue({ success: true, data: Array.from({ length: 26 }, (_, index) => ({ id: `i${index}`, desc: `Concepto ${index + 1}`, amount: 100 })) });
+  mocks.create.mockResolvedValue({ success: true, data: { id: "b1" } });
+  const actor = { id: "c1", name: "Cliente", docType: "CC" as const, docNumber: "1" };
+  render(<ActorForm clientsList={[actor]} creditorsList={[{ ...actor, id: "a1", name: "Acreedor" }]} />);
+  selectOption("Cliente", "c1"); selectOption("Acreedor", "a1");
+  fireEvent.click(await screen.findByLabelText(/^Concepto 1 /));
+  expect(screen.queryByLabelText(/^Concepto 26 /)).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Siguiente página de ítems" }));
+  fireEvent.click(screen.getByLabelText(/^Concepto 26 /));
+  expect(screen.getByText("$200")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Anterior página de ítems" }));
+  expect((screen.getByLabelText(/^Concepto 1 /) as HTMLInputElement).checked).toBe(true);
+  fireEvent.click(screen.getByRole("button", { name: "Crear cuenta de cobro" }));
+  await waitFor(() => expect(mocks.create).toHaveBeenCalledWith(expect.objectContaining({ item_ids: ["i0", "i25"] })));
+});

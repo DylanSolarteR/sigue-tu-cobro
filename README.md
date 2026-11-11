@@ -27,6 +27,8 @@
 ## Pruebas
 
 - `pnpm run test` ejecuta las pruebas unitarias y de componentes; `pnpm run test:watch` las ejecuta en modo observación.
-- Para E2E, instala Chromium con `pnpm exec playwright install chromium`. Configura una instancia separada de la aplicación con una base SingleStore de pruebas y credenciales de Clerk de pruebas, sin datos reales. Inicia esa instancia manualmente.
-- Define `E2E_BASE_URL` con la dirección de esa instancia y ejecuta `pnpm run test:e2e`. En PowerShell, por ejemplo: `$env:E2E_BASE_URL = "http://127.0.0.1:3001"`. No existe URL predeterminada ni se inicia un servidor automáticamente. Playwright usa la instancia indicada; comprueba que sea la de pruebas antes de ejecutarlo.
-- Guarda las credenciales en variables de entorno, nunca en archivos versionados. Actualmente la suite E2E solo verifica la portada y no cubre aún recorridos autenticados.
+- Instala el navegador con `pnpm exec playwright install chromium` y ejecuta `pnpm run test:e2e`. Playwright compila un harness optimizado en `.next-e2e`, inicia un servidor en `127.0.0.1:3123` y lo detiene al terminar. El puerto debe estar libre; no se reutilizan servidores externos.
+- La suite usa Clerk y backend simulados con estado local reiniciado por prueba; conserva las acciones, validación, interfaz y generación de PDF reales. `E2E_USER_ID` puede definirse en `.env.e2e.local` para usar una identidad local autorizada; sin ella se emplea una identidad ficticia. Nunca versionar ese archivo.
+- Los mocks se activan únicamente en el harness. La conexión real aborta en modo E2E y el comando de producción rechaza los flags del harness. No se necesitan credenciales reales para estas pruebas. No demuestran autenticación, persistencia ni rendimiento de los servicios reales.
+- Los proyectos `desktop` y `mobile` prueban recorridos y volumen. Para una ejecución dirigida: `pnpm run test:e2e --project=mobile`. Las pruebas de rendimiento usan cinco muestras tras un calentamiento, sin otras suites o builds concurrentes; conservan JSON, capturas y trazas en `test-results/` y el reporte HTML en `playwright-report/`.
+- `pnpm run typecheck` verifica tipos por separado y `pnpm run build` genera la compilación final con servicios reales. Los ensayos de migración/restauración y de concurrencia real siguen siendo una validación independiente.

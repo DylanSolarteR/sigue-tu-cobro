@@ -227,22 +227,19 @@ export default function ListBillingStatements() {
     );
 
   const invalidRange = Boolean(from && to && from > to);
+  const normalizedQuery = query.trim().toLocaleLowerCase("es");
   const filtered = accounts.filter((account) => {
     // Keep an open editor mounted if saving changes its status or payment date.
     if (account.id && account.id === expanded) return true;
-    const parsed = parseBillingDateForCalendar(account.payDate);
-    const civil = parsed.ok ? calendarDateToCivil(parsed.value) : null;
-    if (
-      (from || to) &&
-      (!civil?.ok || (from && civil.value < from) || (to && civil.value > to))
-    )
-      return false;
-    return (
-      account.client.name
-        .toLocaleLowerCase("es")
-        .includes(query.trim().toLocaleLowerCase("es")) &&
-      (status === "all" || account.status === status)
-    );
+    if (status !== "all" && account.status !== status) return false;
+    if (normalizedQuery && !account.client.name.toLocaleLowerCase("es").includes(normalizedQuery)) return false;
+    // Date validation is expensive across thousands of rows; only run it for active date filters.
+    if (from || to) {
+      const parsed = parseBillingDateForCalendar(account.payDate);
+      const civil = parsed.ok ? calendarDateToCivil(parsed.value) : null;
+      if (!civil?.ok || (from && civil.value < from) || (to && civil.value > to)) return false;
+    }
+    return true;
   });
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount - 1);

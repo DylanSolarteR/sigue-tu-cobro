@@ -1,6 +1,7 @@
 "use client";
 
 import SelectField from "@/components/dashboard/SelectField";
+import ItemPagination, { ITEM_PAGE_SIZE } from "@/components/dashboard/ItemPagination";
 
 import { useRef, useState } from "react";
 import Link from "next/link";
@@ -20,6 +21,7 @@ export default function ActorForm({
   creditorsList: Actor[];
 }) {
   const router = useRouter();
+  const [page, setPage] = useState(0);
   const [client, setClient] = useState("");
   const [creditor, setCreditor] = useState("");
   const [date, setDate] = useState(new Date());
@@ -33,6 +35,7 @@ export default function ActorForm({
 
   async function changeClient(clientId: string) {
     setClient(clientId);
+    setPage(0);
     setItems([]);
     setSelected([]);
     setMessage("");
@@ -74,6 +77,8 @@ export default function ActorForm({
     setSaving(false);
   }
 
+  const safePage = Math.min(page, Math.max(0, Math.ceil(items.length / ITEM_PAGE_SIZE) - 1));
+  const visibleItems = items.slice(safePage * ITEM_PAGE_SIZE, (safePage + 1) * ITEM_PAGE_SIZE);
   const total = items
     .filter((item) => item.id && selected.includes(item.id))
     .reduce((sum, item) => sum + item.amount, 0);
@@ -135,7 +140,7 @@ export default function ActorForm({
           </button>
         ) : items.length ? (
           <div className="space-y-2">
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <label
                 key={item.id}
                 className="border-stc-border bg-stc-field hover:border-stc-focus focus-within:border-stc-focus flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3"
@@ -162,6 +167,8 @@ export default function ActorForm({
                 </span>
               </label>
             ))}
+            <ItemPagination count={items.length} page={safePage} onChange={setPage} />
+            <p aria-live="polite" className="text-stc-label text-stc-muted">{selected.length} seleccionados de {items.length} ítems</p>
           </div>
         ) : (
           <p className="text-stc-label text-stc-muted leading-6">

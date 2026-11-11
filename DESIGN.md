@@ -148,6 +148,8 @@ La opción activa se distingue por superficie y texto. En móvil, el menú se ab
 ### Carga, estados y gráficas
 Reservar espacio con skeletons accesibles. Los gráficos deben tener una alternativa textual y describir la fecha representada; el resumen actual filtra por fecha prevista, no por el instante efectivo en que se marcó el pago.
 
+Las listas de pendientes muestran 25 ítems por página y conservan la selección y el total al preparar una cuenta. La descarga de PDF se prepara al solicitarla, sin generar documentos para todas las filas al entrar al listado. El perfil de Configuración solicita el ancho disponible mediante los contenedores públicos de apariencia de Clerk.
+
 ## Do's and Don'ts
 
 ### Do:

@@ -1,6 +1,7 @@
 "use client";
 
 import SelectField from "@/components/dashboard/SelectField";
+import ItemPagination, { ITEM_PAGE_SIZE } from "@/components/dashboard/ItemPagination";
 
 import { useRef, useState } from "react";
 import Link from "next/link";
@@ -73,6 +74,9 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
   const total = items.reduce((sum, item) => sum + Number(item.amount), 0);
   const fieldClass =
     "input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-base text-stc-text outline-none hover:border-stc-focus focus:border-stc-focus";
+  const [page, setPage] = useState(0);
+  const safePage = Math.min(page, Math.max(0, Math.ceil(items.length / ITEM_PAGE_SIZE) - 1));
+  const visibleItems = items.slice(safePage * ITEM_PAGE_SIZE, (safePage + 1) * ITEM_PAGE_SIZE);
   const buttonClass =
     "min-h-11 rounded-xl border border-stc-border px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus disabled:cursor-not-allowed disabled:opacity-50";
 
@@ -91,7 +95,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
             <label htmlFor="item-client" className="font-medium">
               Cliente
             </label>
-            <SelectField id="item-client" value={client} disabled={saving} placeholder="Selecciona un cliente" searchable searchLabel="Buscar cliente" onChange={(id) => { selectedClient.current = id; setClient(id); setMessage(""); void load(id); }} options={[{ value: "", label: "Selecciona un cliente" }, ...clients.flatMap((actor) => actor.id ? [{ value: actor.id, label: actor.name }] : [])]} />
+            <SelectField id="item-client" value={client} disabled={saving} placeholder="Selecciona un cliente" searchable searchLabel="Buscar cliente" onChange={(id) => { selectedClient.current = id; setPage(0); setClient(id); setMessage(""); void load(id); }} options={[{ value: "", label: "Selecciona un cliente" }, ...clients.flatMap((actor) => actor.id ? [{ value: actor.id, label: actor.name }] : [])]} />
             {clients.length === 0 && (
               <p className="text-stc-label text-stc-muted leading-6">
                 Crea un cliente antes de registrar ítems.{" "}
@@ -205,8 +209,9 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
               Reintentar carga
             </button>
           ) : items.length ? (
+            <div>
             <ul className="space-y-3">
-              {items.map((item) => (
+              {visibleItems.map((item) => (
                 <li key={item.id}>
                   <PendingItem
                     item={item}
@@ -217,6 +222,8 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
                 </li>
               ))}
             </ul>
+            <ItemPagination count={items.length} page={safePage} onChange={setPage} />
+            </div>
           ) : (
             <p className="border-stc-border text-stc-label text-stc-muted rounded-2xl border px-5 py-6 leading-6">
               Este cliente no tiene ítems pendientes.

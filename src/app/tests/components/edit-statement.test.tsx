@@ -3,7 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import UpdateForm from "../../../components/dashboard/billing-statements/UpdateBillingStatementForm";
 const mocks = vi.hoisted(() => ({ get: vi.fn(), list: vi.fn(), save: vi.fn(), edit: vi.fn() }));
-vi.mock("@/actions/billing-statement.api", () => ({ getBillingStatement: mocks.get, saveBillingStatement: mocks.save }));
+vi.mock("@/actions/billing-statement.api", () => ({ getBillingStatementDetails: async (...args: unknown[]) => { const [account, items] = await Promise.all([mocks.get(...args), mocks.list(...args)]); return account.success ? { success: true, data: { account: account.data, items: items.data } } : account; }, saveBillingStatement: mocks.save }));
 vi.mock("@/actions/billing-statement.item.api", () => ({ getBillingStatementItems: mocks.list, updateBillingStatementItem: mocks.edit }));
 vi.mock("@/components/DatePicker", () => ({ DatePicker: () => <span>Fecha</span> }));
 afterEach(() => { cleanup(); vi.clearAllMocks(); });

@@ -7,7 +7,7 @@ import {
   View,
   Document,
   StyleSheet,
-  PDFDownloadLink,
+  pdf,
 } from "@react-pdf/renderer";
 import {
   billing_statement,
@@ -15,7 +15,7 @@ import {
 } from "@/types/billing-statement";
 import { convertirNumeroALetras } from "@/lib/numeroALetras";
 import { formatBillingDate } from "@/lib/billing-date";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const styles = StyleSheet.create({
   page: {
@@ -183,51 +183,45 @@ export const BillingStatementPDF: React.FC<{
 };
 
 const DownloadPDFButton = ({ data }: { data: billing_statement }) => {
-  const [result, setResult] = useState<{ id: string; items: billing_statement_item[] | null } | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    if (!data.id) return;
-    const id = data.id;
-    void getBillingStatementItems(id).then((response) => {
-      if (active) setResult({ id, items: response.success && response.data ? response.data : null });
-    }).catch(() => { if (active) setResult({ id, items: null }); });
-    return () => { active = false; };
-  }, [data.id]);
-
-  if (!data.id) {
-    return <span role="status">No se pudo preparar el PDF.</span>;
-  }
-  if (!result || result.id !== data.id) {
-    return <button type="button" disabled aria-label="Cargando ítems para el PDF"><Download size={24} /></button>;
-  }
-  if (result.items === null) return <span role="status">No se pudo preparar el PDF.</span>;
-  const items = result.items;
+  const [preparing, setPreparing] = useState(false);
+  const [message, setMessage] = useState("");
   const date = formatBillingDate(data.payDate);
-  if (!date.ok) return <span role="status">No se pudo preparar el PDF: fecha no válida.</span>;
 
-  return (
-    <PDFDownloadLink
-      document={<BillingStatementPDF data={data} items={items} />}
-      fileName={`Cuenta de cobro ${data.client.name} (${date.value}).pdf`}
-      onClick={(event, instance?: { loading: boolean; error: string | null; url: string | null }) => {
-        if (!instance || instance.loading || instance.error || !instance.url) event.preventDefault();
-      }}
-    >
-      {({ loading, error }) => error ? (
-        <span role="status">No se pudo generar el PDF.</span>
-      ) : (
-        <button
-          type="button"
-          aria-label={loading ? "Preparando PDF" : "Descargar PDF"}
-          className={`flex items-center justify-center ${loading ? "cursor-not-allowed" : "cursor-pointer"} `}
-          disabled={loading}
-        >
-          {<Download size={24} />}
-        </button>
-      )}
-    </PDFDownloadLink>
-  );
+  async function download() {
+    if (!data.id || preparing || !date.ok) return;
+    setPreparing(true);
+    setMessage("");
+    try {
+      // Fetch and render only on demand; lists must not generate every PDF on mount.
+      const result = await getBillingStatementItems(data.id);
+      if (!result.success || !result.data) {
+        setMessage("No se pudo preparar el PDF.");
+        return;
+      }
+      const blob = await pdf(<BillingStatementPDF data={data} items={result.data} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Cuenta de cobro ${data.client.name} (${date.value}).pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      const revoke = URL.revokeObjectURL.bind(URL);
+      setTimeout(() => revoke(url), 1000);
+    } catch {
+      setMessage("No se pudo generar el PDF.");
+    } finally {
+      setPreparing(false);
+    }
+  }
+
+  if (!data.id || !date.ok) return <span role="status">No se pudo preparar el PDF: cuenta o fecha no válida.</span>;
+  return <div className="flex flex-col gap-2">
+    <button type="button" onClick={() => void download()} disabled={preparing} aria-label={preparing ? "Preparando PDF" : "Descargar PDF"} className="flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-transparent outline-none hover:bg-stc-hover focus-visible:border-stc-focus disabled:cursor-wait disabled:opacity-50">
+      <Download size={24} aria-hidden="true" />
+    </button>
+    {message && <span role="status">{message}</span>}
+  </div>;
 };
 
 export default DownloadPDFButton;

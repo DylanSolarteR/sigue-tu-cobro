@@ -1,0 +1,506 @@
+[
+  {
+    "accounts": 1000,
+    "pending": 100,
+    "project": "desktop",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "browser": "158.0.8127.18",
+    "cpuThrottling": "none",
+    "network": "local mocked",
+    "fixtureStorage": "file-backed memory cache, invalidated on file change",
+    "timingMethod": "observed wall clock including Playwright action and assertion overhead",
+    "timings": {
+      "accountsReady": {
+        "median": 242,
+        "worst": 329,
+        "samples": [
+          238,
+          329,
+          242,
+          259,
+          211
+        ]
+      },
+      "filter": {
+        "median": 63,
+        "worst": 63,
+        "samples": [
+          63,
+          61,
+          63,
+          51,
+          63
+        ]
+      },
+      "pagination": {
+        "median": 116,
+        "worst": 151,
+        "samples": [
+          151,
+          116,
+          118,
+          101,
+          100
+        ]
+      },
+      "selection": {
+        "median": 102,
+        "worst": 116,
+        "samples": [
+          116,
+          102,
+          103,
+          100,
+          100
+        ]
+      },
+      "editor": {
+        "median": 131,
+        "worst": 151,
+        "samples": [
+          151,
+          116,
+          131,
+          118,
+          134
+        ]
+      },
+      "itemsReady": {
+        "median": 302,
+        "worst": 312,
+        "samples": [
+          312,
+          285,
+          308,
+          284,
+          302
+        ]
+      },
+      "createReady": {
+        "median": 308,
+        "worst": 339,
+        "samples": [
+          339,
+          306,
+          322,
+          308,
+          292
+        ]
+      },
+      "summaryReady": {
+        "median": 354,
+        "worst": 370,
+        "samples": [
+          370,
+          359,
+          333,
+          354,
+          347
+        ]
+      }
+    },
+    "routes": {
+      "accounts": {
+        "maxDomNodes": 540,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0.0056487037037037035
+      },
+      "items": {
+        "maxDomNodes": 316,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "create": {
+        "maxDomNodes": 253,
+        "maxLongTaskMs": 54,
+        "maxCLS": 0
+      },
+      "summary": {
+        "maxDomNodes": 265,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      }
+    }
+  },
+  {
+    "accounts": 10000,
+    "pending": 1000,
+    "project": "desktop",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "browser": "158.0.8127.18",
+    "cpuThrottling": "none",
+    "network": "local mocked",
+    "fixtureStorage": "file-backed memory cache, invalidated on file change",
+    "timingMethod": "observed wall clock including Playwright action and assertion overhead",
+    "timings": {
+      "accountsReady": {
+        "median": 423,
+        "worst": 500,
+        "samples": [
+          389,
+          500,
+          477,
+          390,
+          423
+        ]
+      },
+      "filter": {
+        "median": 68,
+        "worst": 75,
+        "samples": [
+          68,
+          75,
+          65,
+          68,
+          66
+        ]
+      },
+      "pagination": {
+        "median": 101,
+        "worst": 111,
+        "samples": [
+          101,
+          111,
+          105,
+          99,
+          101
+        ]
+      },
+      "selection": {
+        "median": 119,
+        "worst": 132,
+        "samples": [
+          101,
+          132,
+          130,
+          102,
+          119
+        ]
+      },
+      "editor": {
+        "median": 134,
+        "worst": 150,
+        "samples": [
+          148,
+          150,
+          133,
+          134,
+          132
+        ]
+      },
+      "itemsReady": {
+        "median": 318,
+        "worst": 336,
+        "samples": [
+          336,
+          318,
+          314,
+          333,
+          318
+        ]
+      },
+      "createReady": {
+        "median": 321,
+        "worst": 357,
+        "samples": [
+          319,
+          357,
+          322,
+          321,
+          306
+        ]
+      },
+      "summaryReady": {
+        "median": 1649,
+        "worst": 2004,
+        "samples": [
+          1697,
+          1649,
+          1606,
+          2004,
+          1589
+        ]
+      }
+    },
+    "routes": {
+      "accounts": {
+        "maxDomNodes": 540,
+        "maxLongTaskMs": 68,
+        "maxCLS": 0.0056487037037037035
+      },
+      "items": {
+        "maxDomNodes": 316,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "create": {
+        "maxDomNodes": 253,
+        "maxLongTaskMs": 57,
+        "maxCLS": 0
+      },
+      "summary": {
+        "maxDomNodes": 265,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      }
+    }
+  },
+  {
+    "accounts": 1000,
+    "pending": 100,
+    "project": "mobile",
+    "viewport": {
+      "width": 412,
+      "height": 839
+    },
+    "browser": "158.0.8127.18",
+    "cpuThrottling": "none",
+    "network": "local mocked",
+    "fixtureStorage": "file-backed memory cache, invalidated on file change",
+    "timingMethod": "observed wall clock including Playwright action and assertion overhead",
+    "timings": {
+      "accountsReady": {
+        "median": 208,
+        "worst": 223,
+        "samples": [
+          208,
+          223,
+          222,
+          207,
+          206
+        ]
+      },
+      "filter": {
+        "median": 50,
+        "worst": 83,
+        "samples": [
+          49,
+          83,
+          50,
+          51,
+          49
+        ]
+      },
+      "pagination": {
+        "median": 101,
+        "worst": 117,
+        "samples": [
+          101,
+          117,
+          99,
+          98,
+          101
+        ]
+      },
+      "selection": {
+        "median": 101,
+        "worst": 118,
+        "samples": [
+          100,
+          118,
+          101,
+          101,
+          100
+        ]
+      },
+      "editor": {
+        "median": 118,
+        "worst": 133,
+        "samples": [
+          116,
+          133,
+          118,
+          118,
+          119
+        ]
+      },
+      "itemsReady": {
+        "median": 235,
+        "worst": 244,
+        "samples": [
+          236,
+          235,
+          244,
+          235,
+          233
+        ]
+      },
+      "createReady": {
+        "median": 290,
+        "worst": 307,
+        "samples": [
+          289,
+          306,
+          287,
+          290,
+          307
+        ]
+      },
+      "summaryReady": {
+        "median": 272,
+        "worst": 289,
+        "samples": [
+          272,
+          272,
+          271,
+          257,
+          289
+        ]
+      }
+    },
+    "routes": {
+      "accounts": {
+        "maxDomNodes": 540,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "items": {
+        "maxDomNodes": 316,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "create": {
+        "maxDomNodes": 253,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "summary": {
+        "maxDomNodes": 265,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      }
+    }
+  },
+  {
+    "accounts": 10000,
+    "pending": 1000,
+    "project": "mobile",
+    "viewport": {
+      "width": 412,
+      "height": 839
+    },
+    "browser": "158.0.8127.18",
+    "cpuThrottling": "none",
+    "network": "local mocked",
+    "fixtureStorage": "file-backed memory cache, invalidated on file change",
+    "timingMethod": "observed wall clock including Playwright action and assertion overhead",
+    "timings": {
+      "accountsReady": {
+        "median": 386,
+        "worst": 425,
+        "samples": [
+          425,
+          386,
+          405,
+          375,
+          373
+        ]
+      },
+      "filter": {
+        "median": 66,
+        "worst": 69,
+        "samples": [
+          66,
+          69,
+          66,
+          65,
+          67
+        ]
+      },
+      "pagination": {
+        "median": 100,
+        "worst": 116,
+        "samples": [
+          116,
+          100,
+          99,
+          102,
+          100
+        ]
+      },
+      "selection": {
+        "median": 101,
+        "worst": 117,
+        "samples": [
+          101,
+          117,
+          102,
+          100,
+          100
+        ]
+      },
+      "editor": {
+        "median": 134,
+        "worst": 135,
+        "samples": [
+          135,
+          116,
+          116,
+          134,
+          134
+        ]
+      },
+      "itemsReady": {
+        "median": 235,
+        "worst": 253,
+        "samples": [
+          244,
+          253,
+          214,
+          203,
+          235
+        ]
+      },
+      "createReady": {
+        "median": 299,
+        "worst": 372,
+        "samples": [
+          299,
+          273,
+          372,
+          322,
+          291
+        ]
+      },
+      "summaryReady": {
+        "median": 1569,
+        "worst": 1622,
+        "samples": [
+          1586,
+          1541,
+          1569,
+          1622,
+          1539
+        ]
+      }
+    },
+    "routes": {
+      "accounts": {
+        "maxDomNodes": 540,
+        "maxLongTaskMs": 56,
+        "maxCLS": 0
+      },
+      "items": {
+        "maxDomNodes": 316,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "create": {
+        "maxDomNodes": 253,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "summary": {
+        "maxDomNodes": 265,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      }
+    }
+  }
+]

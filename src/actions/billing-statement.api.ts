@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { api } from "@/trpc/server";
 import type { ActionResponse } from "@/types/actionResponses";
-import type { billing_statement } from "@/types/billing-statement";
+import type { billing_statement, billing_statement_item } from "@/types/billing-statement";
 import { billingDateSchema } from "@/lib/billing-date";
 
 const createSchema = z.object({
@@ -29,6 +29,18 @@ export async function getBillingStatement(id: string): Promise<ActionResponse<bi
   if (!z.string().min(1).safeParse(id).success) return { success: false, message: "La cuenta no es válida." };
   try { return { success: true, message: "Cuenta obtenida.", data: await api.billing_statement.queries.getOne({ id }) }; }
   catch { return { success: false, message: "No se pudo obtener la cuenta." }; }
+}
+
+export async function getBillingStatementDetails(id: string): Promise<ActionResponse<{ account: billing_statement; items: billing_statement_item[] }>> {
+  if (!z.string().min(1).safeParse(id).success) return { success: false, message: "La cuenta no es válida." };
+  try {
+    // Browser-triggered server actions are queued; combine these reads into one round trip.
+    const [account, items] = await Promise.all([
+      api.billing_statement.queries.getOne({ id }),
+      api.billing_statement_item.queries.getBillingStatementItems({ parentBillingStatementId: id }),
+    ]);
+    return { success: true, message: "Detalles obtenidos.", data: { account, items } };
+  } catch { return { success: false, message: "No se pudieron obtener los detalles de la cuenta." }; }
 }
 
 export async function createBillingStatement(input: z.infer<typeof createSchema>): Promise<ActionResponse<{ id: string }>> {

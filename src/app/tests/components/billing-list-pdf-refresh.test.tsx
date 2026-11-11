@@ -1,6 +1,6 @@
 ﻿// @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import ListBillingStatements from "@/components/dashboard/billing-statements/ListBillingStatements";
 
 const mocks = vi.hoisted(() => ({ list: vi.fn(), items: vi.fn() }));
@@ -9,13 +9,14 @@ vi.mock("@/actions/billing-statement.item.api", () => ({ getBillingStatementItem
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("@react-pdf/renderer", () => ({
   StyleSheet: { create: (styles: unknown) => styles }, Page: () => null, Text: () => null, View: () => null, Document: () => null,
-  PDFDownloadLink: ({ children }: { children: (state: { loading: boolean; error: null }) => React.ReactNode }) => <a href="blob:pdf">{children({ loading: false, error: null })}</a>,
+  pdf: () => ({ toBlob: async () => new Blob(["pdf"]) }),
 }));
 vi.mock("@/components/dashboard/billing-statements/UpdateBillingStatementForm", () => ({
   default: ({ onUpdated, onPdfInvalidated }: { onUpdated: (value: unknown) => void; onPdfInvalidated: () => void }) => <button onClick={() => { const result = mocks.list.mock.results[0]; if (!result) throw new Error("Falta la cuenta de prueba"); onUpdated(result.value.valueData); onPdfInvalidated(); }}>Guardar edicion</button>,
 }));
 
-afterEach(() => { cleanup(); vi.resetAllMocks(); });
+beforeEach(() => { vi.stubGlobal("URL", class extends URL { static createObjectURL = () => "blob:pdf"; static revokeObjectURL = vi.fn(); }); vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {}); });
+afterEach(() => { cleanup(); vi.resetAllMocks(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 it("recarga los conceptos del PDF despues de guardar en el acordeon", async () => {
   const actor = { name: "Ana", docType: "CC" as const, docNumber: "1" };
@@ -25,10 +26,11 @@ it("recarga los conceptos del PDF despues de guardar en el acordeon", async () =
   mocks.list.mockReturnValue(response);
   mocks.items.mockResolvedValue({ success: true, data: [] });
   render(<ListBillingStatements />);
-  await screen.findByRole("button", { name: "Descargar PDF" });
-  expect(mocks.items).toHaveBeenCalledTimes(1);
+  fireEvent.click(await screen.findByRole("button", { name: "Descargar PDF" }));
+  await waitFor(() => expect(mocks.items).toHaveBeenCalledTimes(1));
   fireEvent.click(screen.getByRole("button", { name: "Abrir cuenta de Ana" }));
   fireEvent.click(screen.getByRole("button", { name: "Guardar edicion" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Descargar PDF" }));
   await waitFor(() => expect(mocks.items).toHaveBeenCalledTimes(2));
   expect(mocks.items).toHaveBeenLastCalledWith("1");
   expect(await screen.findByRole("button", { name: "Descargar PDF" })).toBeTruthy();
