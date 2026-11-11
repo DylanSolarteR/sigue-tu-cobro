@@ -1,7 +1,7 @@
 'use server';
 import { api } from "@/trpc/server";
-import { ActionResponse } from "@/types/actionResponses";
-import { Actor } from "@/types/actor";
+import { type ActionResponse } from "@/types/actionResponses";
+import { type Actor } from "@/types/actor";
 import { z } from "zod";
 
 const actorSchema = z.object({
@@ -49,7 +49,7 @@ export async function getClientById(id: string): Promise<ActionResponse<Actor>> 
             message: 'Cliente encontrado',
             data: result,
         };
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Un error ha ocurrido',
@@ -88,7 +88,7 @@ export async function getCreditorById(id: string): Promise<ActionResponse<Actor>
             data: result,
         };
 
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Un error ha ocurrido',
@@ -176,7 +176,7 @@ export async function createCreditor(prevState: ActionResponse<Actor> | null, fo
             success: true,
             message: 'Acreedor creado exitosamente!',
         }
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Un error ha ocurrido',
@@ -214,7 +214,7 @@ export async function updateClientById(prevState: ActionResponse<Actor> | null, 
         }
 
         await api.actor.mutations.client.update({
-            id: validatedId.data as string,
+            id: validatedId.data,
             name: validatedData.data.name,
             docType: validatedData.data.docType,
             docNumber: validatedData.data.docNumber,
@@ -227,7 +227,7 @@ export async function updateClientById(prevState: ActionResponse<Actor> | null, 
             message: 'Cliente actualizado exitosamente!',
             input: rawData,
         }
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Un error ha ocurrido',
@@ -265,7 +265,7 @@ export async function updateCreditorById(prevState: ActionResponse<Actor> | null
         }
 
         await api.actor.mutations.creditor.update({
-            id: validatedId.data as string,
+            id: validatedId.data,
             name: validatedData.data.name,
             docType: validatedData.data.docType,
             docNumber: validatedData.data.docNumber,
@@ -278,7 +278,7 @@ export async function updateCreditorById(prevState: ActionResponse<Actor> | null
             message: 'Acreedor actualizado exitosamente!',
             input: rawData,
         }
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Un error ha ocurrido',
@@ -304,7 +304,7 @@ export async function deleteClientById(id: string): Promise<ActionResponse<Actor
             success: true,
             message: 'Cliente eliminado exitosamente',
         };
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Ocurrió un error al eliminar el cliente',
@@ -330,7 +330,7 @@ export async function deleteCreditorById(id: string): Promise<ActionResponse<Act
             success: true,
             message: 'Acreedor eliminado exitosamente',
         };
-    } catch (error) {
+    } catch {
         return {
             success: false,
             message: 'Ocurrió un error al eliminar el acreedor',

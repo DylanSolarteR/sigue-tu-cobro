@@ -10,7 +10,11 @@ import { ICON_ACTION_CLASS } from "@/components/dashboard/action-styles";
 
 const PAGE_SIZE = 10;
 
-export function ActorList({ kind, cards = false }: { kind: "client" | "creditor"; cards?: boolean }) {
+type ActorListProps = { kind: "client" | "creditor"; cards?: boolean };
+export function ActorList(props: ActorListProps) {
+  return <ActorListContent key={props.kind} {...props} />;
+}
+function ActorListContent({ kind, cards = false }: ActorListProps) {
   const [actors, setActors] = useState<Actor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -21,8 +25,6 @@ export function ActorList({ kind, cards = false }: { kind: "client" | "creditor"
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setError(false);
     const request = kind === "client" ? getClients() : getCreditors();
     void request.then((result) => { if (active) { setActors(result); setLoading(false); } })
       .catch(() => { if (active) { setError(true); setLoading(false); } });
@@ -91,7 +93,7 @@ export function ActorList({ kind, cards = false }: { kind: "client" | "creditor"
         <table className="table w-full max-md:block">
           <thead className="max-md:sr-only"><tr><th scope="col">Nombre</th><th scope="col">Documento</th><th scope="col">Lugar de expedición</th><th scope="col">Teléfono</th><th scope="col">Acciones</th></tr></thead>
           <tbody className="max-md:block">{visible.length ? visible.map((actor) => <tr key={actor.id} className="max-md:block max-md:border-b max-md:border-base-300 max-md:p-4">
-            <td className="font-semibold max-md:block max-md:whitespace-normal max-md:break-words max-md:px-0 max-md:pb-3 max-md:text-base">{actor.name}</td><td data-label="Documento" className="max-md:block max-md:whitespace-normal max-md:break-all max-md:px-0 max-md:py-1 max-md:before:mr-2 max-md:before:font-medium max-md:before:text-base-content/70 max-md:before:content-[attr(data-label)]">{actor.docType} {actor.docNumber}</td><td data-label="Lugar de expedición" className="max-md:block max-md:whitespace-normal max-md:break-words max-md:px-0 max-md:py-1 max-md:before:mr-2 max-md:before:font-medium max-md:before:text-base-content/70 max-md:before:content-[attr(data-label)]">{actor.expeditionPlace || "—"}</td><td data-label="Teléfono" className="max-md:block max-md:whitespace-normal max-md:break-all max-md:px-0 max-md:py-1 max-md:before:mr-2 max-md:before:font-medium max-md:before:text-base-content/70 max-md:before:content-[attr(data-label)]">{actor.telephone || "—"}</td>
+            <td className="font-semibold max-md:block max-md:whitespace-normal max-md:break-words max-md:px-0 max-md:pb-3 max-md:text-base">{actor.name}</td><td data-label="Documento" className="max-md:block max-md:whitespace-normal max-md:break-all max-md:px-0 max-md:py-1 max-md:before:mr-2 max-md:before:font-medium max-md:before:text-base-content/70 max-md:before:content-[attr(data-label)]">{actor.docType} {actor.docNumber}</td><td data-label="Lugar de expedición" className="max-md:block max-md:whitespace-normal max-md:break-words max-md:px-0 max-md:py-1 max-md:before:mr-2 max-md:before:font-medium max-md:before:text-base-content/70 max-md:before:content-[attr(data-label)]">{actor.expeditionPlace?.length ? actor.expeditionPlace : "—"}</td><td data-label="Teléfono" className="max-md:block max-md:whitespace-normal max-md:break-all max-md:px-0 max-md:py-1 max-md:before:mr-2 max-md:before:font-medium max-md:before:text-base-content/70 max-md:before:content-[attr(data-label)]">{actor.telephone?.length ? actor.telephone : "—"}</td>
             <td className="max-md:block max-md:px-0 max-md:pt-3"><div className="flex gap-2"><Link className={ICON_ACTION_CLASS} href={`/dashboard/${section}/editar/${actor.id}`} aria-label={`Editar ${actor.name}`}><Edit size={18} aria-hidden="true" /></Link><button type="button" className={ICON_ACTION_CLASS} disabled={!actor.id || deleting !== null} onClick={() => void remove(actor)} aria-label={`Eliminar ${actor.name}`}><Trash size={18} aria-hidden="true" /></button></div></td>
           </tr>) : <tr><td colSpan={5} className="py-8 text-center">No hay {section} registrados.</td></tr>}</tbody>
         </table>

@@ -1,6 +1,6 @@
 # 012 · Modernización de Sigue Tu Cobro
 
-**Estado:** base técnica, flujo e interfaz implementados y validados localmente; quedan lint y restauración de históricos.
+**Estado:** base técnica, flujo e interfaz implementados y validados localmente; lint global resuelto y restauración de históricos pendiente.
 
 ## Objetivo
 
@@ -25,4 +25,4 @@ La implementación se divide en etapas revisables; otros problemas de experienci
 
 ## Alcance de la validación actual
 
-Las etapas 013–021 cubren dominio, componentes y recorridos de navegador con servicios simulados; no verifican servicios reales. El usuario excluyó de la secuencia actual las pruebas con Clerk/SingleStore reales y hará por separado la revisión en dispositivos físicos y el despliegue. El siguiente trabajo es lint y después la restauración. El roadmap se actualizará en cada implementación.
+Las etapas 013–021 cubren dominio, componentes y recorridos de navegador con servicios simulados; no verifican servicios reales. La etapa 022 resolvió el lint global con check estricto, pruebas y build aprobados. El usuario excluyó de la secuencia actual las pruebas con Clerk/SingleStore reales y hará por separado la revisión en dispositivos físicos y el despliegue. El siguiente trabajo es la restauración histórica. El roadmap se actualizará en cada implementación.

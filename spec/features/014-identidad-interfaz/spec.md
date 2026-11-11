@@ -19,13 +19,13 @@ La estructura actual de las páginas no satisface las expectativas del usuario y
 - [ ] Formularios, listados, navegación, estados de carga, vacío y error conservan su comportamiento y pueden usarse en móvil y escritorio.
 - [ ] Los controles interactivos tienen nombre accesible, foco visible y funcionamiento con teclado; el texto y las acciones mantienen contraste legible.
 - [ ] El rediseño usa daisyUI en lugar de los componentes shadcn, preservando el comportamiento accesible de los controles complejos.
-- [x] Las pruebas de lógica/componentes y los E2E con mocks pasan; la revisión global de lint es el siguiente trabajo.
+- [x] Las pruebas de lógica/componentes y los E2E con mocks pasan; el lint global quedó resuelto en la etapa 022.
 
 ## Fuera de alcance
 
 - Cambios en el modelo de datos o aplicación de la migración de registros históricos.
-- Revisión global de lint y restauración histórica: siguientes trabajos, en ese orden después de la 404. Las pruebas con servicios reales se excluyeron por decisión del usuario.
+- Revisión global de lint: completada en la etapa 022. La restauración histórica es el siguiente trabajo. Las pruebas con servicios reales se excluyeron por decisión del usuario.
 
 ## Seguimiento consolidado
 
-Las etapas 015–021 completaron controles, vistas y recorridos de navegador con mocks. Los criterios anteriores se interpretan dentro de ese alcance, sin afirmar validación de Clerk o SingleStore reales. El roadmap registra lint y restauración como siguientes trabajos.
+Las etapas 015–021 completaron controles, vistas y recorridos de navegador con mocks. Los criterios anteriores se interpretan dentro de ese alcance, sin afirmar validación de Clerk o SingleStore reales. El lint global se completó en la etapa 022; el roadmap registra la restauración como siguiente trabajo.

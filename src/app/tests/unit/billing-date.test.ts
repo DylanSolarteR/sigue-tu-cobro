@@ -5,8 +5,8 @@ describe("fecha civil de cuenta de cobro", () => {
   it("conserva el día elegido en el calendario al guardarlo", () => {
     const selected = new Date(2026, 0, 1, 23, 45);
     expect(calendarDateToCivil(selected)).toEqual({ ok: true, value: "2026-01-01" });
-    expect(parseBillingDateForCalendar("2026-01-01")).toMatchObject({ ok: true, value: expect.any(Date) });
     const parsed = parseBillingDateForCalendar("2026-01-01");
+    expect(parsed.ok).toBe(true);
     if (parsed.ok) expect([parsed.value.getFullYear(), parsed.value.getMonth(), parsed.value.getDate()]).toEqual([2026, 0, 1]);
   });
 

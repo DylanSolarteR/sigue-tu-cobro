@@ -24,8 +24,8 @@ describe("acciones de ítems", () => {
   it("informa el error al editar y al eliminar sin revelar la excepción", async () => {
     mocks.updateItem.mockRejectedValue(new Error("error interno"));
     mocks.deleteItem.mockRejectedValue(new Error("error interno"));
-    expect(await updateBillingStatementItem("i1", "Servicio", 100)).toMatchObject({ success: false, message: expect.not.stringContaining("error interno") });
-    expect(await deleteBillingStatementItem("i1")).toMatchObject({ success: false, message: expect.not.stringContaining("error interno") });
+    { const result = await updateBillingStatementItem("i1", "Servicio", 100); expect(result.success).toBe(false); expect(result.message).not.toContain("error interno"); }
+    { const result = await deleteBillingStatementItem("i1"); expect(result.success).toBe(false); expect(result.message).not.toContain("error interno"); }
   });
 });
 

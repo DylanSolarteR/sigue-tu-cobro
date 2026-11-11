@@ -62,7 +62,7 @@ it("abre y cierra el editor de la cuenta en contexto", async () => {
   fireEvent.keyDown(trigger, { key: "Enter", code: "Enter" });
   fireEvent.click(trigger);
   expect(screen.getByText("Editor 1")).toBeTruthy();
-  expect((screen.getByLabelText("Fecha prevista de pago desde") as HTMLInputElement).disabled).toBe(true);
+  expect((screen.getByLabelText<HTMLInputElement>("Fecha prevista de pago desde")).disabled).toBe(true);
   expect(screen.getByRole("button", { name: "Cerrar cuenta de Ana" }).getAttribute("aria-expanded")).toBe("true");
   fireEvent.click(screen.getByRole("button", { name: "Cerrar cuenta de Ana" }));
   expect(screen.queryByText("Editor 1")).toBeNull();
@@ -110,7 +110,7 @@ it("confirma la eliminaci\u00f3n masiva y omite cuentas pagadas", async () => {
 });
 
 it("reserva espacio accesible mientras carga las cuentas", () => {
-  vi.mocked(getBillingStatements).mockReturnValueOnce(new Promise(() => {}));
+  vi.mocked(getBillingStatements).mockReturnValueOnce(new Promise(() => { /* Mantiene la carga pendiente. */ }));
   render(<ListBillingStatements />);
   expect(screen.getByRole("status", { name: "Cargando cuentas" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
 });
@@ -150,10 +150,10 @@ it("selecciona con pulsacion tactil sostenida y cancela al desplazar", async () 
   vi.useFakeTimers();
   pointer("pointerdown", 0);
   pointer("pointermove", 20);
-  act(() => vi.advanceTimersByTime(700));
+  await act(async () => { vi.advanceTimersByTime(700); });
   expect(screen.getByRole("button", { name: "Seleccionar cuenta de Ana" })).toBeTruthy();
   pointer("pointerdown", 0);
-  act(() => vi.advanceTimersByTime(700));
+  await act(async () => { vi.advanceTimersByTime(700); });
   pointer("pointerup", 0);
   expect(screen.getByRole("button", { name: "Deseleccionar cuenta de Ana" })).toBeTruthy();
   vi.useRealTimers();
@@ -203,7 +203,7 @@ it("no abre la fila por el clic posterior a una pulsacion prolongada", async () 
   Object.defineProperties(event, { pointerType: { value: "touch" }, clientX: { value: 0 }, clientY: { value: 0 } });
   vi.useFakeTimers();
   fireEvent(row, event);
-  act(() => vi.advanceTimersByTime(700));
+  await act(async () => { vi.advanceTimersByTime(700); });
   fireEvent.pointerUp(row);
   fireEvent.click(row);
   expect(screen.queryByText("Editor 1")).toBeNull();
@@ -220,7 +220,7 @@ it("selecciona al mantener pulsado el encabezado sin abrir el editor", async () 
   Object.defineProperties(event, { pointerType: { value: "touch" }, clientX: { value: 0 }, clientY: { value: 0 } });
   vi.useFakeTimers();
   fireEvent(trigger, event);
-  act(() => vi.advanceTimersByTime(700));
+  await act(async () => { vi.advanceTimersByTime(700); });
   fireEvent.pointerUp(trigger);
   fireEvent.click(trigger);
   expect(screen.queryByText("Editor 1")).toBeNull();

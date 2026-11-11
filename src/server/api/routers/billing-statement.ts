@@ -6,21 +6,8 @@ import { eq, and, aliasedTable, desc, sum, inArray, asc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { billingDateSchema } from "@/lib/billing-date";
 import { itemStatusForStatement, validateSelection } from "@/server/api/billing-domain";
-import { billing_statement as billing_statement_type } from "@/types/billing-statement";
+import { type billing_statement as billing_statement_type } from "@/types/billing-statement";
 
-const billing_statement_Schema = z.object({
-    id: z.string().optional(),
-    client_id: z.string().nonempty({ message: "El Cliente es requerido" }),
-    creditor_id: z.string().nonempty({ message: "El Acreedor es requerido" }),
-    amount: z.number().optional(),
-    extraInfo: z.string().optional(),
-    showItemAmount: z.boolean().optional(),
-    payDate: z.string(),
-    status: z.enum(["paid", "pending"], { message: "Invalid status" }),
-    isActive: z.boolean().optional(),
-    createdAt: z.string().optional(),
-    updatedAt: z.string().optional(),
-});
 
 export const billingStatementRouter = createTRPCRouter({
     queries: {
@@ -61,7 +48,7 @@ export const billingStatementRouter = createTRPCRouter({
                 .where(
                     and(
                         eq(billing_statement.isActive, true),
-                        eq(billing_statement.ownerId, ctx.user.userId as string)
+                        eq(billing_statement.ownerId, ctx.user.userId)
                     )
                 ).orderBy(desc(billing_statement.createdAt));
             return billingStatements;
@@ -103,7 +90,7 @@ export const billingStatementRouter = createTRPCRouter({
                 .where(
                     and(
                         eq(billing_statement.isActive, true),
-                        eq(billing_statement.ownerId, ctx.user.userId as string),
+                        eq(billing_statement.ownerId, ctx.user.userId),
                         eq(billing_statement.id, input.id)
                     )
                 );
@@ -116,7 +103,7 @@ export const billingStatementRouter = createTRPCRouter({
             const count = await ctx.db.$count(billing_statement,
                 and(
                     eq(billing_statement.isActive, true),
-                    eq(billing_statement.ownerId, ctx.user.userId as string)
+                    eq(billing_statement.ownerId, ctx.user.userId)
                 )
             );
             return count;
@@ -125,7 +112,7 @@ export const billingStatementRouter = createTRPCRouter({
             const count = await ctx.db.$count(billing_statement,
                 and(
                     eq(billing_statement.isActive, true),
-                    eq(billing_statement.ownerId, ctx.user.userId as string),
+                    eq(billing_statement.ownerId, ctx.user.userId),
                     eq(billing_statement.status, "pending")
                 )
             );
@@ -135,7 +122,7 @@ export const billingStatementRouter = createTRPCRouter({
             const count = await ctx.db.$count(billing_statement,
                 and(
                     eq(billing_statement.isActive, true),
-                    eq(billing_statement.ownerId, ctx.user.userId as string),
+                    eq(billing_statement.ownerId, ctx.user.userId),
                     eq(billing_statement.status, "paid")
                 )
             );
@@ -147,7 +134,7 @@ export const billingStatementRouter = createTRPCRouter({
                 .where(
                     and(
                         eq(billing_statement.isActive, true),
-                        eq(billing_statement.ownerId, ctx.user.userId as string)
+                        eq(billing_statement.ownerId, ctx.user.userId)
                     )
                 );
             return total[0]?.value ?? 0;
@@ -161,7 +148,7 @@ export const billingStatementRouter = createTRPCRouter({
             payDate: billingDateSchema,
             item_ids: z.array(z.string().min(1)).min(1),
         })).mutation(async ({ ctx, input }) => {
-            const owner = ctx.user.userId!;
+            const owner = ctx.user.userId;
             return ctx.db.transaction(async (tx) => {
                 const parties = await tx.select({ id: actor.id, type: actor.type }).from(actor).where(and(
                     eq(actor.ownerId, owner), eq(actor.isActive, true), inArray(actor.id, [input.client_id, input.creditor_id]),
@@ -185,7 +172,7 @@ export const billingStatementRouter = createTRPCRouter({
             payDate: billingDateSchema,
             showItemAmount: z.boolean().optional(),
         })).mutation(async ({ ctx, input }) => {
-            const owner = ctx.user.userId!;
+            const owner = ctx.user.userId;
             await ctx.db.transaction(async (tx) => {
                 const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
                 if (!statement) throw new TRPCError({ code: "NOT_FOUND", message: "Cuenta no encontrada" });
@@ -194,7 +181,7 @@ export const billingStatementRouter = createTRPCRouter({
             });
         }),
         updateStatus: privateProcedure.input(z.object({ id: z.string().min(1), status: z.enum(["paid", "pending"]) })).mutation(async ({ ctx, input }) => {
-            const owner = ctx.user.userId!;
+            const owner = ctx.user.userId;
             await ctx.db.transaction(async (tx) => {
                 const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
                 if (!statement) throw new TRPCError({ code: "NOT_FOUND", message: "Cuenta no encontrada" });
@@ -204,7 +191,7 @@ export const billingStatementRouter = createTRPCRouter({
             });
         }),
         delete: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-            const owner = ctx.user.userId!;
+            const owner = ctx.user.userId;
             await ctx.db.transaction(async (tx) => {
                 const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, input.id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
                 if (!statement) throw new TRPCError({ code: "NOT_FOUND", message: "Cuenta no encontrada" });

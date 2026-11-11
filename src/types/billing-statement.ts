@@ -1,4 +1,4 @@
-import { Actor } from "./actor";
+import { type Actor } from "./actor";
 export interface billing_statement {
     id?: string;
     client_id: string;

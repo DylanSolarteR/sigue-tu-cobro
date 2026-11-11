@@ -26,7 +26,7 @@ it("prepara el PDF solo al solicitarlo y bloquea clics durante la carga", async 
   expect(mocks.fetch).not.toHaveBeenCalled();
   expect(mocks.blob).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole("button", { name: "Descargar PDF" }));
-  expect((screen.getByRole("button", { name: "Preparando PDF" }) as HTMLButtonElement).disabled).toBe(true);
+  expect((screen.getByRole<HTMLButtonElement>("button", { name: "Preparando PDF" })).disabled).toBe(true);
   resolve({ success: false, message: "Error al cargar" });
   expect(await screen.findByText("No se pudo preparar el PDF.")).toBeTruthy();
   expect(mocks.downloads).toHaveLength(0);

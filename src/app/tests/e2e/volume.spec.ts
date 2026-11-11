@@ -40,7 +40,7 @@ for (const [accounts, pending] of [[1000, 100], [10000, 1000]] as const) test(`v
   await expect(list.locator(":scope > li")).toHaveCount(10);
   await page.getByLabel("Buscar cliente", { exact: true }).fill("Cliente 20");
   const next = page.getByRole("button", { name: "Siguiente", exact: true });
-  for (let index = 1; index < accounts! / 20 / 10; index++) await next.click();
+  for (let index = 1; index < accounts / 20 / 10; index++) await next.click();
   await expect(next).toBeDisabled();
   await list.getByRole("button", { name: /Abrir cuenta/ }).last().click();
   await expect(page.getByLabel("Descripción del ítem")).toHaveValue(`Trabajo incluido ${accounts}`);

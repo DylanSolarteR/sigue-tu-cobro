@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ActorForm } from "@/components/dashboard/actors/ActorForm";
 import CreateClientForm from "@/components/dashboard/clients/CreateClientForm";
 import UpdateCreditorForm from "@/components/dashboard/creditors/UpdateCreditorForm";
 import { createClient, getCreditorById } from "@/actions/actor.api";
@@ -25,7 +26,7 @@ function selectOption(label: string, value: string) {
 
 describe("formularios de clientes y acreedores", () => {
   it("reserva espacio con un skeleton accesible mientras carga la edición", () => {
-    vi.mocked(getCreditorById).mockImplementationOnce(() => new Promise(() => {}));
+    vi.mocked(getCreditorById).mockImplementationOnce(() => new Promise(() => { /* Mantiene la carga pendiente. */ }));
     render(<UpdateCreditorForm id="1" />);
     const status = screen.getByRole("status", { name: "Cargando información del acreedor" });
     expect(status.querySelector('[aria-hidden="true"]')).toBeTruthy();
@@ -49,8 +50,8 @@ describe("formularios de clientes y acreedores", () => {
   it("muestra los datos del acreedor al editar y preserva su documento", async () => {
     render(<UpdateCreditorForm id="1" />);
     await waitFor(() => expect(screen.getByRole("textbox", { name: "Nombre completo" })).toBeTruthy());
-    expect((screen.getByRole("textbox", { name: "Nombre completo" }) as HTMLInputElement).value).toBe("Persona acreedora");
-    expect((screen.getByRole("combobox", { name: "Tipo de documento" }).closest("form")?.querySelector("[name=docType]") as HTMLInputElement).value).toBe("NIT");
+    expect((screen.getByRole<HTMLInputElement>("textbox", { name: "Nombre completo" })).value).toBe("Persona acreedora");
+    expect(screen.getByRole("combobox", { name: "Tipo de documento" }).closest("form")?.querySelector<HTMLInputElement>("[name=docType]")?.value).toBe("NIT");
     expect(screen.getByRole("button", { name: "Actualizar acreedor" })).toBeTruthy();
   });
 
@@ -66,7 +67,17 @@ describe("formularios de clientes y acreedores", () => {
     expect(submitted?.get("docType")).toBe("CC");
     expect(await screen.findByText("Documento inválido")).toBeTruthy();
     expect(screen.getByRole("textbox", { name: "Número de documento" }).getAttribute("aria-invalid")).toBe("true");
-    expect((screen.getByRole("combobox", { name: "Tipo de documento" }).closest("form")?.querySelector("[name=docType]") as HTMLInputElement).value).toBe("CC");
-    expect((screen.getByRole("textbox", { name: "Nombre completo" }) as HTMLInputElement).value).toBe("Ana Pérez");
+    expect(screen.getByRole("combobox", { name: "Tipo de documento" }).closest("form")?.querySelector<HTMLInputElement>("[name=docType]")?.value).toBe("CC");
+    expect((screen.getByRole<HTMLInputElement>("textbox", { name: "Nombre completo" })).value).toBe("Ana Pérez");
   });
+});
+
+it("descarta el estado de validación del formulario anterior al editar otra entidad", async () => {
+  vi.mocked(createClient).mockResolvedValueOnce({ success: false, message: "Dato anterior", input: { name: "Nombre anterior", docType: "CC", docNumber: "12345" } });
+  const { rerender } = render(<ActorForm kind="client" />);
+  fireEvent.submit(screen.getByRole("button", { name: "Crear cliente" }).closest("form")!);
+  await screen.findByText("Dato anterior");
+  rerender(<ActorForm kind="creditor" id="1" />);
+  await waitFor(() => expect(screen.getByRole<HTMLInputElement>("textbox", { name: "Nombre completo" }).value).toBe("Persona acreedora"));
+  expect(screen.queryByText("Dato anterior")).toBeNull();
 });

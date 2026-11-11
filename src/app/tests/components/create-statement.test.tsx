@@ -139,7 +139,7 @@ it("conserva selección y total de conceptos entre páginas", async () => {
   fireEvent.click(screen.getByLabelText(/^Concepto 26 /));
   expect(screen.getByText("$200")).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Anterior página de ítems" }));
-  expect((screen.getByLabelText(/^Concepto 1 /) as HTMLInputElement).checked).toBe(true);
+  expect((screen.getByLabelText<HTMLInputElement>(/^Concepto 1 /)).checked).toBe(true);
   fireEvent.click(screen.getByRole("button", { name: "Crear cuenta de cobro" }));
   await waitFor(() => expect(mocks.create).toHaveBeenCalledWith(expect.objectContaining({ item_ids: ["i0", "i25"] })));
 });

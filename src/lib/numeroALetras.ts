@@ -22,9 +22,9 @@ export function convertirNumeroALetras(numero: number): string {
     function convertirGrupo(n: number): string {
         let resultado = '';
 
-        let centena = Math.floor(n / 100);
-        let decena = Math.floor((n % 100) / 10);
-        let unidad = n % 10;
+        const centena = Math.floor(n / 100);
+        const decena = Math.floor((n % 100) / 10);
+        const unidad = n % 10;
 
         if (centena > 0) {
             if (centena === 1 && decena === 0 && unidad === 0) {
@@ -52,9 +52,9 @@ export function convertirNumeroALetras(numero: number): string {
         return resultado;
     }
 
-    let millones = Math.floor(numero / 1000000);
-    let miles = Math.floor((numero % 1000000) / 1000);
-    let resto = numero % 1000;
+    const millones = Math.floor(numero / 1000000);
+    const miles = Math.floor((numero % 1000000) / 1000);
+    const resto = numero % 1000;
 
     let resultado = '';
     resultado += procesarMillones(millones);

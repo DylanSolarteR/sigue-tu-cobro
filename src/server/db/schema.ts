@@ -1,4 +1,4 @@
-import { int, text, singlestoreTableCreator, index, singlestoreEnum, boolean, timestamp } from
+import { int, text, singlestoreTableCreator, index, singlestoreEnum, boolean } from
   "drizzle-orm/singlestore-core";
 
 export const createTable = singlestoreTableCreator((name): string => `stc_${name}`);

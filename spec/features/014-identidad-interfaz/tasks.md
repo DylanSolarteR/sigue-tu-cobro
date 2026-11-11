@@ -7,4 +7,4 @@
 - [x] Ejecutar pruebas de lógica/componentes, E2E con mocks, tipos y build; evidencia en la etapa 021.
 - [x] Actualizar el roadmap y separar la revisión manual de la validación automática.
 
-La revisión final en dispositivos físicos corresponde al usuario. Lint es la siguiente implementación; los servicios reales quedan fuera de esta secuencia por su decisión.
+La revisión final en dispositivos físicos corresponde al usuario. Lint quedó resuelto en la etapa 022; los servicios reales quedan fuera de esta secuencia por su decisión.

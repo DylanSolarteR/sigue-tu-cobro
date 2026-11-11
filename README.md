@@ -23,13 +23,14 @@
 - [x] make a 404 page (rutas públicas/dashboard, teclado y móvil/escritorio emulados).
 - [x] make the site responsive (validado en escritorio y móvil emulado).
 - [x] make automated tests and pass every one (lógica, componentes y E2E con servicios simulados).
-- [ ] resolve global lint errors and warnings.
+- [x] resolve global lint errors and warnings (etapa 022: cero diagnósticos, tipos, pruebas y build aprobados).
 - [ ] restore historical backup into v2 tables, replacing current test data.
 
 Revisión en dispositivos físicos y despliegue: a cargo del usuario. Las pruebas con servicios reales quedan fuera de la secuencia actual por su decisión. Consulta el [roadmap actualizado](spec/constitution/roadmap.md).
 
 ## Pruebas
 
+- `pnpm run check` ejecuta lint con límite de cero avisos y después comprueba los tipos.
 - `pnpm run test` ejecuta las pruebas unitarias y de componentes; `pnpm run test:watch` las ejecuta en modo observación.
 - Instala el navegador con `pnpm exec playwright install chromium` y ejecuta `pnpm run test:e2e`. Playwright compila un harness optimizado en `.next-e2e`, inicia un servidor en `127.0.0.1:3123` y lo detiene al terminar. El puerto debe estar libre; no se reutilizan servidores externos.
 - La suite usa Clerk y backend simulados con estado local reiniciado por prueba; conserva las acciones, validación, interfaz y generación de PDF reales. `E2E_USER_ID` puede definirse en `.env.e2e.local` para usar una identidad local autorizada; sin ella se emplea una identidad ficticia. Nunca versionar ese archivo.

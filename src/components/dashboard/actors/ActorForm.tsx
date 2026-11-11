@@ -17,13 +17,11 @@ import type { ActionResponse } from "@/types/actionResponses";
 
 const INITIAL_STATE: ActionResponse<Actor> = { success: false, message: "" };
 
-export function ActorForm({
-  kind,
-  id,
-}: {
-  kind: "client" | "creditor";
-  id?: string;
-}) {
+type ActorFormProps = { kind: "client" | "creditor"; id?: string };
+export function ActorForm(props: ActorFormProps) {
+  return <ActorFormContent key={`${props.kind}:${props.id ?? "new"}`} {...props} />;
+}
+function ActorFormContent({ kind, id }: ActorFormProps) {
   const editing = Boolean(id);
   const subject = kind === "client" ? "cliente" : "acreedor";
   const [record, setRecord] = useState<Actor | null>(null);
@@ -45,8 +43,6 @@ export function ActorForm({
   useEffect(() => {
     if (!id) return;
     let active = true;
-    setLoading(true);
-    setLoadError(false);
     const request = kind === "client" ? getClientById(id) : getCreditorById(id);
     void request
       .then((result) => {

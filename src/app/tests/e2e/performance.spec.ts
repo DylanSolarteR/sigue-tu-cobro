@@ -42,7 +42,7 @@ for (const [accounts, pending] of [[1000, 100], [10000, 1000]] as const) test(`r
   }
   const results = Object.fromEntries(Object.entries(timings).map(([key, values]) => [key, summarize(values)]));
   const report = testInfo.outputPath("performance.json");
-  await writeFile(report, JSON.stringify({ accounts, pending, project: testInfo.project.name, viewport: page.viewportSize(), browser: await page.context().browser()!.version(), cpuThrottling: "none", network: "local mocked", fixtureStorage: "file-backed memory cache, invalidated on file change", timingMethod: "observed wall clock including Playwright action and assertion overhead", timings: results, pages }, null, 2));
+  await writeFile(report, JSON.stringify({ accounts, pending, project: testInfo.project.name, viewport: page.viewportSize(), browser: page.context().browser()!.version(), cpuThrottling: "none", network: "local mocked", fixtureStorage: "file-backed memory cache, invalidated on file change", timingMethod: "observed wall clock including Playwright action and assertion overhead", timings: results, pages }, null, 2));
   await testInfo.attach("performance.json", { path: report, contentType: "application/json" });
   for (const key of ["accountsReady", "itemsReady", "createReady", "summaryReady"]) expect.soft(results[key]!.median, key).toBeLessThanOrEqual(3000);
   for (const key of ["filter", "pagination", "selection", "editor"]) expect.soft(results[key]!.median, key).toBeLessThanOrEqual(500);

@@ -10,8 +10,8 @@ import {
   pdf,
 } from "@react-pdf/renderer";
 import {
-  billing_statement,
-  billing_statement_item,
+  type billing_statement,
+  type billing_statement_item,
 } from "@/types/billing-statement";
 import { convertirNumeroALetras } from "@/lib/numeroALetras";
 import { formatBillingDate } from "@/lib/billing-date";
@@ -128,7 +128,7 @@ export const BillingStatementPDF: React.FC<{
           </Text>
           <Text style={styles.amount}>
             La suma de ${data.amount?.toLocaleString('es-CO')} (
-            {convertirNumeroALetras(data.amount as number)}).
+            {convertirNumeroALetras(data.amount!)}).
           </Text>
         </View>
 

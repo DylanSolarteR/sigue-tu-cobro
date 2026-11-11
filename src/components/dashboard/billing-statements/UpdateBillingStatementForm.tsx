@@ -2,7 +2,7 @@
 
 import SelectField from "@/components/dashboard/SelectField";
 
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import {
   getBillingStatementDetails,
   saveBillingStatement,
@@ -44,6 +44,10 @@ export default function UpdateBillingStatementForm({
   const [showItemAmount, setShowItemAmount] = useState(true);
   const [message, setMessage] = useState("");
 
+  const notifyLoaded = useEffectEvent((loadedAccount: billing_statement) => {
+    onUpdated?.(loadedAccount);
+    onItemsRefreshed?.();
+  });
   useEffect(() => {
     let active = true;
     void (async () => {
@@ -63,8 +67,7 @@ export default function UpdateBillingStatementForm({
       }
       setAccount(loadedAccount);
       setItems(loadedItems);
-      onUpdated?.(loadedAccount);
-      onItemsRefreshed?.();
+      notifyLoaded(loadedAccount);
       setStatus(loadedAccount.status === "paid" ? "paid" : "pending");
       setDate(parsedDate.value);
       setExtraInfo(loadedAccount.extraInfo);

@@ -6,7 +6,7 @@ afterEach(cleanup);
 it("formatea miles, usa teclado numérico y rechaza letras sin alterar el valor", () => {
   const change = vi.fn();
   const { rerender } = render(<MoneyInput id="amount" value="1234" onChange={change} />);
-  const input = screen.getByRole("textbox") as HTMLInputElement;
+  const input = screen.getByRole<HTMLInputElement>("textbox");
   expect(input.value).toBe("1.234");
   expect(input.inputMode).toBe("numeric");
   fireEvent.change(input, { target: { value: "1.234a" } });

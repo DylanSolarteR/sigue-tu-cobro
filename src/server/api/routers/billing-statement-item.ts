@@ -12,21 +12,21 @@ export const billingStatementItemRouter = createTRPCRouter({
   queries: {
     getBillingStatementItems: privateProcedure.input(z.object({ parentBillingStatementId: id })).query(async ({ ctx, input }) => {
       return ctx.db.select().from(billing_statement_item).where(and(
-        eq(billing_statement_item.ownerId, ctx.user.userId!),
+        eq(billing_statement_item.ownerId, ctx.user.userId),
         eq(billing_statement_item.billing_statement_id, input.parentBillingStatementId),
         eq(billing_statement_item.isActive, true),
       )).orderBy(billing_statement_item.updatedAt);
     }),
     getPendingByClient: privateProcedure.input(z.object({ client_id: id })).query(async ({ ctx, input }) => {
       return ctx.db.select().from(billing_statement_item).where(and(
-        eq(billing_statement_item.ownerId, ctx.user.userId!), eq(billing_statement_item.client_id, input.client_id),
+        eq(billing_statement_item.ownerId, ctx.user.userId), eq(billing_statement_item.client_id, input.client_id),
         eq(billing_statement_item.status, "pending"), eq(billing_statement_item.isActive, true),
       )).orderBy(billing_statement_item.updatedAt);
     }),
   },
   mutations: {
     create: privateProcedure.input(z.object({ client_id: id, desc: description, amount })).mutation(async ({ ctx, input }) => {
-      const owner = ctx.user.userId!;
+      const owner = ctx.user.userId;
       const [client] = await ctx.db.select({ id: actor.id }).from(actor).where(and(
         eq(actor.id, input.client_id), eq(actor.ownerId, owner), eq(actor.type, "client"), eq(actor.isActive, true),
       ));
@@ -36,16 +36,16 @@ export const billingStatementItemRouter = createTRPCRouter({
       return item_id;
     }),
     update: privateProcedure.input(z.object({ id, desc: description, amount })).mutation(async ({ ctx, input }) => {
-      const owner = ctx.user.userId!;
+      const owner = ctx.user.userId;
       await ctx.db.transaction(async (tx) => {
         const [initial] = await tx.select().from(billing_statement_item).where(and(eq(billing_statement_item.id, input.id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true)));
         if (!initial) throw new TRPCError({ code: "NOT_FOUND", message: "Ítem no encontrado" });
         if (initial.billing_statement_id) {
           const [statement] = await tx.select().from(billing_statement).where(and(eq(billing_statement.id, initial.billing_statement_id), eq(billing_statement.ownerId, owner), eq(billing_statement.isActive, true))).for("update");
-          if (!statement || statement.status !== "pending") throw new TRPCError({ code: "CONFLICT", message: "Reabre la cuenta antes de editar sus ítems" });
+          if (statement?.status !== "pending") throw new TRPCError({ code: "CONFLICT", message: "Reabre la cuenta antes de editar sus ítems" });
         }
         const [item] = await tx.select().from(billing_statement_item).where(and(eq(billing_statement_item.id, input.id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true))).for("update");
-        if (!item || item.billing_statement_id !== initial.billing_statement_id || item.status === "paid") throw new TRPCError({ code: "CONFLICT", message: "El ítem cambió; vuelve a intentarlo" });
+        if (item?.billing_statement_id !== initial.billing_statement_id || item.status === "paid") throw new TRPCError({ code: "CONFLICT", message: "El ítem cambió; vuelve a intentarlo" });
         await tx.update(billing_statement_item).set({ desc: input.desc, amount: input.amount, updatedAt: new Date().toISOString() }).where(and(eq(billing_statement_item.id, input.id), eq(billing_statement_item.ownerId, owner)));
         if (item.billing_statement_id) {
           const [total] = await tx.select({ value: sum(billing_statement_item.amount) }).from(billing_statement_item).where(and(eq(billing_statement_item.billing_statement_id, item.billing_statement_id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true)));
@@ -56,7 +56,7 @@ export const billingStatementItemRouter = createTRPCRouter({
       });
     }),
     delete: privateProcedure.input(z.object({ id })).mutation(async ({ ctx, input }) => {
-      const owner = ctx.user.userId!;
+      const owner = ctx.user.userId;
       await ctx.db.transaction(async (tx) => {
         const [item] = await tx.select().from(billing_statement_item).where(and(eq(billing_statement_item.id, input.id), eq(billing_statement_item.ownerId, owner), eq(billing_statement_item.isActive, true))).for("update");
         if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Ítem no encontrado" });

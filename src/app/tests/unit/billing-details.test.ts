@@ -23,5 +23,7 @@ it("inicia ambas consultas y devuelve una respuesta conjunta para el editor", as
 it("no devuelve detalles incompletos si una consulta falla", async () => {
   mocks.account.mockResolvedValue({ id: "b1" });
   mocks.items.mockRejectedValue(new Error("Detalle interno"));
-  expect(await getBillingStatementDetails("b1")).toMatchObject({ success: false, message: expect.not.stringContaining("Detalle interno") });
+  const result = await getBillingStatementDetails("b1");
+  expect(result.success).toBe(false);
+  expect(result.message).not.toContain("Detalle interno");
 });

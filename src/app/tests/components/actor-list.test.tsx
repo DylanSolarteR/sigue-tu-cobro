@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ActorList } from "@/components/dashboard/actors/ActorList";
 import ListClients from "@/components/dashboard/clients/ListClients";
-import { deleteClientById, getClients } from "@/actions/actor.api";
+import { deleteClientById, getClients, getCreditors } from "@/actions/actor.api";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
@@ -15,7 +16,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 describe("listado de clientes", () => {
   it("reserva espacio con un skeleton accesible mientras carga", () => {
-    vi.mocked(getClients).mockImplementationOnce(() => new Promise(() => {}));
+    vi.mocked(getClients).mockImplementationOnce(() => new Promise(() => { /* Mantiene la carga pendiente. */ }));
     render(<ListClients />);
     const status = screen.getByRole("status", { name: "Cargando clientes" });
     expect(status.querySelector('[aria-hidden="true"]')).toBeTruthy();
@@ -47,4 +48,16 @@ describe("listado de clientes", () => {
     await waitFor(() => expect(deleteClientById).toHaveBeenCalledWith("0"));
     await waitFor(() => expect(screen.queryByText("Cliente 1")).toBeNull());
   });
+});
+
+it("reinicia la página al cambiar de clientes a acreedores", async () => {
+  vi.mocked(getCreditors).mockResolvedValueOnce([{ id: "a1", name: "Acreedor nuevo", docType: "CC", docNumber: "12345", type: "creditor", ownerId: "user-test", expeditionPlace: null, telephone: null, isActive: true, createdAt: "2026-01-01", updatedAt: "2026-01-01" }]);
+  const { rerender } = render(<ActorList kind="client" />);
+  await screen.findByText("Cliente 1");
+  fireEvent.click(screen.getByRole("button", { name: "Siguiente" }));
+  expect(screen.getByText("Cliente 11")).toBeTruthy();
+  rerender(<ActorList kind="creditor" />);
+  expect(screen.getByRole("status", { name: "Cargando acreedores" })).toBeTruthy();
+  expect(await screen.findByText("Acreedor nuevo")).toBeTruthy();
+  expect(screen.getByRole<HTMLButtonElement>("button", { name: "Anterior" }).disabled).toBe(true);
 });

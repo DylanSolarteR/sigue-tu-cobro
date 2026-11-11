@@ -1,25 +1,35 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import UpdateForm from "../../../components/dashboard/billing-statements/UpdateBillingStatementForm";
-const mocks = vi.hoisted(() => ({ get: vi.fn(), list: vi.fn(), save: vi.fn(), edit: vi.fn() }));
-vi.mock("@/actions/billing-statement.api", () => ({ getBillingStatementDetails: async (...args: unknown[]) => { const [account, items] = await Promise.all([mocks.get(...args), mocks.list(...args)]); return account.success ? { success: true, data: { account: account.data, items: items.data } } : account; }, saveBillingStatement: mocks.save }));
-vi.mock("@/actions/billing-statement.item.api", () => ({ getBillingStatementItems: mocks.list, updateBillingStatementItem: mocks.edit }));
+import type { getBillingStatementDetails } from "@/actions/billing-statement.api";
+const mocks = vi.hoisted(() => ({ load: vi.fn<typeof getBillingStatementDetails>(), save: vi.fn(), edit: vi.fn() }));
+vi.mock("@/actions/billing-statement.api", () => ({ getBillingStatementDetails: mocks.load, saveBillingStatement: mocks.save }));
+vi.mock("@/actions/billing-statement.item.api", () => ({ updateBillingStatementItem: mocks.edit }));
 vi.mock("@/components/DatePicker", () => ({ DatePicker: () => <span>Fecha</span> }));
-afterEach(() => { cleanup(); vi.clearAllMocks(); });
+const actor = { name: "Cliente", docType: "CC" as const, docNumber: "12345" };
+const data = { account: { id: "b1", client_id: "c1", creditor_id: "a1", client: actor, creditor: actor, status: "paid", payDate: "2026-01-01", extraInfo: "", showItemAmount: true, amount: 500 }, items: [{ id: "i1", client_id: "c1", billing_statement_id: "b1", status: "paid" as const, desc: "Servicio", amount: 500 }] };
+afterEach(() => { cleanup(); vi.resetAllMocks(); });
 it("muestra los ítems pagados bloqueados y no escribe datos al abrir", async () => {
-  mocks.get.mockResolvedValue({ success: true, data: { id: "b1", status: "paid", payDate: "2026-01-01T00:00:00.000Z", extraInfo: "", showItemAmount: true, amount: 500 } });
-  mocks.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
+  mocks.load.mockResolvedValue({ success: true, message: "", data });
   render(<UpdateForm id="b1" />);
-  const item = await screen.findByLabelText("Descripción del ítem");
-  expect((item as HTMLInputElement).disabled).toBe(true);
+  expect((await screen.findByLabelText<HTMLInputElement>("Descripción del ítem")).disabled).toBe(true);
   expect(mocks.save).not.toHaveBeenCalled();
   expect(mocks.edit).not.toHaveBeenCalled();
 });
-
 it("reserva espacio accesible mientras carga la cuenta", () => {
-  mocks.get.mockReturnValue(new Promise(() => { /* Mantiene la carga pendiente. */ }));
-  mocks.list.mockReturnValue(new Promise(() => { /* Mantiene la carga pendiente. */ }));
+  mocks.load.mockReturnValue(new Promise(() => { /* Carga pendiente. */ }));
   render(<UpdateForm id="b1" />);
   expect(screen.getByRole("status", { name: "Cargando cuenta" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
+});
+it("notifica al callback vigente sin volver a consultar al cambiar los callbacks", async () => {
+  let resolve!: (value: Awaited<ReturnType<typeof getBillingStatementDetails>>) => void;
+  mocks.load.mockReturnValue(new Promise((done) => { resolve = done; }));
+  const previous = vi.fn(); const current = vi.fn();
+  const { rerender } = render(<UpdateForm id="b1" onUpdated={previous} />);
+  rerender(<UpdateForm id="b1" onUpdated={current} />);
+  resolve({ success: true, message: "", data });
+  await waitFor(() => expect(current).toHaveBeenCalledWith(data.account));
+  expect(previous).not.toHaveBeenCalled();
+  expect(mocks.load).toHaveBeenCalledTimes(1);
 });

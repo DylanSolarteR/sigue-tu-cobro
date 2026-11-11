@@ -6,7 +6,7 @@
 - [x] Mejorar acciones frecuentes y adaptar los recorridos a escritorio y móvil emulado.
 - [x] Ejecutar E2E con servicios simulados, descargas y escenarios de volumen/rendimiento (etapa 021).
 - [x] Cerrar la validación de la 404 (etapa 009).
-- [ ] Revisar y resolver el lint global.
+- [x] Revisar y resolver el lint global (etapa 022: check estricto, pruebas y build aprobados).
 - [ ] Convertir y restaurar los datos históricos en tablas v2, sustituyendo los datos actuales de prueba y comprobando montos, fechas y relaciones.
 - [x] Consolidar el roadmap y distinguir las exclusiones acordadas de los pendientes de implementación; actualizarlo en cada etapa.
 

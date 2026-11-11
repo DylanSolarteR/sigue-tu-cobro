@@ -8,7 +8,7 @@ vi.mock("@/components/dashboard/clients/ListClients", () => ({ default: () => <d
 afterEach(cleanup);
 
 it("ofrece un enlace de navegación sin controles anidados", async () => {
-  render(await Clientes());
+  render(Clientes());
   const link = screen.getByRole("link", { name: "Crear nuevo cliente" });
   expect(link.getAttribute("href")).toBe("/dashboard/clientes/crear");
   expect(link.querySelector("button")).toBeNull();

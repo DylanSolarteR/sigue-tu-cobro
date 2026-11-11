@@ -5,6 +5,6 @@
 - [x] Ejecutar recorridos críticos en navegador con servicios simulados, incluidos PDF, lotes, errores, teclado y gesto táctil (etapa 021).
 - [x] Registrar escenarios de volumen y métricas locales con sus limitaciones.
 - [x] Actualizar la evidencia y el roadmap.
-- [ ] Revisar y resolver los errores y avisos del lint global en la siguiente etapa.
+- [x] Revisar y resolver errores/avisos del lint global: etapa 022, límite de cero avisos y comprobación de tipos.
 
 Las pruebas con servicios reales quedan fuera de esta secuencia por decisión del usuario. La revisión en dispositivos físicos corresponde al usuario.
