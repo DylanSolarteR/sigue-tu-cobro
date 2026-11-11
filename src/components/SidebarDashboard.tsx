@@ -3,15 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Show, UserButton } from "@clerk/nextjs";
-import { ChartNoAxesCombined, CircleUser, HandCoins, Handshake, ListChecks, Menu, NotebookText, Settings, X } from "lucide-react";
+import { ChartNoAxesCombined, CircleUser, Handshake, ListChecks, Menu, NotebookText, Settings, X } from "lucide-react";
 import { useRef, useState } from "react";
 
 const NAVIGATION = [
   { href: "/dashboard/resumen", title: "Resumen", icon: ChartNoAxesCombined },
   { href: "/dashboard/cuentas-cobro", title: "Cuentas de cobro", icon: NotebookText },
   { href: "/dashboard/items", title: "Ítems", icon: ListChecks },
-  { href: "/dashboard/clientes", title: "Clientes", icon: Handshake },
-  { href: "/dashboard/acreedores", title: "Acreedores", icon: HandCoins },
+  { href: "/dashboard/directorio", title: "Directorio", icon: Handshake },
   { href: "/dashboard/config", title: "Configuración", icon: Settings },
 ];
 
@@ -19,7 +18,7 @@ function NavigationLinks({ pathname, onNavigate }: { pathname: string; onNavigat
   return (
     <ul className="space-y-1">
       {NAVIGATION.map(({ href, title, icon: Icon }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
+        const active = pathname === href || pathname.startsWith(`${href}/`) || (href === "/dashboard/directorio" && (pathname.startsWith("/dashboard/clientes") || pathname.startsWith("/dashboard/acreedores")));
         return (
           <li key={href}>
             <Link href={href} onClick={onNavigate} aria-current={active ? "page" : undefined}

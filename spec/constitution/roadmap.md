@@ -31,3 +31,4 @@ No se asigna prioridad entre pendientes porque el README no la establece.
 - [017 · Sistema visual e ítems](../features/017-sistema-e-items/spec.md): tokens compartidos, toasts, valores interactivos de la gráfica y rediseño de ítems; pendiente de revisión visual del usuario.
 - [018 · Flujo de ítems y cuentas](../features/018-flujo-items-cuentas/spec.md): secciones y filas expandibles de ítems, creación de cuentas y botón uniforme; pendiente de revisión visual.
 - [019 · Controles y secciones](../features/019-controles/spec.md): selects personalizados, skeletons, foco y secciones; pendiente de revisión visual.
+- [020 · Directorio y recorrido de cobro](../features/020-directorio/spec.md): acceso conjunto a clientes y acreedores y guía de tres pasos en resumen; pendiente de revisión visual.

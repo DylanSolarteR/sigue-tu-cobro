@@ -9,7 +9,7 @@ import type { Actor } from "@/types/actor";
 
 const PAGE_SIZE = 10;
 
-export function ActorList({ kind }: { kind: "client" | "creditor" }) {
+export function ActorList({ kind, cards = false }: { kind: "client" | "creditor"; cards?: boolean }) {
   const [actors, setActors] = useState<Actor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -66,6 +66,24 @@ export function ActorList({ kind }: { kind: "client" | "creditor" }) {
 
   const pageCount = Math.max(1, Math.ceil(actors.length / PAGE_SIZE));
   const visible = actors.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  if (cards) return (
+    <div className="space-y-4">
+      {visible.length ? <ul className="space-y-3">{visible.map((actor) => (
+        <li key={actor.id} className="bg-stc-bg border-stc-border rounded-2xl border p-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
+          <div className="min-w-0 space-y-1">
+            <h3 className="break-words font-semibold">{actor.name}</h3>
+            <p className="text-stc-muted break-all text-sm">{actor.docType} {actor.docNumber}</p>
+            {(Boolean(actor.telephone) || Boolean(actor.expeditionPlace)) && <p className="text-stc-muted break-words text-sm">{[actor.telephone, actor.expeditionPlace].filter(Boolean).join(" · ")}</p>}
+          </div>
+          <div className="mt-3 flex gap-2 sm:mt-0 sm:shrink-0">
+            <Link className="btn btn-ghost min-h-11 min-w-11" href={`/dashboard/${section}/editar/${actor.id}`} aria-label={`Editar ${actor.name}`}><Edit size={18} aria-hidden="true" /></Link>
+            <button type="button" className="btn btn-ghost min-h-11 min-w-11" disabled={!actor.id || deleting !== null} onClick={() => void remove(actor)} aria-label={`Eliminar ${actor.name}`}><Trash size={18} aria-hidden="true" /></button>
+          </div>
+        </li>
+      ))}</ul> : <p className="text-stc-muted py-4">No hay {section} registrados.</p>}
+      {pageCount > 1 && <div className="flex flex-wrap items-center justify-end gap-3"><button type="button" className="btn btn-outline min-h-11" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Anterior</button><span className="text-sm text-base-content/70">{page + 1} de {pageCount}</span><button type="button" className="btn btn-outline min-h-11" disabled={page + 1 >= pageCount} onClick={() => setPage((value) => value + 1)}>Siguiente</button></div>}
+    </div>
+  );
   return (
     <div className="w-full space-y-4">
       <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
