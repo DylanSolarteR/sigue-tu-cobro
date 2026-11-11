@@ -12,7 +12,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Tu resumen</h1>
           <p className="text-stc-label leading-6 text-[#b9c9c2] sm:text-base">Organiza tus cobros y consulta cómo avanzan en un solo lugar.</p>
         </div>
-        <Link href="/dashboard/cuentas-cobro/crear" className="inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-xl bg-[#4fc69c] px-5 text-stc-label font-semibold text-[#092019] transition-colors hover:bg-[#72d9b2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a4f2d3]">
+        <Link href="/dashboard/cuentas-cobro/crear" className="btn btn-primary w-full rounded-xl sm:w-auto">
           <FilePlus2 size={19} aria-hidden="true" /> Crear cuenta de cobro
         </Link>
       </header>

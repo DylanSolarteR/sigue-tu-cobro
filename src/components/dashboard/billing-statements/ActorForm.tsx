@@ -47,15 +47,36 @@ export default function ActorForm({ clientsList, creditorsList }: { clientsList:
     setSaving(false);
   }
 
+  const fieldClass = "select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field px-4 text-stc-label text-stc-text hover:border-stc-focus focus:border-stc-focus focus:bg-stc-field-focus focus:outline-none focus:shadow-none disabled:opacity-50";
+  const total = items.filter((item) => item.id && selected.includes(item.id)).reduce((sum, item) => sum + item.amount, 0);
+
   return (
-    <form onSubmit={(event) => void submit(event)} className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2"><div className="space-y-2"><label htmlFor="statement-client" className="font-medium">Cliente</label><select id="statement-client" value={client} disabled={saving} onChange={(event) => void changeClient(event.target.value)} className="select w-full"><option value="">Selecciona un cliente</option>{clientsList.filter((item) => item.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></div>
-      <div className="space-y-2"><label htmlFor="statement-creditor" className="font-medium">Acreedor</label><select id="statement-creditor" value={creditor} disabled={saving} onChange={(event) => setCreditor(event.target.value)} className="select w-full"><option value="">Selecciona un acreedor</option>{creditorsList.filter((item) => item.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></div></div>
-      <fieldset disabled={saving || loading} className="space-y-3 rounded-box border border-base-300 p-4"><legend className="px-1 font-medium">Ítems pendientes</legend>{!client ? <p>Selecciona un cliente para ver sus ítems.</p> : loading ? <div role="status" aria-label="Cargando conceptos pendientes" className="space-y-3"><div className="skeleton h-8 w-full" /><div className="skeleton h-8 w-full" /></div> : loadFailed ? <button type="button" className="btn btn-outline btn-sm" onClick={() => void changeClient(client)}>Reintentar carga</button> : items.length ? items.map((item) => <label key={item.id} className="flex items-center gap-3"><input type="checkbox" className="checkbox checkbox-primary" checked={selected.includes(item.id ?? "")} onChange={(event) => { if (!item.id) return; const id = item.id; setSelected((previous) => event.target.checked ? [...previous, id] : previous.filter((value) => value !== id)); }} /><span>{item.desc} · ${item.amount.toLocaleString("es-CO")}</span></label>) : <p>No hay ítems pendientes. <Link href="/dashboard/items" className="link link-primary">Crear un ítem</Link></p>}
-      <p className="text-sm font-medium">Total seleccionado: ${items.filter((item) => item.id && selected.includes(item.id)).reduce((sum, item) => sum + item.amount, 0).toLocaleString("es-CO")}</p></fieldset>
-      <DatePicker date={date} setDate={setDate} />
+    <form onSubmit={(event) => void submit(event)} className="space-y-6 text-stc-text">
+      <div className="grid gap-stc-group sm:grid-cols-2 lg:grid-cols-3">
+        <div className="min-w-0 space-y-2">
+          <label htmlFor="statement-client" className="block text-stc-label font-medium text-[var(--color-stc-label)]">Cliente</label>
+          <select id="statement-client" value={client} disabled={saving} onChange={(event) => void changeClient(event.target.value)} className={fieldClass}>
+            <option value="">Selecciona un cliente</option>
+            {clientsList.filter((item) => item.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
+          </select>
+        </div>
+        <div className="min-w-0 space-y-2">
+          <label htmlFor="statement-creditor" className="block text-stc-label font-medium text-[var(--color-stc-label)]">Acreedor</label>
+          <select id="statement-creditor" value={creditor} disabled={saving} onChange={(event) => setCreditor(event.target.value)} className={fieldClass}>
+            <option value="">Selecciona un acreedor</option>
+            {creditorsList.filter((item) => item.id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
+          </select>
+        </div>
+        <DatePicker date={date} setDate={setDate} />
+      </div>
+      <fieldset disabled={saving || loading} className="min-w-0 space-y-4 border-t border-stc-divider pt-5">
+        <legend className="sr-only">Ítems pendientes</legend>
+        <h3 aria-hidden="true" className="text-lg font-semibold">Ítems pendientes</h3>
+        {!client ? <p className="text-stc-label leading-6 text-stc-muted">Selecciona un cliente para ver sus ítems.</p> : loading ? <div role="status" aria-label="Cargando conceptos pendientes" className="space-y-3"><div className="skeleton h-12 w-full" /><div className="skeleton h-12 w-full" /></div> : loadFailed ? <button type="button" className="min-h-11 rounded-xl border border-stc-border px-4 text-stc-label font-medium hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover" onClick={() => void changeClient(client)}>Reintentar carga</button> : items.length ? <div className="space-y-2">{items.map((item) => <label key={item.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border border-stc-border bg-stc-field px-4 py-3 hover:border-stc-focus focus-within:border-stc-focus"><input type="checkbox" className="checkbox checkbox-primary shrink-0" checked={selected.includes(item.id ?? "")} onChange={(event) => { if (!item.id) return; const id = item.id; setSelected((previous) => event.target.checked ? [...previous, id] : previous.filter((value) => value !== id)); }} /><span className="min-w-0 flex-1 break-words text-stc-label">{item.desc} · <span className="tabular-nums">${item.amount.toLocaleString("es-CO")}</span></span></label>)}</div> : <p className="text-stc-label leading-6 text-stc-muted">No hay ítems pendientes. <Link href="/dashboard/items" className="font-medium text-stc-accent underline underline-offset-4">Crear un ítem</Link></p>}
+        <p className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-stc-divider pt-4 text-stc-label font-medium"><span>Total seleccionado:</span> <strong className="text-base tabular-nums">${total.toLocaleString("es-CO")}</strong></p>
+      </fieldset>
       {message && <p role="alert" className="alert alert-error text-sm">{message}</p>}
-      <button type="submit" className="btn btn-primary w-full sm:w-auto" disabled={saving || loading || !selected.length}>{saving ? "Creando…" : "Crear cuenta de cobro"}</button>
+      <button type="submit" className="min-h-12 w-full rounded-xl border border-transparent bg-stc-accent px-5 font-semibold text-stc-ink hover:bg-stc-accent-hover focus-visible:border-stc-focus focus-visible:bg-stc-accent-focus disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto" disabled={saving || loading || !selected.length}>{saving ? "Creando…" : "Crear cuenta de cobro"}</button>
     </form>
   );
 }

@@ -40,6 +40,7 @@ describe("gestión de ítems pendientes", () => {
     actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
     fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+    fireEvent.click(await screen.findByRole("button", { name: /Servicio.*500/ }));
     fireEvent.change(await screen.findByLabelText("Descripción de Servicio"), { target: { value: "Servicio editado" } });
     fireEvent.click(screen.getByRole("button", { name: "Guardar ítem" }));
     await waitFor(() => expect(actions.update).toHaveBeenCalledWith("i1", "Servicio editado", 500));
@@ -62,7 +63,8 @@ describe("gestión de ítems pendientes", () => {
     actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
     fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
-    fireEvent.click(await screen.findByRole("button", { name: "Eliminar ítem" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Servicio.*500/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Eliminar ítem" }));
     fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
     expect(actions.remove).not.toHaveBeenCalled();
     expect(screen.queryByRole("button", { name: "Confirmar eliminación" })).toBeNull();
@@ -102,6 +104,7 @@ it("formatea valores y rechaza letras al crear y editar", async () => {
   fireEvent.change(createAmount, { target: { value: "1.234.567a" } });
   expect(createAmount.value).toBe("1.234.567");
   expect(screen.getByRole("alert").textContent).toContain("únicamente números");
+  fireEvent.click(await screen.findByRole("button", { name: /Servicio.*50.000/ }));
   const editAmount = await screen.findByLabelText<HTMLInputElement>("Valor de Servicio");
   expect(editAmount.value).toBe("50.000");
   fireEvent.change(editAmount, { target: { value: "75000" } });
@@ -113,4 +116,25 @@ it("ofrece una ruta para crear un cliente cuando no hay clientes", () => {
   render(<ItemsManager clients={[]} />);
   expect(screen.getByRole("link", { name: /crear cliente/i }).getAttribute("href")).toBe("/dashboard/clientes/crear");
   expect(screen.getByRole<HTMLButtonElement>("button", { name: "Crear ítem" }).disabled).toBe(true);
+});
+
+
+it("muestra el resumen del cliente y filas compactas expandibles", async () => {
+  actions.list.mockResolvedValue({ success: true, data: [
+    { id: "i1", desc: "Servicio", amount: 50000 },
+    { id: "i2", desc: "Materiales", amount: 2500 },
+  ] });
+  render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
+  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  const row = await screen.findByRole("button", { name: /Servicio.*50.000/ });
+  expect(screen.getAllByText("Cliente A").length).toBeGreaterThan(1);
+  expect(screen.getByText("2 ítems")).toBeTruthy();
+  expect(screen.getByText(/52.500/)).toBeTruthy();
+  expect(row.getAttribute("aria-expanded")).toBe("false");
+  expect(screen.queryByLabelText("Descripción de Servicio")).toBeNull();
+  fireEvent.click(row);
+  expect(row.getAttribute("aria-expanded")).toBe("true");
+  expect(screen.getByLabelText("Descripción de Servicio")).toBeTruthy();
+  fireEvent.click(row);
+  expect(screen.queryByLabelText("Descripción de Servicio")).toBeNull();
 });
