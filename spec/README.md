@@ -1,6 +1,6 @@
 # Especificaciones del proyecto
 
-Esta documentación es una reconstrucción retrospectiva del código y del TODO de `README.md`, revisados el 9 de noviembre de 2026. No afirma que las especificaciones precedieran a la implementación ni que se hayan ejecutado sus criterios.
+Las especificaciones iniciales 001–010 se reconstruyeron retrospectivamente desde el código y el TODO de `README.md`, revisados el 9 de noviembre de 2026. Las etapas posteriores documentan la modernización y sus validaciones. El roadmap consolida el estado vigente; las listas antiguas se actualizan con evidencia y distinguen exclusiones de criterios verificados.
 
 - [Constitución](constitution/mission.md) · [Stack y convenciones](constitution/tech-stack.md) · [Roadmap](constitution/roadmap.md)
 - Cada feature contiene `spec.md`, `plan.md` y `tasks.md`. La evidencia apunta al código existente; las casillas de aceptación y validación permanecen abiertas hasta comprobar el comportamiento.

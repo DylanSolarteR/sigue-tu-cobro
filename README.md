@@ -20,9 +20,13 @@
   - [x] fix checkbox sync with updating values in billing statements.
   - [x] change margins and align text to the right in the table in the pdf.
   - [x] fix the grammar errors with the amount spelling in the pdf.
-- [ ] make a 404 page.
-- [ ] make the site responsive.
-- [ ] make automated tests and pass every one.
+- [x] make a 404 page (rutas públicas/dashboard, teclado y móvil/escritorio emulados).
+- [x] make the site responsive (validado en escritorio y móvil emulado).
+- [x] make automated tests and pass every one (lógica, componentes y E2E con servicios simulados).
+- [ ] resolve global lint errors and warnings.
+- [ ] restore historical backup into v2 tables, replacing current test data.
+
+Revisión en dispositivos físicos y despliegue: a cargo del usuario. Las pruebas con servicios reales quedan fuera de la secuencia actual por su decisión. Consulta el [roadmap actualizado](spec/constitution/roadmap.md).
 
 ## Pruebas
 

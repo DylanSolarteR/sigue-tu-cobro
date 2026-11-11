@@ -20,4 +20,6 @@ La migración debe conservar el historial y adaptar el valor histórico payed. P
 
 TDD por funcionalidad; validar dominio y componentes con Vitest, recorridos críticos con Playwright y servicios de prueba aislados, además de pruebas de migración, aislamiento entre usuarios, concurrencia, PDF, accesibilidad y responsive. No almacenar credenciales en el repositorio.
 
-El usuario aplazó la ejecución E2E y la corrección de lint hasta después de los cambios de lógica y UI/UX. La comprobación de tipos se ejecuta por separado porque el build la omite.
+La ejecución E2E y el lint se aplazaron inicialmente hasta después de lógica y UI/UX. La etapa 021 ya completó los E2E con mocks; después de la 404 siguen lint y la restauración del respaldo histórico al formato v2, sustituyendo los registros actuales de prueba. La comprobación de tipos se ejecuta por separado porque el build la omite.
+
+El usuario excluyó de esta secuencia las pruebas con servicios reales y hará por separado la revisión en dispositivos físicos y el despliegue. El orden original anterior se conserva como contexto; el seguimiento vigente es el roadmap consolidado.

@@ -1,10 +1,8 @@
 # 010 · Adaptación responsive — Tareas
 
-Actividades propuestas; pendientes de planificación y ejecución.
+- [x] Adaptar navegación, formularios y listados a escritorio y móvil.
+- [x] Probar recorridos y ausencia de desbordamiento en los tamaños emulados de Playwright.
+- [x] Comprobar escenarios de volumen y selección táctil en emulación (etapa 021).
+- [x] Registrar evidencia y actualizar el roadmap.
 
-- [ ] Definir tamaños y recorridos de aceptación.
-- [ ] Crear pruebas responsive antes de la implementación.
-- [ ] Adaptar y validar los flujos de forma integral.
-- [ ] Actualizar el roadmap cuando estén comprobados.
-- [ ] Validar los criterios de aceptación de `spec.md` y registrar evidencia.
-- [ ] Actualizar el estado en [roadmap](../../constitution/roadmap.md) después de la validación.
+La revisión en teléfonos y tabletas físicos queda a cargo del usuario. Estas comprobaciones no se presentan como validación de hardware real ni de todas las combinaciones de navegador y tamaño.

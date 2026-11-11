@@ -1,12 +1,10 @@
 # 011 · Pruebas automatizadas — Tareas
 
-Seguimiento de la base de pruebas y su validación.
+- [x] Configurar Vitest y Playwright con TDD y comandos documentados.
+- [x] Cubrir lógica y componentes por dominio.
+- [x] Ejecutar recorridos críticos en navegador con servicios simulados, incluidos PDF, lotes, errores, teclado y gesto táctil (etapa 021).
+- [x] Registrar escenarios de volumen y métricas locales con sus limitaciones.
+- [x] Actualizar la evidencia y el roadmap.
+- [ ] Revisar y resolver los errores y avisos del lint global en la siguiente etapa.
 
-- [x] Acordar alcance inicial y avisar antes de instalar dependencias.
-- [x] Configurar Vitest y Playwright y escribir pruebas iniciales usando TDD.
-- [x] Ejecutar Vitest y registrar resultados iniciales.
-- [ ] Tras los cambios de lógica y UI/UX, ejecutar E2E en entorno aislado y ampliar los recorridos críticos.
-- [ ] Revisar los errores y avisos pendientes de lint tras dichos cambios.
-- [ ] Actualizar el roadmap cuando se cumplan los criterios.
-- [ ] Validar los criterios de aceptación de `spec.md` y registrar evidencia.
-- [ ] Actualizar el estado en [roadmap](../../constitution/roadmap.md) después de la validación.
+Las pruebas con servicios reales quedan fuera de esta secuencia por decisión del usuario. La revisión en dispositivos físicos corresponde al usuario.

@@ -1,19 +1,5 @@
-# 010 · Adaptación responsive — Plan
+# 010 · Adaptación responsive — Plan y seguimiento
 
-## Enfoque
+La adaptación se desarrolló en las etapas 014–021: navegación móvil, reorganización de formularios/listados, controles comunes y acciones accesibles. Se verificaron recorridos, volumen y ausencia de desbordamiento en los dos proyectos de Playwright (escritorio y móvil emulado).
 
-Propuesta inicial para desarrollar la capacidad; debe detallarse y validarse antes de implementarla.
-
-## Implementación
-
-1. Inventariar flujos, breakpoints y restricciones actuales de portada y panel.
-2. Definir criterios por tamaño de pantalla y escribir pruebas antes de modificar UI.
-3. Adaptar layouts, navegación, formularios y tablas; validar en dispositivos representativos.
-
-## Decisiones
-
-- Las decisiones de implementación y alternativas aún están por definir.
-
-## Riesgos
-
-- La portada indica que la aplicación aún no está optimizada para móviles; el usuario prevé corregirlo.
+La evidencia y sus límites se registran en la etapa 021. La revisión en dispositivos físicos queda a cargo del usuario por decisión expresa; no se considera demostrada mediante emulación. Los siguientes trabajos del agente son lint y restauración histórica, según el roadmap.
