@@ -11,7 +11,7 @@ it("muestra los ítems pagados bloqueados y no escribe datos al abrir", async ()
   mocks.get.mockResolvedValue({ success: true, data: { id: "b1", status: "paid", payDate: "2026-01-01T00:00:00.000Z", extraInfo: "", showItemAmount: true, amount: 500 } });
   mocks.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
   render(<UpdateForm id="b1" />);
-  const item = await screen.findByLabelText("Descripción del ítem Servicio");
+  const item = await screen.findByLabelText("Descripción del ítem");
   expect((item as HTMLInputElement).disabled).toBe(true);
   expect(mocks.save).not.toHaveBeenCalled();
   expect(mocks.edit).not.toHaveBeenCalled();

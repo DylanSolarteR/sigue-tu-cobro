@@ -9,7 +9,7 @@ function Cuentas() {
           <h1 className="text-2xl font-semibold sm:text-3xl">
             Cuentas de cobro
           </h1>
-          <p className="text-base-content/70 mt-2 text-stc-label">
+          <p className="text-stc-label mt-2">
             Consulta tus cuentas y haz seguimiento a su estado.
           </p>
         </div>

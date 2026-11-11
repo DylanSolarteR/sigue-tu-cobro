@@ -45,7 +45,9 @@ export default function DateField({
         if (event.key === "Escape") setOpen(false);
       }}
     >
-      <span className="block text-stc-label font-medium text-[var(--color-stc-label)]">{label}</span>
+      <span className="text-stc-label block font-medium text-[var(--color-stc-label)]">
+        {label}
+      </span>
       <button
         id={id}
         type="button"
@@ -56,12 +58,12 @@ export default function DateField({
           if (!open) setMonth(firstMonth(value));
           setOpen(!open);
         }}
-        className="flex min-h-12 w-full items-center gap-3 rounded-2xl border border-stc-border bg-stc-field px-4 text-left text-stc-label text-stc-text hover:border-stc-focus focus-visible:border-stc-focus focus-visible:bg-[var(--color-stc-date-focus)] disabled:opacity-50"
+        className="border-stc-border bg-stc-field text-stc-label text-stc-text hover:border-stc-focus focus-visible:border-stc-focus flex min-h-12 w-full items-center gap-3 rounded-2xl border px-4 text-left focus-visible:bg-[var(--color-stc-date-focus)] disabled:opacity-50"
       >
         <CalendarDays
           size={18}
           aria-hidden="true"
-          className="shrink-0 text-stc-accent"
+          className="text-stc-accent shrink-0"
         />
         <span className="flex-1">
           {formatted?.ok ? formatted.value : "Seleccionar fecha"}
@@ -69,7 +71,7 @@ export default function DateField({
       </button>
       {open && (
         <div
-          className="absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-3rem))] rounded-2xl border border-stc-border bg-stc-bg p-4 shadow-xl"
+          className="border-stc-border bg-stc-bg absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-3rem))] rounded-2xl border p-4 shadow-xl"
           role="group"
           aria-label={`Calendario: ${label}`}
         >
@@ -129,7 +131,7 @@ export default function DateField({
                     onChange(key);
                     setOpen(false);
                   }}
-                  className={`mx-auto flex h-9 w-9 items-center justify-center rounded-xl text-stc-label focus-visible:bg-[var(--color-stc-day-hover)] ${value === key ? "bg-stc-accent font-semibold text-[var(--color-stc-date-ink)]" : "text-[var(--color-stc-date-text)] hover:bg-[var(--color-stc-day-hover)]"}`}
+                  className={`text-stc-label mx-auto flex h-9 w-9 items-center justify-center rounded-xl focus-visible:bg-[var(--color-stc-day-hover)] ${value === key ? "bg-stc-accent font-semibold text-[var(--color-stc-date-ink)]" : "text-[var(--color-stc-date-text)] hover:bg-[var(--color-stc-day-hover)]"}`}
                 >
                   {day}
                 </button>
@@ -143,7 +145,7 @@ export default function DateField({
                 onChange("");
                 setOpen(false);
               }}
-              className="mt-3 flex items-center gap-1 text-stc-label text-[var(--color-stc-date-clear)] hover:text-white"
+              className="text-stc-label mt-3 flex items-center gap-1 text-[var(--color-stc-date-clear)] hover:text-white"
             >
               <X size={15} /> Limpiar fecha
             </button>

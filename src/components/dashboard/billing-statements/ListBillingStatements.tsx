@@ -206,7 +206,11 @@ export default function ListBillingStatements() {
 
   if (loading)
     return (
-      <div role="status" aria-label="Cargando cuentas" className="space-y-stc-group">
+      <div
+        role="status"
+        aria-label="Cargando cuentas"
+        className="space-y-stc-group"
+      >
         <div className="skeleton h-12 w-full" />
         <div className="skeleton h-36 w-full" />
         <div className="skeleton h-36 w-full" />
@@ -247,18 +251,21 @@ export default function ListBillingStatements() {
     <div className="w-full space-y-5">
       <fieldset
         disabled={locked}
-        className="grid gap-stc-group rounded-2xl border border-[var(--color-stc-divider)] bg-stc-bg p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4"
+        className="gap-stc-group bg-stc-bg grid rounded-2xl border border-[var(--color-stc-divider)] p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4"
       >
-        <legend className="px-2 text-stc-label font-semibold text-[var(--color-stc-filter-title)]">
+        <legend className="text-stc-label px-2 font-semibold text-[var(--color-stc-filter-title)]">
           Filtros
         </legend>
         <div className="flex flex-col gap-2">
-          <label htmlFor="billing-search" className="text-stc-label font-medium">
+          <label
+            htmlFor="billing-search"
+            className="text-stc-label font-medium"
+          >
             Buscar cliente
           </label>
           <input
             id="billing-search"
-            className="input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-stc-text outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
+            className="input focus:bg-stc-field-focus border-stc-border bg-stc-field text-stc-text hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border outline-0"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -267,12 +274,15 @@ export default function ListBillingStatements() {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="billing-status" className="text-stc-label font-medium">
+          <label
+            htmlFor="billing-status"
+            className="text-stc-label font-medium"
+          >
             Estado
           </label>
           <select
             id="billing-status"
-            className="select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-stc-text outline-0 hover:border-stc-focus focus-visible:border-stc-focus"
+            className="select focus:bg-stc-field-focus border-stc-border bg-stc-field text-stc-text hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border outline-0"
             value={status}
             onChange={(event) => {
               setStatus(event.target.value);
@@ -311,7 +321,7 @@ export default function ListBillingStatements() {
         </p>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-base-content/70 mr-auto text-stc-label">
+        <span className="text-base-content/70 text-stc-label mr-auto">
           {selected.length} seleccionadas
         </span>
         <button
@@ -374,7 +384,7 @@ export default function ListBillingStatements() {
             return (
               <li
                 key={id}
-                className={`space-y-stc-group rounded-2xl border p-4 sm:p-5 ${isSelected ? "border-[var(--color-stc-accent)] bg-stc-bg/50" : "border-[var(--color-stc-divider)] bg-stc-bg"}`}
+                className={`space-y-stc-group rounded-2xl border p-4 sm:p-5 ${isSelected ? "bg-stc-bg/50 border-[var(--color-stc-accent)]" : "bg-stc-bg border-[var(--color-stc-divider)]"}`}
                 onPointerDown={(event) => {
                   held.current = false;
                   if (
@@ -433,7 +443,7 @@ export default function ListBillingStatements() {
                       <button
                         type="button"
                         data-billing-trigger
-                        className="flex min-h-11 items-center gap-2 rounded-md text-left text-lg font-semibold border border-transparent focus-visible:border-stc-focus focus-visible:bg-stc-field focus-visible:outline-none"
+                        className="focus-visible:border-stc-focus focus-visible:bg-stc-field flex min-h-11 items-center gap-2 rounded-md border border-transparent text-left text-lg font-semibold focus-visible:outline-none"
                         aria-label={`${isOpen ? "Cerrar cuenta de" : "Abrir cuenta de"} ${account.client.name}`}
                         aria-expanded={isOpen}
                         disabled={busy || !id}
@@ -455,7 +465,7 @@ export default function ListBillingStatements() {
                         />
                       </button>
                     </h2>
-                    <p className="text-base-content/70 wrap-break-words mt-1 text-stc-label">
+                    <p className="text-base-content/70 wrap-break-words text-stc-label mt-1">
                       Acreedor: {account.creditor.name}
                     </p>
                   </div>
@@ -483,7 +493,7 @@ export default function ListBillingStatements() {
                     </button>
                   </div>
                 </div>
-                <dl className="flex flex-wrap gap-x-10 gap-y-3 text-stc-label">
+                <dl className="text-stc-label flex flex-wrap gap-x-10 gap-y-3">
                   <div>
                     <dt className="text-base-content/70">
                       Fecha prevista de pago
