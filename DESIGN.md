@@ -10,7 +10,7 @@ colors:
   borde-campo: "#40544b"
   seleccion-fondo: "rgb(11 21 18 / 0.5)"
   primario: "#319678"
-  acento-menta: "#74d5a7"
+  acento-verde-claro: "#74d5a7"
   tinta-oscura: "#10231a"
   texto-principal: "#edf5ef"
   texto-secundario: "#c1d3c8"
@@ -51,7 +51,7 @@ spacing:
   "10": "2.5rem"
 components:
   boton-portada:
-    backgroundColor: "{colors.acento-menta}"
+    backgroundColor: "{colors.acento-verde-claro}"
     textColor: "{colors.tinta-oscura}"
     rounded: "{rounded.lg}"
     height: "3.5rem"
@@ -81,7 +81,7 @@ components:
 
 **Creative North Star: "Mesa de trabajo serena"**
 
-La interfaz debe sentirse clara y tranquila, con espacio suficiente para leer y actuar. El carbón sostiene la superficie y el verde menta señala las acciones y los estados importantes. Los botones, las tarjetas y los campos tienen una presencia suave y bien definida.
+La interfaz debe sentirse clara y tranquila, con espacio suficiente para leer y actuar. El carbón sostiene la superficie y el verde oscuro y profesional define la identidad; los acentos verdes más claros señalan acciones y estados importantes. Los botones, las tarjetas y los campos tienen una presencia suave y bien definida.
 
 La profundidad deseada usa capas y sombras suaves frecuentes. La implementación actual es principalmente plana: combina superficies y bordes, con sombra en el calendario y un halo en la selección. Las sombras adicionales son una dirección visual acordada, no una capacidad ya implementada.
 
@@ -93,11 +93,11 @@ La profundidad deseada usa capas y sombras suaves frecuentes. La implementación
 
 ## Colors
 
-El fondo carbón y las superficies neutras hacen sitio al verde menta sin multiplicar tonos verdes en cada tarjeta. El tema de daisyUI define un primario distinto del menta aplicado directamente a algunos controles; se conservan ambos valores porque el código usa los dos. Los componentes comunes utilizan tokens semánticos `stc` de color, tipografía y espaciado definidos en el CSS global.
+El fondo carbón y las superficies neutras acompañan una identidad de verde oscuro y profesional sin multiplicar tonos verdes en cada tarjeta. El tema de daisyUI define un primario distinto del verde claro aplicado directamente a algunos controles; se conservan ambos valores porque el código usa los dos. Los componentes comunes utilizan tokens semánticos `stc` de color, tipografía y espaciado definidos en el CSS global.
 
 ### Primary
 - **Verde de acción:** primario del tema de daisyUI.
-- **Menta claro:** acciones de la portada, foco y énfasis de selección.
+- **Verde claro de acento:** acciones de la portada, foco y énfasis de selección.
 
 ### Neutral
 - **Carbón de fondo:** lienzo de portada y panel.
@@ -125,13 +125,19 @@ La dirección acordada es usar capas con sombras suaves frecuentes. Hoy las supe
 
 La escala observada va de esquinas suaves a redondeadas: `0.5rem` en acciones de portada, `0.75rem` en varios botones y navegación, y `1rem` en campos y filas de cuentas. Las etiquetas de estado son de forma píldora y tienen relleno interior.
 
+Los bordes deben ser finos y no superar `2px` (`border-2`).
+
+## Motion
+
+Usar animaciones pequeñas y sencillas con un propósito claro, por ejemplo para responder al accionar un botón. Respetar la preferencia de movimiento reducido y conservar una respuesta comprensible sin animación.
+
 ## Components
 
 ### Botones
-Priorizar una acción principal reconocible y opciones secundarias discretas. Usar alturas mínimas de `2.75rem` o `3rem` según el componente, esquinas redondeadas y foco visible mediante cambios de borde o superficie, sin anillos decorativos. La portada usa un botón menta claro; el panel también emplea el primario del tema.
+Priorizar una acción principal reconocible y opciones secundarias discretas. Usar alturas mínimas de `2.75rem` o `3rem` según el componente, esquinas redondeadas y foco visible mediante cambios de borde o superficie, sin outlines ni anillos decorativos. La portada usa un botón verde claro; el panel también emplea el primario del tema.
 
 ### Campos y calendario
-Las entradas tienen fondo oscuro diferenciado, borde visible y etiquetas. El campo monetario muestra `$`, usa teclado numérico, separa miles con puntos y comunica caracteres inválidos. Los selectores personalizados utilizan la misma superficie y borde; ofrecen búsqueda para clientes y acreedores y navegación por teclado. Los campos conservan su fondo al enfocarse y destacan el borde. El calendario propio presenta mes, navegación y días seleccionables; el foco y los nombres accesibles forman parte del control.
+La dirección deseada para las entradas es un fondo transparente con borde fino visible y etiquetas; mantener suficiente contraste sobre la superficie contenedora. El campo monetario muestra `$`, usa teclado numérico, separa miles con puntos y comunica caracteres inválidos. Los selectores personalizados comparten el tratamiento de los campos; ofrecen búsqueda para clientes y acreedores y navegación por teclado. Los campos conservan su fondo al enfocarse y destacan el borde sin outlines; el indicador debe ser visible también al navegar con teclado. El calendario propio presenta mes, navegación y días seleccionables; el foco y los nombres accesibles forman parte del control.
 
 ### Cuentas y selección
 Las cuentas aparecen como filas redondeadas expandibles. La selección cambia superficie y borde, y añade un punto luminoso con estado accesible. En pantallas táctiles se admite la pulsación sostenida; en escritorio y teclado existe un control de selección.
