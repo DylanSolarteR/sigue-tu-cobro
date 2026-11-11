@@ -22,6 +22,15 @@ it("reúne ambas secciones expandibles y mantiene visibles las acciones de creac
   const card = screen.getByText("Ana").closest("li")!;
   expect(within(card).getByRole("link", { name: "Editar Ana" }).getAttribute("href")).toBe("/dashboard/clientes/editar/1");
   expect(within(card).getByRole("button", { name: "Eliminar Ana" })).toBeTruthy();
+  for (const action of [screen.getByRole("link", { name: "Crear cliente" }), screen.getByRole("link", { name: "Crear acreedor" })]) {
+    expect(action.classList.contains("btn-primary")).toBe(true);
+    expect(action.classList.contains("rounded-xl")).toBe(true);
+  }
+  for (const action of [within(card).getByRole("link", { name: "Editar Ana" }), within(card).getByRole("button", { name: "Eliminar Ana" })]) {
+    expect(action.classList.contains("btn-ghost")).toBe(false);
+    expect(action.classList.contains("hover:bg-stc-hover")).toBe(true);
+    expect(action.classList.contains("focus-visible:border-stc-focus")).toBe(true);
+  }
   fireEvent.click(clients);
   expect(clients.getAttribute("aria-expanded")).toBe("false");
   expect(screen.getByText("Ana").closest("[hidden]")).toBeTruthy();

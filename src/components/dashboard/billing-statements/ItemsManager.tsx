@@ -77,7 +77,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
     "min-h-11 rounded-xl border border-stc-border px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
-    <div className="text-stc-text mx-auto flex w-full max-w-6xl flex-col gap-8 rounded-2xl">
+    <div className="text-stc-text flex w-full min-w-0 flex-col gap-8 rounded-2xl">
       <header className="bg-stc-surface rounded-2xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-semibold sm:text-3xl">Ítems pendientes</h1>
         <p className="text-stc-label text-stc-muted mt-2 max-w-2xl leading-6">

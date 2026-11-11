@@ -26,8 +26,8 @@ export default function Directorio() {
       <header className="bg-stc-surface flex flex-col gap-5 rounded-2xl p-4 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
         <div><h1 className="text-2xl font-semibold sm:text-3xl">Directorio</h1><p className="text-stc-muted mt-2">Consulta y administra tus clientes y acreedores.</p></div>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link href="/dashboard/clientes/crear" className="btn btn-primary min-h-11">Crear cliente</Link>
-          <Link href="/dashboard/acreedores/crear" className="btn btn-outline min-h-11">Crear acreedor</Link>
+          <Link href="/dashboard/clientes/crear" className="btn btn-primary min-h-11 w-full rounded-xl sm:w-auto">Crear cliente</Link>
+          <Link href="/dashboard/acreedores/crear" className="btn btn-primary min-h-11 w-full rounded-xl sm:w-auto">Crear acreedor</Link>
         </div>
       </header>
       <DirectorySection kind="client" title="Clientes" />

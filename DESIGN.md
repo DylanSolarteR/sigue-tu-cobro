@@ -115,7 +115,7 @@ Geologica se carga localmente para la interfaz y los títulos. La portada usa un
 
 ## Layout
 
-El panel usa una barra lateral de `16rem` en escritorio y navegación plegable en móvil. El contenido principal se centra con un ancho máximo de `72rem` y márgenes que crecen con la pantalla. Los formularios y filtros se reordenan de una a varias columnas; conservar espacio entre grupos relacionados y permitir que los textos largos se ajusten.
+El panel usa una barra lateral de `16rem` en escritorio y navegación plegable en móvil. El contenido principal ocupa el ancho disponible, con márgenes que crecen con la pantalla. Los formularios y filtros se reordenan de una a varias columnas; conservar espacio entre grupos relacionados y permitir que los textos largos se ajusten.
 
 ## Elevation & Depth
 

@@ -4,6 +4,7 @@ import SelectField from "@/components/dashboard/SelectField";
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trash } from "lucide-react";
+import { ICON_ACTION_CLASS } from "@/components/dashboard/action-styles";
 import DateField from "@/components/dashboard/DateField";
 import { toast } from "sonner";
 import {
@@ -349,7 +350,7 @@ export default function ListBillingStatements() {
         </button>
         <button
           type="button"
-          className="btn btn-outline min-h-11 rounded-xl border"
+          className="min-h-11 rounded-xl border border-transparent px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover disabled:cursor-not-allowed disabled:opacity-50"
           disabled={locked || !selected.length}
           onClick={() => void batch("delete")}
         >
@@ -512,7 +513,7 @@ export default function ListBillingStatements() {
                   )}
                   <button
                     type="button"
-                    className="btn btn-ghost min-h-11 min-w-11 rounded-xl"
+                    className={ICON_ACTION_CLASS}
                     disabled={locked || account.status !== "pending"}
                     aria-label={`Eliminar cuenta de ${account.client.name}`}
                     onClick={() => void remove(account)}
