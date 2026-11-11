@@ -1,5 +1,7 @@
 "use client";
 
+import SelectField from "@/components/dashboard/SelectField";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import DateField from "@/components/dashboard/DateField";
 import { buildSummaryAnalytics, getSummaryPeriod, type StatementSummary } from "@/lib/dashboard-statistics";
@@ -47,20 +49,8 @@ export default function SummaryAnalytics({ statements }: { statements: Statement
       <p className="mt-1 max-w-3xl text-stc-label leading-relaxed text-base-content/70">Los períodos usan la fecha prevista de pago elegida para cada cuenta; no es la fecha efectiva de pago.</p>
     </div>
     <div className="grid gap-stc-group sm:grid-cols-2 lg:grid-cols-4">
-      <label className="space-y-2 text-stc-label font-medium" htmlFor="summary-period"><span className="block">Período</span>
-        <select id="summary-period" className="select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field px-4 text-stc-label text-stc-text hover:border-stc-focus focus:border-stc-focus focus:bg-stc-bg focus:outline-none focus:shadow-none" value={preset} onChange={(event) => {
-          const value = event.target.value;
-          setPreset(value);
-          if (value === "3" || value === "6" || value === "12") setPeriod(getSummaryPeriod(Number(value) as 3 | 6 | 12));
-        }}>
-          <option value="3">Últimos 3 meses</option><option value="6">Últimos 6 meses</option><option value="12">Últimos 12 meses</option><option value="custom">Personalizado</option>
-        </select>
-      </label>
-      <label className="space-y-2 text-stc-label font-medium" htmlFor="summary-client"><span className="block">Cliente de la gráfica</span>
-        <select id="summary-client" className="select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field px-4 text-stc-label text-stc-text hover:border-stc-focus focus:border-stc-focus focus:bg-stc-bg focus:outline-none focus:shadow-none" value={clientId} onChange={(event) => setClientId(event.target.value)}>
-          <option value="all">Todos los clientes</option>{options.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-        </select>
-      </label>
+      <div className="space-y-2 text-stc-label font-medium"><label className="block" htmlFor="summary-period">Período</label><SelectField id="summary-period" value={preset} onChange={(value) => { setPreset(value); if (value === "3" || value === "6" || value === "12") setPeriod(getSummaryPeriod(Number(value) as 3 | 6 | 12)); }} options={[{ value: "3", label: "Últimos 3 meses" }, { value: "6", label: "Últimos 6 meses" }, { value: "12", label: "Últimos 12 meses" }, { value: "custom", label: "Personalizado" }]} /></div>
+      <div className="space-y-2 text-stc-label font-medium"><label className="block" htmlFor="summary-client">Cliente de la gráfica</label><SelectField id="summary-client" value={clientId} onChange={setClientId} searchable searchLabel="Buscar cliente" options={[{ value: "all", label: "Todos los clientes" }, ...options.map(([id, name]) => ({ value: id, label: name }))]} /></div>
       {preset === "custom" && <><DateField id="summary-start" label="Desde" value={period.start} onChange={(start) => setPeriod((current) => ({ ...current, start }))} /><DateField id="summary-end" label="Hasta" value={period.end} onChange={(end) => setPeriod((current) => ({ ...current, end }))} /></>}
     </div>
     <p className="text-xs text-base-content/70">El período incluye las fechas de inicio y fin. Los meses incluyen el mes actual completo. El filtro de cliente solo afecta la gráfica.</p>

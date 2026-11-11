@@ -30,3 +30,4 @@ No se asigna prioridad entre pendientes porque el README no la establece.
 - [016 · Pulido de cuentas y resumen](../features/016-pulido-cuentas-resumen/spec.md): revisión visual de cuentas, calendario e importes, evolución por fecha prevista y ranking de clientes con cuentas pagadas; pendiente de revisión visual del usuario.
 - [017 · Sistema visual e ítems](../features/017-sistema-e-items/spec.md): tokens compartidos, toasts, valores interactivos de la gráfica y rediseño de ítems; pendiente de revisión visual del usuario.
 - [018 · Flujo de ítems y cuentas](../features/018-flujo-items-cuentas/spec.md): secciones y filas expandibles de ítems, creación de cuentas y botón uniforme; pendiente de revisión visual.
+- [019 · Controles y secciones](../features/019-controles/spec.md): selects personalizados, skeletons, foco y secciones; pendiente de revisión visual.

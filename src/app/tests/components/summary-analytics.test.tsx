@@ -5,6 +5,13 @@ import SummaryAnalytics from "@/components/dashboard/summary/SummaryAnalytics";
 
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
+function selectOption(label: string, value: string) {
+  fireEvent.click(screen.getByRole("combobox", { name: label }));
+  const option = screen.getAllByRole("option").find((item) => item.getAttribute("data-value") === value);
+  if (!option) throw new Error(`Opción ${value} no encontrada`);
+  fireEvent.click(option);
+}
+
 it("ofrece filtros accesibles y actualiza la gráfica por cliente y período", () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-02-15T12:00:00Z"));
@@ -16,16 +23,16 @@ it("ofrece filtros accesibles y actualiza la gráfica por cliente y período", (
   expect(screen.getByText(/no es la fecha efectiva de pago/i)).toBeTruthy();
   expect(screen.getByRole("heading", { name: /top 5 clientes por valor de cuentas pagadas/i })).toBeTruthy();
   expect(screen.getByText("Cuentas pagadas con fecha prevista dentro del período")).toBeTruthy();
-  fireEvent.change(screen.getByLabelText("Cliente de la gráfica"), { target: { value: "a" } });
+  selectOption("Cliente de la gráfica", "a");
   expect(screen.getByLabelText("Datos de la gráfica").textContent).toContain("$500");
   expect(screen.getByLabelText("Ranking de clientes").textContent).toContain("$200");
-  fireEvent.change(screen.getByLabelText("Período"), { target: { value: "custom" } });
+  selectOption("Período", "custom");
   expect(screen.getByRole("button", { name: "Desde" })).toBeTruthy();
   expect(screen.getByRole("button", { name: "Hasta" })).toBeTruthy();
   fireEvent.click(screen.getByRole("button", { name: "Desde" }));
   fireEvent.click(screen.getByRole("button", { name: "Limpiar fecha" }));
   expect(screen.getByRole("alert").textContent).toContain("rango de fechas válido");
-  fireEvent.change(screen.getByLabelText("Período"), { target: { value: "3" } });
+  selectOption("Período", "3");
   expect(screen.queryByRole("alert")).toBeNull();
   expect(screen.getByLabelText("Datos de la gráfica").textContent).toContain("$500");
 });
@@ -66,9 +73,9 @@ it("permite consultar cada nodo con puntero, toque y teclado sin bloquear la gr�
   fireEvent.blur(nodo);
   fireEvent.focus(nodo);
   expect(screen.getByTestId("chart-value").textContent).toContain("$500");
-  fireEvent.change(screen.getByLabelText("Cliente de la gráfica"), { target: { value: "a" } });
+  selectOption("Cliente de la gráfica", "a");
   expect(screen.getByTestId("chart-value").textContent).toContain("$500");
-  fireEvent.change(screen.getByLabelText("Período"), { target: { value: "3" } });
+  selectOption("Período", "3");
   expect(screen.getByLabelText("Datos de la gráfica").querySelectorAll("li")).toHaveLength(3);
 });
 

@@ -10,7 +10,7 @@ function Config() {
       <div className="min-w-0 overflow-x-auto">
       <UserProfile
         fallback={
-          <div className="skeleton min-h-96 w-full max-w-4xl" role="status" aria-label="Cargando configuración" />
+          <div className="skeleton min-h-96 w-full rounded-2xl" role="status" aria-label="Cargando configuración" />
         }
       />
       </div>

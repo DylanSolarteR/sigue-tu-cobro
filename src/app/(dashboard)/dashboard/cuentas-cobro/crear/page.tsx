@@ -26,11 +26,11 @@ function CrearCuentaCobro() {
             <div
               role="status"
               aria-label="Cargando formulario de cuenta"
-              className="w-full max-w-4xl space-y-4"
+              className="w-full space-y-4"
             >
-              <div className="skeleton h-8 w-2/3" />
-              <div className="skeleton h-12 w-full" />
-              <div className="skeleton h-48 w-full" />
+              <div className="skeleton rounded-xl h-8 w-2/3" />
+              <div className="skeleton rounded-xl h-12 w-full" />
+              <div className="skeleton rounded-xl h-48 w-full" />
             </div>
           }
         >

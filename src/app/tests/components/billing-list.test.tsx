@@ -14,6 +14,13 @@ vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 
+function selectOption(label: string, value: string) {
+  fireEvent.click(screen.getByRole("combobox", { name: label }));
+  const option = screen.getAllByRole("option").find((item) => item.getAttribute("data-value") === value);
+  if (!option) throw new Error(`Opción ${value} no encontrada`);
+  fireEvent.click(option);
+}
+
 describe("listado de cuentas", () => {
   it("permite marcar una cuenta pagada desde su fila", async () => {
     vi.mocked(getBillingStatements).mockResolvedValueOnce({ success: true, message: "", data: [{ id: "1", client: { name: "Cliente", docType: "CC", docNumber: "12345" }, creditor: { name: "Acreedor", docType: "CC", docNumber: "12345" }, amount: 100, status: "pending", payDate: "2026-01-01", extraInfo: "", showItemAmount: true, client_id: "c", creditor_id: "a", createdAt: "" }] });
@@ -67,7 +74,7 @@ it("filtra por cliente, estado y fecha prevista de pago", async () => {
   render(<ListBillingStatements />);
   await screen.findByText("Bea");
   fireEvent.change(screen.getByLabelText("Buscar cliente"), { target: { value: "ana" } });
-  fireEvent.change(screen.getByLabelText("Estado"), { target: { value: "paid" } });
+  selectOption("Estado", "paid");
   fireEvent.change(screen.getByLabelText("Fecha prevista de pago desde"), { target: { value: "2026-02-01" } });
   expect(screen.queryByText("Bea")).toBeNull();
   expect(screen.getAllByText("Ana")).toHaveLength(1);

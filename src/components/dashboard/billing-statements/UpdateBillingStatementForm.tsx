@@ -1,5 +1,7 @@
 "use client";
 
+import SelectField from "@/components/dashboard/SelectField";
+
 import { useEffect, useState } from "react";
 import {
   getBillingStatement,
@@ -142,11 +144,11 @@ export default function UpdateBillingStatementForm({
       <div
         role="status"
         aria-label="Cargando cuenta"
-        className="space-y-stc-group w-full max-w-4xl"
+        className="space-y-stc-group w-full"
       >
-        <div className="skeleton h-8 w-2/3" />
-        <div className="skeleton h-32 w-full" />
-        <div className="skeleton h-48 w-full" />
+        <div className="skeleton rounded h-8 w-2/3" />
+        <div className="skeleton rounded h-32 w-full" />
+        <div className="skeleton rounded h-48 w-full" />
       </div>
     );
   if (!account) return <p role="alert">{message || "La cuenta no existe."}</p>;
@@ -187,17 +189,7 @@ export default function UpdateBillingStatementForm({
             <label htmlFor="statement-status" className="font-medium">
               Estado
             </label>
-            <select
-              id="statement-status"
-              value={status}
-              onChange={(event) =>
-                setStatus(event.target.value === "paid" ? "paid" : "pending")
-              }
-              className="select focus:bg-stc-field-focus border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border outline-0"
-            >
-              <option value="pending">Pendiente</option>
-              <option value="paid">Pagada</option>
-            </select>
+            <SelectField id="statement-status" value={status} onChange={(value) => setStatus(value === "paid" ? "paid" : "pending")} options={[{ value: "pending", label: "Pendiente" }, { value: "paid", label: "Pagada" }]} />
           </div>
           <p>Valor total: ${(account.amount ?? 0).toLocaleString("es-CO")}</p>
           <DatePicker date={date} setDate={setDate} />
@@ -218,7 +210,7 @@ export default function UpdateBillingStatementForm({
               Información adicional
             </label>
             <textarea
-              className="textarea focus:bg-stc-field-focus border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-24 w-full rounded-2xl border outline-0"
+              className="textarea border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-24 w-full rounded-2xl border outline-0"
               id="extra-info"
               value={extraInfo}
               onChange={(event) => setExtraInfo(event.target.value)}
@@ -279,7 +271,7 @@ function ItemEditor({
           Descripción del ítem
         </label>
         <input
-          className="input focus:bg-stc-field-focus border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border text-base outline-0"
+          className="input border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border text-base outline-0"
           id={`desc-${item.id}`}
           value={description}
           disabled={disabled || saving}

@@ -1,5 +1,7 @@
 "use client";
 
+import SelectField from "@/components/dashboard/SelectField";
+
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trash } from "lucide-react";
 import DateField from "@/components/dashboard/DateField";
@@ -211,9 +213,9 @@ export default function ListBillingStatements() {
         aria-label="Cargando cuentas"
         className="space-y-stc-group"
       >
-        <div className="skeleton h-12 w-full" />
-        <div className="skeleton h-36 w-full" />
-        <div className="skeleton h-36 w-full" />
+        <div className="skeleton rounded h-12 w-full" />
+        <div className="skeleton rounded h-36 w-full" />
+        <div className="skeleton rounded h-36 w-full" />
       </div>
     );
   if (error)
@@ -265,7 +267,7 @@ export default function ListBillingStatements() {
           </label>
           <input
             id="billing-search"
-            className="input focus:bg-stc-field-focus border-stc-border bg-stc-field text-stc-text hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border outline-0"
+            className="input border-stc-border bg-stc-field text-stc-text hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border outline-0"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -280,19 +282,7 @@ export default function ListBillingStatements() {
           >
             Estado
           </label>
-          <select
-            id="billing-status"
-            className="select focus:bg-stc-field-focus border-stc-border bg-stc-field text-stc-text hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border outline-0"
-            value={status}
-            onChange={(event) => {
-              setStatus(event.target.value);
-              setPage(0);
-            }}
-          >
-            <option value="all">Todos</option>
-            <option value="pending">Pendiente</option>
-            <option value="paid">Pagada</option>
-          </select>
+          <SelectField id="billing-status" value={status} onChange={(value) => { setStatus(value); setPage(0); }} options={[{ value: "all", label: "Todos" }, { value: "pending", label: "Pendiente" }, { value: "paid", label: "Pagada" }]} />
         </div>
         <DateField
           id="billing-from"

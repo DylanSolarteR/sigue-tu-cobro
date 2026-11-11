@@ -17,6 +17,10 @@ vi.mock("@/actions/billing-statement.item.api", () => ({
 }));
 
 afterEach(cleanup);
+function selectClient() {
+  fireEvent.click(screen.getByRole("combobox", { name: "Cliente" }));
+  fireEvent.click(screen.getByRole("option", { name: "Cliente A" }));
+}
 beforeEach(() => {
   vi.resetAllMocks();
   actions.list.mockResolvedValue({ success: true, message: "", data: [] });
@@ -28,7 +32,7 @@ beforeEach(() => {
 describe("gestión de ítems pendientes", () => {
   it("solicita los ítems del cliente seleccionado y crea un ítem válido", async () => {
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-    fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+    selectClient();
     await waitFor(() => expect(actions.list).toHaveBeenCalledWith("c1"));
     fireEvent.change(screen.getByLabelText("Descripción"), { target: { value: "Servicio" } });
     fireEvent.change(screen.getByLabelText("Valor"), { target: { value: "50000" } });
@@ -39,7 +43,7 @@ describe("gestión de ítems pendientes", () => {
   it("permite editar y eliminar un ítem pendiente", async () => {
     actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-    fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+    selectClient();
     fireEvent.click(await screen.findByRole("button", { name: /Servicio.*500/ }));
     fireEvent.change(await screen.findByLabelText("Descripción de Servicio"), { target: { value: "Servicio editado" } });
     fireEvent.click(screen.getByRole("button", { name: "Guardar ítem" }));
@@ -51,7 +55,7 @@ describe("gestión de ítems pendientes", () => {
   it("conserva los datos si falla la creación y permite volver a intentar", async () => {
     actions.create.mockResolvedValue({ success: false, message: "No se pudo crear" });
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-    fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+    selectClient();
     fireEvent.change(screen.getByLabelText("Descripción"), { target: { value: "Servicio" } });
     fireEvent.change(screen.getByLabelText("Valor"), { target: { value: "50000" } });
     fireEvent.click(screen.getByRole("button", { name: "Crear ítem" }));
@@ -62,7 +66,7 @@ describe("gestión de ítems pendientes", () => {
   it("no elimina el ítem si se cancela la confirmación", async () => {
     actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 500 }] });
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-    fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+    selectClient();
     fireEvent.click(await screen.findByRole("button", { name: /Servicio.*500/ }));
     fireEvent.click(screen.getByRole("button", { name: "Eliminar ítem" }));
     fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
@@ -72,7 +76,7 @@ describe("gestión de ítems pendientes", () => {
   it("no presenta una carga fallida como una lista vacía", async () => {
     actions.list.mockResolvedValueOnce({ success: false, message: "No se pudieron cargar los ítems pendientes." }).mockResolvedValueOnce({ success: true, data: [] });
     render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-    fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+    selectClient();
     expect(await screen.findByText("No se pudieron cargar los ítems pendientes.")).toBeTruthy();
     expect(screen.queryByText("Este cliente no tiene ítems pendientes.")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Reintentar carga" }));
@@ -90,14 +94,14 @@ it("orienta al usuario antes de seleccionar un cliente", () => {
 it("reserva espacio accesible mientras carga los pendientes", () => {
   actions.list.mockReturnValue(new Promise(() => { /* La carga permanece pendiente durante la prueba. */ }));
   render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  selectClient();
   expect(screen.getByRole("status", { name: "Cargando items pendientes" }).querySelectorAll(".skeleton").length).toBeGreaterThan(0);
 });
 
 it("formatea valores y rechaza letras al crear y editar", async () => {
   actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: "Servicio", amount: 50000 }] });
   render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  selectClient();
   const createAmount = screen.getByLabelText<HTMLInputElement>("Valor");
   fireEvent.change(createAmount, { target: { value: "1234567" } });
   expect(createAmount.value).toBe("1.234.567");
@@ -125,7 +129,7 @@ it("muestra el resumen del cliente y filas compactas expandibles", async () => {
     { id: "i2", desc: "Materiales", amount: 2500 },
   ] });
   render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
-  fireEvent.change(screen.getByLabelText("Cliente"), { target: { value: "c1" } });
+  selectClient();
   const row = await screen.findByRole("button", { name: /Servicio.*50.000/ });
   expect(screen.getAllByText("Cliente A").length).toBeGreaterThan(1);
   expect(screen.getByText("2 ítems")).toBeTruthy();
@@ -137,4 +141,35 @@ it("muestra el resumen del cliente y filas compactas expandibles", async () => {
   expect(screen.getByLabelText("Descripción de Servicio")).toBeTruthy();
   fireEvent.click(row);
   expect(screen.queryByLabelText("Descripción de Servicio")).toBeNull();
+});
+
+it("presenta los pendientes en una sección alineada con el formulario", () => {
+  render(<ItemsManager clients={[]} />);
+  const form = screen.getByRole("heading", { name: "Nuevo ítem" }).closest("form")!;
+  const section = screen.getByRole("heading", { name: "Pendientes del cliente" }).closest("section")!;
+  for (const element of [form, section]) {
+    expect(element.classList.contains("border")).toBe(true);
+    expect(element.classList.contains("bg-stc-bg")).toBe(true);
+    expect(element.classList.contains("p-4")).toBe(true);
+    expect(element.classList.contains("sm:p-6")).toBe(true);
+  }
+  expect(form.classList.contains("lg:row-start-2")).toBe(true);
+  expect(section.classList.contains("lg:row-start-2")).toBe(true);
+});
+
+it("mantiene etiquetas breves y nombres accesibles para ítems largos, sin fondos de foco", async () => {
+  const description = "Un concepto de servicio extraordinariamente largo para identificar este ítem";
+  actions.list.mockResolvedValue({ success: true, data: [{ id: "i1", desc: description, amount: 500 }] });
+  const { container } = render(<ItemsManager clients={[{ id: "c1", name: "Cliente A", docType: "CC", docNumber: "1" }]} />);
+  selectClient();
+  fireEvent.click(await screen.findByRole("button", { name: new RegExp(description) }));
+  for (const label of ["Descripción", "Valor"]) {
+    const input = screen.getByLabelText(`${label} de ${description}`);
+    const element = container.querySelector(`label[for="${input.id}"]`)!;
+    expect(element.childNodes[0]?.textContent?.trim()).toBe(label);
+    expect(element.querySelector(".sr-only")?.textContent).toContain(description);
+  }
+  for (const element of container.querySelectorAll("*:not(select)")) {
+    expect(element.getAttribute("class") ?? "").not.toMatch(/(?:focus|focus-visible|focus-within)[^\s]*:bg-/);
+  }
 });

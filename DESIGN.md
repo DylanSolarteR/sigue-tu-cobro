@@ -3,8 +3,8 @@ name: SigueTuCobro
 description: Sistema visual para organizar y seguir cuentas de cobro con claridad.
 colors:
   fondo-carbon: "#0b1512"
-  superficie-carbon: "#0b1512"
-  superficie-campo: "#101815"
+  superficie-carbon: "#101d1a"
+  superficie-campo: "#0b1512"
   superficie-secundaria: "#1b201f"
   borde-foco: "#87bba5"
   borde-campo: "#40544b"
@@ -131,7 +131,7 @@ La escala observada va de esquinas suaves a redondeadas: `0.5rem` en acciones de
 Priorizar una acción principal reconocible y opciones secundarias discretas. Usar alturas mínimas de `2.75rem` o `3rem` según el componente, esquinas redondeadas y foco visible mediante cambios de borde o superficie, sin anillos decorativos. La portada usa un botón menta claro; el panel también emplea el primario del tema.
 
 ### Campos y calendario
-Las entradas tienen fondo oscuro diferenciado, borde visible y etiquetas. El campo monetario muestra `$`, usa teclado numérico, separa miles con puntos y comunica caracteres inválidos. El calendario propio presenta mes, navegación y días seleccionables; el foco y los nombres accesibles forman parte del control.
+Las entradas tienen fondo oscuro diferenciado, borde visible y etiquetas. El campo monetario muestra `$`, usa teclado numérico, separa miles con puntos y comunica caracteres inválidos. Los selectores personalizados utilizan la misma superficie y borde; ofrecen búsqueda para clientes y acreedores y navegación por teclado. Los campos conservan su fondo al enfocarse y destacan el borde. El calendario propio presenta mes, navegación y días seleccionables; el foco y los nombres accesibles forman parte del control.
 
 ### Cuentas y selección
 Las cuentas aparecen como filas redondeadas expandibles. La selección cambia superficie y borde, y añade un punto luminoso con estado accesible. En pantallas táctiles se admite la pulsación sostenida; en escritorio y teclado existe un control de selección.

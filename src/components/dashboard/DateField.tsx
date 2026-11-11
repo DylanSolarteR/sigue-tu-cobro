@@ -58,7 +58,7 @@ export default function DateField({
           if (!open) setMonth(firstMonth(value));
           setOpen(!open);
         }}
-        className="border-stc-border bg-stc-field text-stc-label text-stc-text hover:border-stc-focus focus-visible:border-stc-focus flex min-h-12 w-full items-center gap-3 rounded-2xl border px-4 text-left focus-visible:bg-[var(--color-stc-date-focus)] disabled:opacity-50"
+        className="border-stc-border bg-stc-field text-stc-label text-stc-text hover:border-stc-focus focus-visible:border-stc-focus flex min-h-12 w-full items-center gap-3 rounded-2xl border px-4 text-left disabled:opacity-50"
       >
         <CalendarDays
           size={18}

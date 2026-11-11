@@ -16,6 +16,13 @@ vi.mock("@/actions/actor.api", () => ({
 
 afterEach(cleanup);
 
+function selectOption(label: string, value: string) {
+  fireEvent.click(screen.getByRole("combobox", { name: label }));
+  const option = screen.getAllByRole("option").find((item) => item.getAttribute("data-value") === value);
+  if (!option) throw new Error(`Opción ${value} no encontrada`);
+  fireEvent.click(option);
+}
+
 describe("formularios de clientes y acreedores", () => {
   it("reserva espacio con un skeleton accesible mientras carga la edición", () => {
     vi.mocked(getCreditorById).mockImplementationOnce(() => new Promise(() => {}));
@@ -24,12 +31,12 @@ describe("formularios de clientes y acreedores", () => {
     expect(status.querySelector('[aria-hidden="true"]')).toBeTruthy();
   });
 
-  it("permite seleccionar un tipo de documento mediante un select nativo etiquetado", () => {
+  it("permite seleccionar un tipo de documento mediante un control etiquetado", () => {
     render(<CreateClientForm />);
     const documentType = screen.getByRole("combobox", { name: "Tipo de documento" });
-    expect(documentType.tagName).toBe("SELECT");
-    expect(documentType.getAttribute("name")).toBe("docType");
-    expect(documentType.hasAttribute("required")).toBe(true);
+    expect(documentType.tagName).toBe("BUTTON");
+    expect(documentType.closest("form")?.querySelector("[name=docType]")).toBeTruthy();
+    expect(documentType.getAttribute("aria-required")).toBe("true");
     expect(screen.getByRole("textbox", { name: "Nombre completo" }).hasAttribute("required")).toBe(true);
   });
 
@@ -43,7 +50,7 @@ describe("formularios de clientes y acreedores", () => {
     render(<UpdateCreditorForm id="1" />);
     await waitFor(() => expect(screen.getByRole("textbox", { name: "Nombre completo" })).toBeTruthy());
     expect((screen.getByRole("textbox", { name: "Nombre completo" }) as HTMLInputElement).value).toBe("Persona acreedora");
-    expect((screen.getByRole("combobox", { name: "Tipo de documento" }) as HTMLSelectElement).value).toBe("NIT");
+    expect((screen.getByRole("combobox", { name: "Tipo de documento" }).closest("form")?.querySelector("[name=docType]") as HTMLInputElement).value).toBe("NIT");
     expect(screen.getByRole("button", { name: "Actualizar acreedor" })).toBeTruthy();
   });
 
@@ -51,7 +58,7 @@ describe("formularios de clientes y acreedores", () => {
     vi.mocked(createClient).mockResolvedValueOnce({ success: false, message: "Revisa los datos", errors: { docNumber: ["Documento inválido"] }, input: { name: "Ana Pérez", docType: "CC", docNumber: "12345" } });
     render(<CreateClientForm />);
     fireEvent.change(screen.getByRole("textbox", { name: "Nombre completo" }), { target: { value: "Ana Pérez" } });
-    fireEvent.change(screen.getByRole("combobox", { name: "Tipo de documento" }), { target: { value: "CC" } });
+    selectOption("Tipo de documento", "CC");
     fireEvent.change(screen.getByRole("textbox", { name: "Número de documento" }), { target: { value: "12345" } });
     fireEvent.submit(screen.getByRole("button", { name: "Crear cliente" }).closest("form")!);
     await waitFor(() => expect(createClient).toHaveBeenCalled());
@@ -59,7 +66,7 @@ describe("formularios de clientes y acreedores", () => {
     expect(submitted?.get("docType")).toBe("CC");
     expect(await screen.findByText("Documento inválido")).toBeTruthy();
     expect(screen.getByRole("textbox", { name: "Número de documento" }).getAttribute("aria-invalid")).toBe("true");
-    expect((screen.getByRole("combobox", { name: "Tipo de documento" }) as HTMLSelectElement).value).toBe("CC");
+    expect((screen.getByRole("combobox", { name: "Tipo de documento" }).closest("form")?.querySelector("[name=docType]") as HTMLInputElement).value).toBe("CC");
     expect((screen.getByRole("textbox", { name: "Nombre completo" }) as HTMLInputElement).value).toBe("Ana Pérez");
   });
 });

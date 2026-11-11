@@ -1,5 +1,7 @@
 "use client";
 
+import SelectField from "@/components/dashboard/SelectField";
+
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
@@ -70,9 +72,9 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
   const clientName = clients.find((actor) => actor.id === client)?.name;
   const total = items.reduce((sum, item) => sum + Number(item.amount), 0);
   const fieldClass =
-    "input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-base text-stc-text outline-none hover:border-stc-focus focus:border-stc-focus focus:bg-stc-field-focus";
+    "input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-base text-stc-text outline-none hover:border-stc-focus focus:border-stc-focus";
   const buttonClass =
-    "min-h-11 rounded-xl border border-stc-border px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover disabled:cursor-not-allowed disabled:opacity-50";
+    "min-h-11 rounded-xl border border-stc-border px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
     <div className="text-stc-text mx-auto flex w-full max-w-6xl flex-col gap-8 rounded-2xl">
@@ -84,38 +86,17 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
       </header>
 
       <div className="bg-stc-surface grid items-start gap-8 rounded-2xl px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-10">
-        <div className="space-y-6">
+        <div className="contents">
           <div className="flex flex-col gap-2">
             <label htmlFor="item-client" className="font-medium">
               Cliente
             </label>
-            <select
-              id="item-client"
-              value={client}
-              disabled={saving}
-              onChange={(event) => {
-                const id = event.target.value;
-                selectedClient.current = id;
-                setClient(id);
-                setMessage("");
-                void load(id);
-              }}
-              className={`${fieldClass} select`}
-            >
-              <option value="">Selecciona un cliente</option>
-              {clients
-                .filter((actor) => actor.id)
-                .map((actor) => (
-                  <option key={actor.id} value={actor.id}>
-                    {actor.name}
-                  </option>
-                ))}
-            </select>
+            <SelectField id="item-client" value={client} disabled={saving} placeholder="Selecciona un cliente" searchable searchLabel="Buscar cliente" onChange={(id) => { selectedClient.current = id; setClient(id); setMessage(""); void load(id); }} options={[{ value: "", label: "Selecciona un cliente" }, ...clients.flatMap((actor) => actor.id ? [{ value: actor.id, label: actor.name }] : [])]} />
             {clients.length === 0 && (
               <p className="text-stc-label text-stc-muted leading-6">
                 Crea un cliente antes de registrar ítems.{" "}
                 <Link
-                  className="text-stc-accent focus-visible:bg-stc-hover inline-block min-h-11 content-center rounded-md font-medium underline underline-offset-4 outline-none"
+                  className="text-stc-accent focus-visible:outline-stc-focus inline-block min-h-11 content-center rounded-md font-medium underline underline-offset-4 focus-visible:outline focus-visible:outline-2"
                   href="/dashboard/clientes/crear"
                 >
                   Crear cliente
@@ -126,7 +107,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
 
           <form
             onSubmit={(event) => void create(event)}
-            className="border-stc-border bg-stc-bg space-y-5 rounded-2xl border p-4 sm:p-6"
+            className="border-stc-border bg-stc-bg space-y-5 rounded-2xl border p-4 sm:p-6 lg:col-start-1 lg:row-start-2"
           >
             <div>
               <h2 className="text-lg font-semibold">Nuevo ítem</h2>
@@ -147,7 +128,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
                 required
               />
             </div>
-            <div className="[&_div:focus-within]:border-stc-focus [&_div:focus-within]:bg-stc-field-focus space-y-2">
+            <div className="[&_div:focus-within]:border-stc-focus space-y-2">
               <label htmlFor="item-amount" className="font-medium">
                 Valor
               </label>
@@ -159,7 +140,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
               />
             </div>
             <button
-              className="bg-stc-accent text-stc-ink focus-visible:border-stc-focus min-h-12 w-full rounded-xl border border-transparent px-5 font-semibold outline-none hover:bg-[var(--color-stc-accent-hover)] focus-visible:bg-[var(--color-stc-accent-focus)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+              className="bg-stc-accent text-stc-ink focus-visible:border-stc-focus min-h-12 w-full rounded-xl border border-transparent px-5 font-semibold outline-none hover:bg-[var(--color-stc-accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               type="submit"
               disabled={!client || saving}
             >
@@ -176,7 +157,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
           </form>
         </div>
 
-        <section aria-live="polite" className="space-y-stc-group min-w-0">
+        <section aria-live="polite" className="space-y-stc-group border-stc-border bg-stc-bg min-w-0 rounded-2xl border p-4 sm:p-6 lg:col-start-2 lg:row-start-2">
           <div>
             <h2 className="text-lg font-semibold">Pendientes del cliente</h2>
             <p className="text-stc-label text-stc-muted mt-1 leading-6">
@@ -209,8 +190,8 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
               aria-label="Cargando items pendientes"
               className="space-y-2"
             >
-              <div className="skeleton h-32 w-full" />
-              <div className="skeleton h-32 w-full" />
+              <div className="skeleton rounded h-32 w-full" />
+              <div className="skeleton rounded h-32 w-full" />
             </div>
           ) : loadFailed ? (
             <button
@@ -293,9 +274,9 @@ function PendingItem({
     setConfirming(false);
   }
   const fieldClass =
-    "input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-base text-stc-text outline-none hover:border-stc-focus focus:border-stc-focus focus:bg-stc-field-focus";
+    "input min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field text-base text-stc-text outline-none hover:border-stc-focus focus:border-stc-focus";
   const buttonClass =
-    "min-h-11 rounded-xl border border-stc-border px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover disabled:cursor-not-allowed disabled:opacity-50";
+    "min-h-11 rounded-xl border border-stc-border px-4 font-medium text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus disabled:cursor-not-allowed disabled:opacity-50";
   return (
     <div className="border-stc-border bg-stc-surface rounded-2xl border">
       <button
@@ -303,7 +284,7 @@ function PendingItem({
         aria-expanded={expanded}
         aria-controls={`pending-details-${item.id}`}
         onClick={() => setExpanded(!expanded)}
-        className="hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-3 text-left outline-none"
+        className="hover:bg-stc-hover focus-visible:border-stc-focus flex min-h-14 w-full items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-left outline-none"
       >
         <span className="min-w-0 flex-1 font-medium break-words">
           {item.desc}
@@ -328,7 +309,7 @@ function PendingItem({
                 className="block font-medium"
                 htmlFor={`pending-desc-${item.id}`}
               >
-                Descripción de <span className="break-words">{item.desc}</span>
+                Descripción<span className="sr-only"> de {item.desc}</span>
               </label>
               <input
                 className={fieldClass}
@@ -340,12 +321,12 @@ function PendingItem({
                 onChange={(event) => setDescription(event.target.value)}
               />
             </div>
-            <div className="[&_div:focus-within]:border-stc-focus [&_div:focus-within]:bg-stc-field-focus min-w-0 space-y-2">
+            <div className="[&_div:focus-within]:border-stc-focus min-w-0 space-y-2">
               <label
                 className="block font-medium"
                 htmlFor={`pending-amount-${item.id}`}
               >
-                Valor de <span className="break-words">{item.desc}</span>
+                Valor<span className="sr-only"> de {item.desc}</span>
               </label>
               <MoneyInput
                 id={`pending-amount-${item.id}`}
@@ -378,7 +359,7 @@ function PendingItem({
             {confirming ? (
               <>
                 <button
-                  className="min-h-11 rounded-xl border border-[var(--color-stc-danger)] px-4 font-medium text-[var(--color-stc-danger)] outline-none hover:bg-[var(--color-stc-danger-surface)] focus-visible:bg-[var(--color-stc-danger-surface)]"
+                  className="min-h-11 rounded-xl border border-[var(--color-stc-danger)] px-4 font-medium text-[var(--color-stc-danger)] outline-none hover:bg-[var(--color-stc-danger-surface)] focus-visible:border-stc-focus"
                   type="button"
                   disabled={busy}
                   onClick={() => void remove()}

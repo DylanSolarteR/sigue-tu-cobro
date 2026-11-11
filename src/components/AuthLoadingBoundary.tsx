@@ -3,12 +3,12 @@ import { Suspense, type ReactNode } from "react";
 
 function AuthSkeleton() {
   return (
-    <div role="status" aria-label="Cargando formulario de acceso" className="min-h-[28rem] space-y-5 rounded-2xl border border-[#263c35] bg-[#101f1a] p-6">
-      <div className="skeleton mx-auto h-7 w-48" />
-      <div className="skeleton mx-auto h-4 w-56 max-w-full" />
-      <div className="skeleton mt-8 h-12 w-full" />
-      <div className="skeleton h-12 w-full" />
-      <div className="skeleton h-12 w-full" />
+    <div role="status" aria-label="Cargando formulario de acceso" className="min-h-[28rem] w-full space-y-5 rounded-2xl border border-[#263c35] bg-[#101f1a] p-6">
+      <div className="skeleton rounded mx-auto h-7 w-48" />
+      <div className="skeleton rounded mx-auto h-4 w-56 max-w-full" />
+      <div className="skeleton rounded mt-8 h-12 w-full" />
+      <div className="skeleton rounded h-12 w-full" />
+      <div className="skeleton rounded h-12 w-full" />
     </div>
   );
 }

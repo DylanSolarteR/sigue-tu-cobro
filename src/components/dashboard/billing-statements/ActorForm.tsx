@@ -1,5 +1,7 @@
 "use client";
 
+import SelectField from "@/components/dashboard/SelectField";
+
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -72,8 +74,6 @@ export default function ActorForm({
     setSaving(false);
   }
 
-  const fieldClass =
-    "select min-h-12 w-full rounded-2xl border border-stc-border bg-stc-field px-4 text-stc-label text-stc-text hover:border-stc-focus focus:border-stc-focus focus:bg-stc-field-focus focus:outline-none focus:shadow-none disabled:opacity-50";
   const total = items
     .filter((item) => item.id && selected.includes(item.id))
     .reduce((sum, item) => sum + item.amount, 0);
@@ -91,22 +91,7 @@ export default function ActorForm({
           >
             Cliente
           </label>
-          <select
-            id="statement-client"
-            value={client}
-            disabled={saving}
-            onChange={(event) => void changeClient(event.target.value)}
-            className={fieldClass}
-          >
-            <option value="">Selecciona un cliente</option>
-            {clientsList
-              .filter((item) => item.id)
-              .map((item) => (
-                <option value={item.id} key={item.id}>
-                  {item.name}
-                </option>
-              ))}
-          </select>
+          <SelectField id="statement-client" value={client} disabled={saving} onChange={(value) => void changeClient(value)} placeholder="Selecciona un cliente" searchable searchLabel="Buscar cliente" options={[{ value: "", label: "Selecciona un cliente" }, ...clientsList.flatMap((item) => item.id ? [{ value: item.id, label: item.name }] : [])]} />
         </div>
         <div className="min-w-0 space-y-2">
           <label
@@ -115,22 +100,7 @@ export default function ActorForm({
           >
             Acreedor
           </label>
-          <select
-            id="statement-creditor"
-            value={creditor}
-            disabled={saving}
-            onChange={(event) => setCreditor(event.target.value)}
-            className={fieldClass}
-          >
-            <option value="">Selecciona un acreedor</option>
-            {creditorsList
-              .filter((item) => item.id)
-              .map((item) => (
-                <option value={item.id} key={item.id}>
-                  {item.name}
-                </option>
-              ))}
-          </select>
+          <SelectField id="statement-creditor" value={creditor} disabled={saving} onChange={setCreditor} placeholder="Selecciona un acreedor" searchable searchLabel="Buscar acreedor" options={[{ value: "", label: "Selecciona un acreedor" }, ...creditorsList.flatMap((item) => item.id ? [{ value: item.id, label: item.name }] : [])]} />
         </div>
         <DatePicker date={date} setDate={setDate} />
       </div>
@@ -152,8 +122,8 @@ export default function ActorForm({
             aria-label="Cargando conceptos pendientes"
             className="space-y-3"
           >
-            <div className="skeleton h-12 w-full" />
-            <div className="skeleton h-12 w-full" />
+            <div className="skeleton rounded h-12 w-full" />
+            <div className="skeleton rounded h-12 w-full" />
           </div>
         ) : loadFailed ? (
           <button
