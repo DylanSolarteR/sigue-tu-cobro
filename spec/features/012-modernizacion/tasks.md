@@ -7,7 +7,7 @@
 - [x] Ejecutar E2E con servicios simulados, descargas y escenarios de volumen/rendimiento (etapa 021).
 - [x] Cerrar la validación de la 404 (etapa 009).
 - [x] Revisar y resolver el lint global (etapa 022: check estricto, pruebas y build aprobados).
-- [ ] Convertir y restaurar los datos históricos en tablas v2, sustituyendo los datos actuales de prueba y comprobando montos, fechas y relaciones.
+- [x] Convertir y restaurar los datos históricos en tablas `v2`, sustituir registros de prueba y verificar persistencia/estado de origen; evidencia en [023](../023-restauracion-historicos/spec.md).
 - [x] Consolidar el roadmap y distinguir las exclusiones acordadas de los pendientes de implementación; actualizarlo en cada etapa.
 
 Pruebas con servicios reales excluidas por decisión del usuario. Revisión en dispositivos físicos y despliegue a cargo del usuario. No marcar esos criterios como comprobados mediante mocks.

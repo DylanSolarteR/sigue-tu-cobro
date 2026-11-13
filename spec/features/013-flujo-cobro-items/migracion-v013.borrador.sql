@@ -1,3 +1,4 @@
+-- OBSOLETO: reemplazado por spec/features/023-restauracion-historicos. NO EJECUTAR. El plan vigente lee snapshot v1; no usa este SQL ni DDL.
 -- BORRADOR NO VALIDADO: NO ejecutar en producción ni con db:migrate.
 -- Requiere ensayo en base aislada, respaldos comprobados, mantenimiento y
 -- auditoria.sql con cero discrepancias. No incluye el intercambio de tablas.

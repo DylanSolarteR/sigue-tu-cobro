@@ -1,6 +1,6 @@
 # 013 · Flujo de cobro por ítems
 
-**Estado:** especificado; pendiente de implementación y validación.
+**Estado:** implementado con validación local según roadmap. El backfill histórico previsto aquí quedó reemplazado por [023 · Restauración de datos históricos](../023-restauracion-historicos/spec.md); no se ejecutan los borradores SQL de esta etapa.
 
 ## Objetivo
 
@@ -14,7 +14,7 @@ Permitir registrar conceptos de cobro de un cliente antes de emitir la cuenta, s
 - [ ] Los ítems vinculados a una cuenta pendiente se pueden editar y el total se actualiza. En cuentas pagadas se debe reabrir primero.
 - [ ] Al eliminar una cuenta pendiente, sus ítems regresan a `pending` y se desvinculan para reutilizarse.
 - [ ] No se permiten accesos ni escrituras sobre registros de otro propietario; la selección concurrente no puede asignar el mismo ítem dos veces.
-- [ ] Se migran los datos existentes conservando el historial; el estado histórico `payed` se adapta al nuevo modelo. El PDF y el resumen reflejan los datos migrados.
+- [x] Se restauran los datos existentes conservando el historial; el estado histórico `payed` se adapta al nuevo modelo. El PDF con datos históricos se valida automáticamente; evidencia de la restauración en 023.
 - [ ] Existe acceso directo para marcar una cuenta como pagada desde su lista o detalle.
 
 ## Límites

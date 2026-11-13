@@ -8,23 +8,24 @@ Estado consolidado de la modernización. Las validaciones automáticas abarcan l
 - [009 · Página 404](../features/009-pagina-404/spec.md): implementada: 180 pruebas de regresión, 6 E2E dirigidos, tipos y build aprobados. Capturas inspeccionadas en escritorio y móvil emulado.
 - [010 · Responsive](../features/010-responsive/spec.md): layouts adaptados y recorridos probados en escritorio y móvil emulado. La revisión en dispositivos físicos corresponde al usuario.
 - [011 · Pruebas](../features/011-pruebas-automatizadas/spec.md): Vitest y Playwright operativos, con descargas de PDF, volumen y rendimiento local documentados en [021](../features/021-config-e2e/spec.md).
-- [012 · Modernización](../features/012-modernizacion/spec.md): dependencias y base técnica actualizadas; nuevo flujo, identidad, componentes, experiencia y lint global implementados. Queda la restauración histórica indicada abajo.
-- [013 · Flujo por ítems](../features/013-flujo-cobro-items/spec.md): pending → added → paid, selección por cliente, reapertura, desvinculación y PDF implementados con pruebas locales. Los datos históricos aún deben restaurarse al formato v2.
+- [012 · Modernización](../features/012-modernizacion/spec.md): dependencias y base técnica actualizadas; nuevo flujo, identidad, componentes, experiencia, lint global y restauración histórica completados.
+- [013 · Flujo por ítems](../features/013-flujo-cobro-items/spec.md): pending → added → paid, selección por cliente, reapertura, desvinculación y PDF implementados. El historial se restauró a `v2` y verificó en la etapa 023.
 - [014 · Identidad](../features/014-identidad-interfaz/spec.md) y [015 · Experiencia adaptable](../features/015-experiencia-adaptable/spec.md): landing, acceso y dashboard renovados con daisyUI, controles compartidos, selección, filtros, analíticas y skeletons.
 - [016 · Cuentas y resumen](../features/016-pulido-cuentas-resumen/spec.md), [017 · Sistema visual e ítems](../features/017-sistema-e-items/spec.md), [018 · Flujo de ítems y cuentas](../features/018-flujo-items-cuentas/spec.md), [019 · Controles](../features/019-controles/spec.md) y [020 · Directorio](../features/020-directorio/spec.md): implementados y cubiertos por pruebas; la revisión visual final pertenece al usuario.
 - [021 · Configuración, E2E y rendimiento](../features/021-config-e2e/spec.md): 179 pruebas de lógica/componentes, 31 E2E aprobadas y una omisión táctil solo en escritorio; tipos y build aprobados. Incluye PDF bajo demanda, pendientes paginados y medidas con hasta 10.000 cuentas y 1.000 pendientes.
 
 - [022 · Lint global](../features/022-lint-global/spec.md): completada; cero errores y cero avisos, tipos, 185 pruebas, 23 E2E afectados y build de producción aprobados.
+- [023 · Restauración de datos históricos](../features/023-restauracion-historicos/spec.md): snapshot `v1` auditado (22 actores, 88 cuentas, 341 ítems), transformación y reemplazo de datos de prueba en `v2` aplicados en una transacción y verificados con conexión nueva. Hash del snapshot original y posterior de `v1` coincidieron; check, 229 pruebas y build aprobados. La revisión visual manual del PDF no se realizó. No acredita Clerk real, concurrencia ni despliegue.
 
 ## Próximos trabajos, en orden acordado
 
-1. Convertir el respaldo histórico a los formatos v2 y restaurarlo sustituyendo los registros actuales que el usuario creó para pruebas. Preparar antes el inventario, el mapeo de campos/estados/fechas y la comprobación de importes y relaciones. No ejecutar borrados como parte de la etapa 404 o del lint.
+No queda restauración histórica pendiente en la secuencia acordada. El commit e integración de los cambios se registran en el cierre de la rama.
 
 En cada implementación se actualizarán este índice, el README y las listas históricas relacionadas.
 
 ## Fuera de la secuencia por decisión del usuario
 
-- Pruebas con servicios reales: autenticación y perfil de Clerk, persistencia, concurrencia y aislamiento reales de SingleStore.
+- E2E con servicios reales de Clerk y SingleStore y pruebas de concurrencia/aislamiento. La persistencia de la restauración de la etapa 023 sí está comprobada.
 - Revisión en dispositivos físicos: a cargo del usuario; no se declara verificada por emulación.
 - [008 · Despliegue](../features/008-despliegue-revision/spec.md): a cargo del usuario.
 

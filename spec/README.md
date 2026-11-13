@@ -5,4 +5,5 @@ Las especificaciones iniciales 001–010 se reconstruyeron retrospectivamente de
 - [Constitución](constitution/mission.md) · [Stack y convenciones](constitution/tech-stack.md) · [Roadmap](constitution/roadmap.md)
 - Cada feature contiene `spec.md`, `plan.md` y `tasks.md`. La evidencia apunta al código existente; las casillas de aceptación y validación permanecen abiertas hasta comprobar el comportamiento.
 - El README de origen declara algunos puntos completados; ese estado se distingue de pruebas o despliegues verificados durante esta documentación.
+- La restauración histórica vigente se especifica en [023](features/023-restauracion-historicos/spec.md). Los SQL y el procedimiento preliminar bajo 013 son borradores obsoletos y no deben ejecutarse.
 - Para trabajo futuro: especificar, planificar, desglosar tareas, implementar con TDD y actualizar el roadmap conforme a `spec_template/README.md`.

@@ -1,3 +1,4 @@
+-- OBSOLETO: reemplazado por spec/features/023-restauracion-historicos. NO EJECUTAR como procedimiento de restauración.
 -- Consultas de solo lectura; ejecutar con escrituras detenidas antes de migrar.
 -- Deben devolver cero inconsistencias. No muestran datos personales.
 SELECT COUNT(*) AS items_sin_cuenta

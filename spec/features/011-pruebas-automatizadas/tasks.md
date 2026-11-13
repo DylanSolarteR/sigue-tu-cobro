@@ -8,3 +8,5 @@
 - [x] Revisar y resolver errores/avisos del lint global: etapa 022, límite de cero avisos y comprobación de tipos.
 
 Las pruebas con servicios reales quedan fuera de esta secuencia por decisión del usuario. La revisión en dispositivos físicos corresponde al usuario.
+
+Las pruebas específicas de conversión y transacción de la restauración histórica se siguen en [023](../023-restauracion-historicos/tasks.md), no cambian los conteos históricos de esta etapa y aún no representan una regresión completa ni una prueba con servicios reales.

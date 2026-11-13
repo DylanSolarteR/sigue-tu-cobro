@@ -23,9 +23,9 @@ La estructura actual de las páginas no satisface las expectativas del usuario y
 
 ## Fuera de alcance
 
-- Cambios en el modelo de datos o aplicación de la migración de registros históricos.
-- Revisión global de lint: completada en la etapa 022. La restauración histórica es el siguiente trabajo. Las pruebas con servicios reales se excluyeron por decisión del usuario.
+- Cambios en el modelo de datos. La restauración histórica posterior se documenta en 023.
+- Revisión global de lint completada en 022. Las pruebas con Clerk real, concurrencia real y despliegue se excluyeron por decisión del usuario.
 
 ## Seguimiento consolidado
 
-Las etapas 015–021 completaron controles, vistas y recorridos de navegador con mocks. Los criterios anteriores se interpretan dentro de ese alcance, sin afirmar validación de Clerk o SingleStore reales. El lint global se completó en la etapa 022; el roadmap registra la restauración como siguiente trabajo.
+Las etapas 015–021 completaron controles, vistas y recorridos de navegador con mocks. La restauración de datos se realizó después en la etapa 023 y se verificó mediante una conexión nueva; esto no valida Clerk real ni concurrencia real. El lint global se completó en 022.

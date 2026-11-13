@@ -8,3 +8,5 @@
 - [x] Actualizar el roadmap y separar la revisión manual de la validación automática.
 
 La revisión final en dispositivos físicos corresponde al usuario. Lint quedó resuelto en la etapa 022; los servicios reales quedan fuera de esta secuencia por su decisión.
+
+La restauración histórica posterior se completó y verificó en [023](../023-restauracion-historicos/spec.md); no implica validación de Clerk real ni de concurrencia.

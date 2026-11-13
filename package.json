@@ -20,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "data:restore": "tsx src/server/restore/cli.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.25",

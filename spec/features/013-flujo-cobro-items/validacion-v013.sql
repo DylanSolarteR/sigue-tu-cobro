@@ -1,3 +1,4 @@
+-- OBSOLETO: reemplazado por spec/features/023-restauracion-historicos. NO EJECUTAR como procedimiento de restauración.
 -- Solo después de poblar staging. Todas las consultas deben devolver cero.
 -- No contiene datos identificadores en los resultados.
 SELECT ABS((SELECT COUNT(*) FROM stc_billing_statement_table) -

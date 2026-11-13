@@ -1,3 +1,5 @@
+# Plan histórico de implementación 013
+> El flujo descrito fue implementado y está cubierto por evidencia local en el roadmap. La propuesta de migración de datos de esta etapa está obsoleta; la restauración histórica vigente se especifica en [023](../023-restauracion-historicos/plan.md). No ejecutar scripts o DDL de 013.
 # 013 · Flujo de cobro por ítems — Plan
 
 ## Enfoque

@@ -1,4 +1,6 @@
-# 013 · Preparación de migración de datos
+# 013 · Preparación de migración de datos — borrador reemplazado
+
+> **Obsoleto y no ejecutable.** Este procedimiento se conserva como historial de decisiones; quedó reemplazado por [023 · Restauración de datos históricos](../023-restauracion-historicos/spec.md). No ejecutar `migracion-v013.borrador.sql`, `auditoria.sql` ni `validacion-v013.sql` como procedimiento de restauración. La etapa 023 prepara una carga controlada en `v2`; no ejecuta dump ni DDL.
 
 **Estado: borrador sin ensayar; no autorizado para ejecutar.** Los SQL de esta carpeta no son migraciones Drizzle ejecutables. No ejecutar `db:push`, `db:migrate` ni estos borradores sobre datos reales con esta propuesta. La entrega de la aplicación depende de probar y completar el procedimiento en un entorno aislado.
 
