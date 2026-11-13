@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { writeFile } from "node:fs/promises";
 import type { Page } from "@playwright/test";
-import { test, expect, control, select, CLIENT, noOverflow } from "./fixtures";
+import { test, expect, control, select, CLIENT, noOverflow, pagination } from "./fixtures";
 
 declare global {
   interface Window { stcPerformance: { longTasks: number[]; shifts: number[] } }
@@ -28,7 +28,7 @@ for (const [accounts, pending] of [[1000, 100], [10000, 1000]] as const) test(`r
     const sample: Record<string, number> = {};
     sample.accountsReady = await measure(page, async () => { await page.goto("/dashboard/cuentas-cobro"); await expect(page.getByRole("list", { name: "Cuentas de cobro" }).locator(":scope > li")).toHaveCount(10); });
     sample.filter = await measure(page, async () => { await page.getByLabel("Buscar cliente", { exact: true }).fill("Cliente 20"); await expect(page.getByRole("list", { name: "Cuentas de cobro" }).locator(":scope > li").first()).toContainText("Cliente 20"); });
-    sample.pagination = await measure(page, async () => { await page.getByRole("button", { name: "Siguiente", exact: true }).click(); await expect(page.getByText(`2 de ${accounts / 20 / 10}`, { exact: true })).toBeVisible(); });
+    sample.pagination = await measure(page, async () => { await pagination(page, "cuentas de cobro").getByRole("button", { name: "Siguiente", exact: true }).click(); await expect(pagination(page, "cuentas de cobro").getByRole("button", { name: "Página 2", exact: true })).toHaveAttribute("aria-current", "page"); });
     sample.selection = await measure(page, async () => { await page.getByRole("button", { name: "Seleccionar página" }).click(); await expect(page.getByText("10 seleccionadas", { exact: true })).toBeVisible(); });
     sample.editor = await measure(page, async () => { await page.getByRole("button", { name: /Abrir cuenta/ }).first().click(); await expect(page.getByLabel("Descripción del ítem")).toBeVisible(); });
     await record(iteration, "accounts");

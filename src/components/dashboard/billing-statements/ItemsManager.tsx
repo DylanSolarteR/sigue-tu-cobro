@@ -209,7 +209,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
               Reintentar carga
             </button>
           ) : items.length ? (
-            <div>
+            <ItemPagination count={items.length} page={safePage} onChange={setPage} disabled={saving}>
             <ul className="space-y-3">
               {visibleItems.map((item) => (
                 <li key={item.id}>
@@ -222,8 +222,7 @@ export default function ItemsManager({ clients }: { clients: Actor[] }) {
                 </li>
               ))}
             </ul>
-            <ItemPagination count={items.length} page={safePage} onChange={setPage} />
-            </div>
+            </ItemPagination>
           ) : (
             <p className="border-stc-border text-stc-label text-stc-muted rounded-2xl border px-5 py-6 leading-6">
               Este cliente no tiene ítems pendientes.

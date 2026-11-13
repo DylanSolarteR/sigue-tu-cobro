@@ -119,12 +119,12 @@ it("conserva la seleccion al cambiar de pagina y filtrar", async () => {
   vi.mocked(getBillingStatements).mockResolvedValueOnce({ success: true, message: "", data: Array.from({ length: 11 }, (_, index) => account(String(index), `Cliente ${index}`)) });
   render(<ListBillingStatements />);
   fireEvent.click(await screen.findByRole("button", { name: "Seleccionar cuenta de Cliente 0" }));
-  fireEvent.click(screen.getByRole("button", { name: "Siguiente" }));
+  fireEvent.click(screen.getByRole("button", { name: "Página 2" }));
   fireEvent.click(screen.getByRole("button", { name: "Seleccionar cuenta de Cliente 10" }));
   fireEvent.change(screen.getByLabelText("Buscar cliente"), { target: { value: "Cliente 0" } });
   expect(screen.getByText("2 seleccionadas")).toBeTruthy();
   expect(screen.getByRole("button", { name: "Deseleccionar cuenta de Cliente 0" })).toBeTruthy();
-  expect(screen.getByText("1 de 1")).toBeTruthy();
+  expect(screen.queryByRole("navigation", { name: "Paginación de cuentas de cobro inferior" })).toBeNull();
 });
 
 it("no ejecuta acciones masivas si no puede verificar las cuentas", async () => {

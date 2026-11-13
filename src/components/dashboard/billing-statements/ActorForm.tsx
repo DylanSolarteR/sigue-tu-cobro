@@ -140,6 +140,8 @@ export default function ActorForm({
           </button>
         ) : items.length ? (
           <div className="space-y-2">
+            <ItemPagination count={items.length} page={safePage} onChange={setPage} disabled={saving || loading}>
+            <div className="space-y-2">
             {visibleItems.map((item) => (
               <label
                 key={item.id}
@@ -167,7 +169,8 @@ export default function ActorForm({
                 </span>
               </label>
             ))}
-            <ItemPagination count={items.length} page={safePage} onChange={setPage} />
+            </div>
+            </ItemPagination>
             <p aria-live="polite" className="text-stc-label text-stc-muted">{selected.length} seleccionados de {items.length} ítems</p>
           </div>
         ) : (

@@ -27,8 +27,10 @@ describe("listado de clientes", () => {
     expect(await screen.findByText("Cliente 1")).toBeTruthy();
     const table = screen.getByRole("table");
     expect(within(table).queryByText("Cliente 11")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Siguiente" }));
+    const pagination = screen.getByRole("navigation", { name: "Paginación de clientes inferior" });
+    fireEvent.click(within(pagination).getByRole("button", { name: "Página 2" }));
     expect(within(table).getByText("Cliente 11")).toBeTruthy();
+    expect(within(pagination).getByRole("button", { name: "Página 2" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("button", { name: "Anterior" }).hasAttribute("disabled")).toBe(false);
   });
 
@@ -59,5 +61,26 @@ it("reinicia la página al cambiar de clientes a acreedores", async () => {
   rerender(<ActorList kind="creditor" />);
   expect(screen.getByRole("status", { name: "Cargando acreedores" })).toBeTruthy();
   expect(await screen.findByText("Acreedor nuevo")).toBeTruthy();
-  expect(screen.getByRole<HTMLButtonElement>("button", { name: "Anterior" }).disabled).toBe(true);
+  expect(screen.queryByRole("navigation", { name: "Paginación de acreedores inferior" })).toBeNull();
+});
+
+it("vuelve a la página disponible al eliminar el último cliente de una página", async () => {
+  vi.spyOn(window, "confirm").mockReturnValue(true);
+  render(<ActorList kind="client" cards />);
+  await screen.findByText("Cliente 1");
+  fireEvent.click(screen.getByRole("button", { name: "Página 2" }));
+  fireEvent.click(screen.getByRole("button", { name: "Eliminar Cliente 11" }));
+  expect(await screen.findByText("Cliente 1")).toBeTruthy();
+  expect(screen.queryByText("Cliente 11")).toBeNull();
+  expect(screen.queryByRole("navigation", { name: "Paginación de clientes inferior" })).toBeNull();
+});
+
+it("mantiene independientes las páginas de clientes y acreedores", async () => {
+  vi.mocked(getCreditors).mockResolvedValueOnce(Array.from({ length: 11 }, (_, index) => ({ id: `a${index}`, name: `Acreedor ${index + 1}`, docType: "CC" as const, docNumber: "12345", type: "creditor" as const, ownerId: "user-test", expeditionPlace: null, telephone: null, isActive: true, createdAt: "2026-01-01", updatedAt: "2026-01-01" })));
+  render(<><ActorList kind="client" cards /><ActorList kind="creditor" cards /></>);
+  await screen.findByText("Cliente 1"); await screen.findByText("Acreedor 1");
+  fireEvent.click(within(screen.getByRole("navigation", { name: "Paginación de clientes inferior" })).getByRole("button", { name: "Página 2" }));
+  expect(screen.getByText("Cliente 11")).toBeTruthy();
+  expect(screen.getByText("Acreedor 1")).toBeTruthy();
+  expect(within(screen.getByRole("navigation", { name: "Paginación de acreedores inferior" })).getByRole("button", { name: "Página 1" }).getAttribute("aria-current")).toBe("page");
 });

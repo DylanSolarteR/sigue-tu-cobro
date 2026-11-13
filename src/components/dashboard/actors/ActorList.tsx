@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { deleteClientById, deleteCreditorById, getClients, getCreditors } from "@/actions/actor.api";
 import type { Actor } from "@/types/actor";
 import { ICON_ACTION_CLASS } from "@/components/dashboard/action-styles";
+import { PaginatedList } from "@/components/dashboard/Pagination";
 
 const PAGE_SIZE = 10;
 
@@ -68,9 +69,10 @@ function ActorListContent({ kind, cards = false }: ActorListProps) {
   if (error) return <p role="alert" className="alert alert-error">No se pudieron cargar los {section}.</p>;
 
   const pageCount = Math.max(1, Math.ceil(actors.length / PAGE_SIZE));
-  const visible = actors.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const safePage = Math.min(page, pageCount - 1);
+  const visible = actors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
   if (cards) return (
-    <div className="space-y-4">
+    <PaginatedList page={safePage} pages={pageCount} onChange={setPage} label={`Paginación de ${section}`} disabled={deleting !== null}>
       {visible.length ? <ul className="space-y-3">{visible.map((actor) => (
         <li key={actor.id} className="bg-stc-bg border-stc-border rounded-2xl border p-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
           <div className="min-w-0 space-y-1">
@@ -84,11 +86,11 @@ function ActorListContent({ kind, cards = false }: ActorListProps) {
           </div>
         </li>
       ))}</ul> : <p className="text-stc-muted py-4">No hay {section} registrados.</p>}
-      {pageCount > 1 && <div className="flex flex-wrap items-center justify-end gap-3"><button type="button" className="btn btn-outline min-h-11" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Anterior</button><span className="text-sm text-base-content/70">{page + 1} de {pageCount}</span><button type="button" className="btn btn-outline min-h-11" disabled={page + 1 >= pageCount} onClick={() => setPage((value) => value + 1)}>Siguiente</button></div>}
-    </div>
+    </PaginatedList>
   );
   return (
     <div className="w-full space-y-4">
+      <PaginatedList page={safePage} pages={pageCount} onChange={setPage} label={`Paginación de ${section}`} disabled={deleting !== null}>
       <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100">
         <table className="table w-full max-md:block">
           <thead className="max-md:sr-only"><tr><th scope="col">Nombre</th><th scope="col">Documento</th><th scope="col">Lugar de expedición</th><th scope="col">Teléfono</th><th scope="col">Acciones</th></tr></thead>
@@ -98,7 +100,7 @@ function ActorListContent({ kind, cards = false }: ActorListProps) {
           </tr>) : <tr><td colSpan={5} className="py-8 text-center">No hay {section} registrados.</td></tr>}</tbody>
         </table>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end"><button type="button" className="btn btn-outline min-h-11" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Anterior</button><span className="text-sm text-base-content/70">{page + 1} de {pageCount}</span><button type="button" className="btn btn-outline min-h-11" disabled={page + 1 >= pageCount} onClick={() => setPage((value) => value + 1)}>Siguiente</button></div>
+      </PaginatedList>
     </div>
   );
 }

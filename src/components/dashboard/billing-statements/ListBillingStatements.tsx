@@ -5,6 +5,7 @@ import SelectField from "@/components/dashboard/SelectField";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trash } from "lucide-react";
 import { ICON_ACTION_CLASS } from "@/components/dashboard/action-styles";
+import { PaginatedList } from "@/components/dashboard/Pagination";
 import DateField from "@/components/dashboard/DateField";
 import { toast } from "sonner";
 import {
@@ -362,6 +363,7 @@ export default function ListBillingStatements() {
           {summary}
         </p>
       )}
+      <PaginatedList page={safePage} pages={pageCount} onChange={setPage} label="Paginación de cuentas de cobro" disabled={locked}>
       {visible.length ? (
         <ul aria-label="Cuentas de cobro" className="space-y-3">
           {visible.map((account) => {
@@ -576,27 +578,7 @@ export default function ListBillingStatements() {
             : "No hay cuentas de cobro registradas."}
         </p>
       )}
-      <div className="flex items-center justify-end gap-3">
-        <button
-          type="button"
-          className="btn btn-outline min-h-11 rounded-xl"
-          disabled={locked || safePage === 0}
-          onClick={() => setPage(safePage - 1)}
-        >
-          Anterior
-        </button>
-        <span className="text-base-content/70 text-stc-label">
-          {safePage + 1} de {pageCount}
-        </span>
-        <button
-          type="button"
-          className="btn btn-outline min-h-11 rounded-xl"
-          disabled={locked || safePage + 1 >= pageCount}
-          onClick={() => setPage(safePage + 1)}
-        >
-          Siguiente
-        </button>
-      </div>
+      </PaginatedList>
     </div>
   );
 }

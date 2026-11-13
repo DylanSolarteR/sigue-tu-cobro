@@ -25,6 +25,7 @@
 - [x] make automated tests and pass every one (lógica, componentes y E2E con servicios simulados).
 - [x] resolve global lint errors and warnings (etapa 022: cero diagnósticos, tipos, pruebas y build aprobados).
 - [x] restore current historical data from a read-only snapshot of v1 into v2, replacing test records; verify counts and source integrity (feature 023).
+- [x] unify pagination across account, client, creditor and item lists and the item selector (feature 024: tests, check, build and desktop/mobile visual review passed).
 
 Revisión en dispositivos físicos y despliegue: a cargo del usuario. Las pruebas con servicios reales quedan fuera de la secuencia actual por su decisión. Consulta el [roadmap actualizado](spec/constitution/roadmap.md).
 

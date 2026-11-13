@@ -16,12 +16,13 @@ Estado consolidado de la modernización. Las validaciones automáticas abarcan l
 
 - [022 · Lint global](../features/022-lint-global/spec.md): completada; cero errores y cero avisos, tipos, 185 pruebas, 23 E2E afectados y build de producción aprobados.
 - [023 · Restauración de datos históricos](../features/023-restauracion-historicos/spec.md): snapshot `v1` auditado (22 actores, 88 cuentas, 341 ítems), transformación y reemplazo de datos de prueba en `v2` aplicados en una transacción y verificados con conexión nueva. Hash del snapshot original y posterior de `v1` coincidieron; check, 229 pruebas y build aprobados. La revisión visual manual del PDF no se realizó. No acredita Clerk real, concurrencia ni despliegue.
+- [024 · Paginación uniforme](../features/024-paginacion-uniforme/spec.md): control compartido en cuatro listas y selector de ítems, paginación superior condicional medida sobre filas, accesibilidad y sidebar revisados. Pasaron 243 pruebas en 50 archivos, 61 pruebas dirigidas posteriores al ajuste visual, 31 E2E aprobadas con un skip de pulsación sostenida solo en desktop, seis E2E de retest color/foco, check sin errores/avisos, tipos y build. Capturas desktop/mobile inspeccionadas. No se ejecutó benchmark nuevo; no hubo escrituras de base de datos.
 
 ## Próximos trabajos, en orden acordado
 
-No queda restauración histórica pendiente en la secuencia acordada. El commit e integración de los cambios se registran en el cierre de la rama.
+No queda restauración histórica ni paginación uniforme pendiente en la secuencia acordada. La implementación y la evidencia de 024 están consolidadas en su [especificación y tareas](../features/024-paginacion-uniforme/spec.md). El commit e integración se registran en el cierre de la rama.
 
-En cada implementación se actualizarán este índice, el README y las listas históricas relacionadas.
+En cada implementación se actualizarán este índice, el README y las listas históricas relacionadas con evidencia concreta. El commit e integración de cada cambio se registran en el cierre de su rama.
 
 ## Fuera de la secuencia por decisión del usuario
 

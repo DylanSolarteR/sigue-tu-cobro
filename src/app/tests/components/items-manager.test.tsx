@@ -180,7 +180,8 @@ it("pagina muchos conceptos y permite acceder al último", async () => {
   selectClient();
   expect(await screen.findByRole("button", { name: /Concepto 1 / })).toBeTruthy();
   expect(screen.queryByRole("button", { name: /Concepto 26 / })).toBeNull();
-  fireEvent.click(screen.getByRole("button", { name: "Siguiente página de ítems" }));
+  fireEvent.click(screen.getByRole("button", { name: "Página 2" }));
   expect(screen.getByRole("button", { name: /Concepto 26 / })).toBeTruthy();
   expect(screen.queryByRole("button", { name: /Concepto 1 / })).toBeNull();
+  expect(screen.getByRole("button", { name: "Página 2" }).getAttribute("aria-current")).toBe("page");
 });

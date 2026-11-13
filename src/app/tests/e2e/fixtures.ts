@@ -12,6 +12,9 @@ export async function select(page: Page, label: string, option: string | RegExp)
   await page.getByRole("option", { name: option, exact: typeof option === "string" }).click();
 }
 export const CLIENT = "Cliente 01 con nombre extenso de prueba";
+export function pagination(page: Page, entity: "cuentas de cobro" | "clientes" | "acreedores" | "ítems", position: "inferior" | "superior" = "inferior") {
+  return page.getByRole("navigation", { name: `Paginación de ${entity} ${position}`, exact: true });
+}
 export async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy();
 }

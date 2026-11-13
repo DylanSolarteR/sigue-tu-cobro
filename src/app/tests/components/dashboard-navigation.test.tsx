@@ -8,6 +8,13 @@ vi.mock("@clerk/nextjs", () => ({ Show: ({ children }: { children: React.ReactNo
 afterEach(cleanup);
 
 describe("navegación del panel", () => {
+  it("sitúa ítems antes de cuentas en escritorio y móvil", () => {
+    render(<SidebarDashboard />);
+    const expected = ["Resumen", "Ítems", "Cuentas de cobro", "Directorio", "Configuración"];
+    expect(within(screen.getByRole("navigation", { name: "Navegación principal" })).getAllByRole("link").map((link) => link.textContent)).toEqual(expected);
+    fireEvent.click(screen.getByRole("button", { name: "Abrir menú" }));
+    expect(within(screen.getByRole("navigation", { name: "Navegación móvil" })).getAllByRole("link").map((link) => link.textContent)).toEqual(expected);
+  });
   it("indica la sección activa también en sus páginas hijas", () => {
     render(<SidebarDashboard />);
     const navigation = screen.getByRole("navigation", { name: "Navegación principal" });

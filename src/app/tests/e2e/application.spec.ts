@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { inflateSync } from "node:zlib";
-import { test, expect, control, select, CLIENT, noOverflow } from "./fixtures";
+import { test, expect, control, select, CLIENT, noOverflow, pagination } from "./fixtures";
 
 test("acceso simulado, navegación y configuración adaptable", async ({ page, context }) => {
   await context.clearCookies();
@@ -37,7 +37,7 @@ for (const kind of ["cliente", "acreedor"]) test(`crea, edita y elimina un ${kin
   await page.goto("/dashboard/directorio");
   // Clients are paginated; the new entry is on the last page.
   if (kind === "cliente") {
-    const section = page.getByRole("button", { name: "Clientes", exact: true }).locator("xpath=ancestor::section");
+    const section = pagination(page, "clientes");
     while (!(await page.getByRole("button", { name: `Eliminar ${kind} actualizado E2E` }).count())) await section.getByRole("button", { name: "Siguiente" }).click();
   }
   page.once("dialog", (dialog) => dialog.accept());
@@ -118,7 +118,7 @@ test("cuentas: filtros, paginación, selección y acciones por lotes", async ({ 
   const list = page.getByRole("list", { name: "Cuentas de cobro" });
   await expect(list.locator(":scope > li")).toHaveCount(10);
   await page.getByRole("button", { name: "Seleccionar página" }).click();
-  await page.getByRole("button", { name: "Siguiente" }).click();
+  await pagination(page, "cuentas de cobro").getByRole("button", { name: "Siguiente" }).click();
   await expect(page.getByText("10 seleccionadas", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Marcar seleccionadas como pagadas" }).click();
   await expect.poll(async () => (await control(request)).accounts.filter((entry) => entry.status === "paid").length).toBe(10);

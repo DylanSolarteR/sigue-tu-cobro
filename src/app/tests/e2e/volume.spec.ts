@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { test, expect, control, select, CLIENT, noOverflow } from "./fixtures";
+import { test, expect, control, select, CLIENT, noOverflow, pagination } from "./fixtures";
 
 test("PDF de 100 conceptos conserva el documento y genera varias páginas", async ({ page, request }, testInfo) => {
   await control(request, { action: "reset", accounts: 0, pending: 100 });
@@ -11,7 +11,7 @@ test("PDF de 100 conceptos conserva el documento y genera varias páginas", asyn
     const choices = page.getByRole("checkbox");
     await expect(choices.first()).toBeVisible();
     for (const choice of await choices.all()) await choice.check();
-    const next = page.getByRole("button", { name: "Siguiente página de ítems" });
+    const next = pagination(page, "ítems").getByRole("button", { name: "Siguiente página de ítems" });
     if (!(await next.count()) || await next.isDisabled()) break;
     await next.click();
   }
@@ -39,7 +39,7 @@ for (const [accounts, pending] of [[1000, 100], [10000, 1000]] as const) test(`v
   const list = page.getByRole("list", { name: "Cuentas de cobro" });
   await expect(list.locator(":scope > li")).toHaveCount(10);
   await page.getByLabel("Buscar cliente", { exact: true }).fill("Cliente 20");
-  const next = page.getByRole("button", { name: "Siguiente", exact: true });
+  const next = pagination(page, "cuentas de cobro").getByRole("button", { name: "Siguiente", exact: true });
   for (let index = 1; index < accounts / 20 / 10; index++) await next.click();
   await expect(next).toBeDisabled();
   await list.getByRole("button", { name: /Abrir cuenta/ }).last().click();
@@ -50,7 +50,7 @@ for (const [accounts, pending] of [[1000, 100], [10000, 1000]] as const) test(`v
   await select(page, "Cliente", CLIENT);
   await expect(page.getByRole("button", { name: /Concepto pendiente 0001/ })).toBeVisible();
   const last = page.getByRole("button", { name: new RegExp(`Concepto pendiente ${String(pending).padStart(4, "0")}`) });
-  const itemNext = page.getByRole("button", { name: "Siguiente página de ítems" });
+  const itemNext = pagination(page, "ítems").getByRole("button", { name: "Siguiente página de ítems" });
   while (!(await last.count()) && await itemNext.count() && await itemNext.isEnabled()) await itemNext.click();
   await expect(last).toBeVisible();
   await last.click();

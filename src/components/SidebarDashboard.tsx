@@ -8,8 +8,8 @@ import { useRef, useState } from "react";
 
 const NAVIGATION = [
   { href: "/dashboard/resumen", title: "Resumen", icon: ChartNoAxesCombined },
-  { href: "/dashboard/cuentas-cobro", title: "Cuentas de cobro", icon: NotebookText },
   { href: "/dashboard/items", title: "Ítems", icon: ListChecks },
+  { href: "/dashboard/cuentas-cobro", title: "Cuentas de cobro", icon: NotebookText },
   { href: "/dashboard/directorio", title: "Directorio", icon: Handshake },
   { href: "/dashboard/config", title: "Configuración", icon: Settings },
 ];

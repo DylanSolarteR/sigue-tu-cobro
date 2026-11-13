@@ -150,6 +150,12 @@ Reservar espacio con skeletons accesibles. Los gráficos deben tener una alterna
 
 Las listas de pendientes muestran 25 ítems por página y conservan la selección y el total al preparar una cuenta. La descarga de PDF se prepara al solicitarla, sin generar documentos para todas las filas al entrar al listado. El perfil de Configuración solicita el ancho disponible mediante los contenedores públicos de apariencia de Clerk.
 
+### Paginación
+
+La paginación compartida implementada usa botones de 44 px con `rounded-xl`, tipografía global de 14 px y tokens globales de superficie y foco. Para los colores primarios, consumir directamente las variables CSS del tema (`--color-primary` y `--color-primary-content`); no depender de clases Tailwind `bg-primary` heredadas, cuya configuración puede producir contraste incorrecto. El color seleccionado validado es `#319678`, con contraste mínimo de 4.5:1 entre texto y fondo. El estado hover usa la superficie `stc` correspondiente; el foco de teclado cambia borde/superficie sin rings ni outlines externos. Los números muestran solo la página actual y sus vecinas existentes; la página seleccionada utiliza el verde oscuro primario. Las flechas anterior y siguiente usan los iconos Lucide `ChevronLeft` y `ChevronRight`, y se desactivan al alcanzar cada extremo. La página actual expone `aria-current="page"`.
+
+Cada barra es una navegación accesible cuyo nombre identifica entidad y posición. La barra inferior se centra en móvil y se alinea a la derecha en escritorio. Se puede añadir una barra superior a la derecha si el contenido de resultados, medido sin incluir las barras, supera la altura de la ventana. Las dos barras reflejan el mismo estado.
+
 ## Do's and Don'ts
 
 ### Do:
