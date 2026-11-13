@@ -1,4 +1,4 @@
-import { Actor } from "./actor";
+import { type Actor } from "./actor";
 export interface billing_statement {
     id?: string;
     client_id: string;
@@ -17,7 +17,9 @@ export interface billing_statement {
 
 export interface billing_statement_item {
     id?: string;
-    billing_statement_id: string;
+    billing_statement_id: string | null;
+    client_id: string;
+    status: "pending" | "added" | "paid";
     amount: number;
     desc: string;
     isActive?: boolean;

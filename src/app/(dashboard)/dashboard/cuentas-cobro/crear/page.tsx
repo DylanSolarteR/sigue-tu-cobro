@@ -1,29 +1,39 @@
 import CreateBillingStatementForm from "@/components/dashboard/billing-statements/CreateBillingStatementForm";
-import Loading from "@/components/Loading";
-import { Button } from "@/components/ui";
 import Link from "next/link";
 import { Suspense } from "react";
 function CrearCuentaCobro() {
   return (
     <>
-      <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-[70rem] md:max-w-full">
-        <div className="flex h-full flex-col items-start justify-start gap-4">
-          <h1 className="px-8 text-2xl text-white">Cuentas de cobro</h1>
-          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Link href={"/dashboard/cuentas-cobro"}>
-              <Button
-                size={"xl"}
-                variant={"outline"}
-                className="bg-primary drop-shadow-lg hover:brightness-110"
-              >
-                Ver lista de cuentas de cobro
-              </Button>
-            </Link>
-          </div>
+      <section className="bg-stc-surface flex w-full flex-col items-start justify-between gap-5 rounded-2xl p-4 sm:flex-row sm:items-end sm:p-6">
+        <div>
+          <h1 className="text-2xl font-semibold sm:text-3xl">
+            Crear cuenta de cobro
+          </h1>
+          <p className="text-stc-label text-stc-muted mt-2">
+            Selecciona el cliente y los conceptos para preparar tu cuenta.
+          </p>
         </div>
+        <Link
+          href="/dashboard/cuentas-cobro"
+          className="border-stc-border text-stc-label text-stc-text hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover inline-flex min-h-11 w-full items-center justify-center rounded-xl border px-4 font-medium sm:w-auto"
+        >
+          Volver a cuentas de cobro
+        </Link>
       </section>
-      <section className="flex items-center justify-center overflow-auto rounded-lg bg-muted md:h-[80%] md:max-h-[80%] md:w-[70rem] md:max-w-full">
-        <Suspense fallback={<Loading />}>
+      <section className="bg-stc-surface w-full min-w-0 rounded-2xl p-4 sm:p-6">
+        <Suspense
+          fallback={
+            <div
+              role="status"
+              aria-label="Cargando formulario de cuenta"
+              className="w-full space-y-4"
+            >
+              <div className="skeleton rounded-xl h-8 w-2/3" />
+              <div className="skeleton rounded-xl h-12 w-full" />
+              <div className="skeleton rounded-xl h-48 w-full" />
+            </div>
+          }
+        >
           <CreateBillingStatementForm />
         </Suspense>
       </section>

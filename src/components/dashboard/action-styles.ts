@@ -1,0 +1,1 @@
+export const ICON_ACTION_CLASS = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-transparent text-stc-text outline-none hover:bg-stc-hover focus-visible:border-stc-focus focus-visible:bg-stc-hover disabled:cursor-not-allowed disabled:opacity-50";

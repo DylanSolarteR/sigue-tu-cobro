@@ -1,5 +1,4 @@
 import UpdateBillingStatmenteForm from "@/components/dashboard/billing-statements/UpdateBillingStatementForm";
-import { Button } from "@/components/ui";
 import Link from "next/link";
 
 async function UpdateBillingStatement(props: {
@@ -8,23 +7,11 @@ async function UpdateBillingStatement(props: {
   const { id } = await props.params;
   return (
     <>
-      <section className="rounded-lg bg-secondary py-6 md:h-[20%] md:max-h-[20%] md:w-[70rem] md:max-w-full">
-        <div className="flex h-full flex-col items-start justify-start gap-4">
-          <h1 className="px-8 text-2xl text-white">Cuentas de cobro</h1>
-          <div className="flex w-full flex-row items-center justify-start gap-4 px-8">
-            <Link href={"/dashboard/cuentas-cobro"}>
-              <Button
-                size={"xl"}
-                variant={"outline"}
-                className="bg-primary drop-shadow-lg hover:brightness-110"
-              >
-                Ver lista de cuentas de cobro
-              </Button>
-            </Link>
-          </div>
-        </div>
+      <section className="flex w-full flex-col items-start justify-between gap-5 rounded-box bg-base-200 p-4 sm:flex-row sm:items-end sm:p-6">
+        <div><h1 className="text-2xl font-semibold sm:text-3xl">Editar cuenta de cobro</h1><p className="mt-2 text-sm text-base-content/70">Revisa los conceptos y actualiza los datos de esta cuenta.</p></div>
+        <Link href="/dashboard/cuentas-cobro" className="btn btn-outline w-full sm:w-auto">Volver a cuentas de cobro</Link>
       </section>
-      <section className="flex items-center justify-center rounded-lg bg-muted md:h-full md:max-h-[80%] md:w-[70rem] md:max-w-full">
+      <section className="w-full min-w-0 rounded-box bg-base-200 p-4 sm:p-6">
         <UpdateBillingStatmenteForm id={id} />
       </section>
     </>

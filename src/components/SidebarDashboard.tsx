@@ -1,135 +1,67 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarMenuButton,
-  SidebarRail,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
+import { ChartNoAxesCombined, CircleUser, Handshake, ListChecks, Menu, NotebookText, Settings, X } from "lucide-react";
+import { useRef, useState } from "react";
 
-import {
-  ChartNoAxesCombined,
-  NotebookText,
-  HandCoins,
-  Handshake,
-  Settings,
-  CircleUser,
-  LucideProps,
-} from "lucide-react";
-import { ForwardRefExoticComponent, RefAttributes } from "react";
+const NAVIGATION = [
+  { href: "/dashboard/resumen", title: "Resumen", icon: ChartNoAxesCombined },
+  { href: "/dashboard/items", title: "Ítems", icon: ListChecks },
+  { href: "/dashboard/cuentas-cobro", title: "Cuentas de cobro", icon: NotebookText },
+  { href: "/dashboard/directorio", title: "Directorio", icon: Handshake },
+  { href: "/dashboard/config", title: "Configuración", icon: Settings },
+];
 
-function SidebarDashboard() {
-  const path = usePathname();
+function NavigationLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   return (
-    <Sidebar variant="floating" collapsible="icon" className="rounded-full">
-      <SidebarContent className="flex">
-        <SidebarGroup className="flex flex-col items-center justify-start">
-          <SidebarTrigger className="mr-4 mt-4 scale-150 self-end rounded-lg hover:bg-[#10473A]" />
-
-          <SidebarCard
-            title={"Resumen"}
-            active_href={path}
-            Icon={ChartNoAxesCombined}
-            href="/dashboard/resumen"
-          />
-          <SidebarCard
-            title={"Cuentas de Cobro"}
-            active_href={path}
-            Icon={NotebookText}
-            href="/dashboard/cuentas-cobro"
-          />
-          <SidebarCard
-            title={"Clientes"}
-            active_href={path}
-            Icon={Handshake}
-            href="/dashboard/clientes"
-          />
-          <SidebarCard
-            title={"Acreedores"}
-            active_href={path}
-            Icon={HandCoins}
-            href="/dashboard/acreedores"
-          />
-          <SidebarCard
-            title={"Configuración"}
-            active_href={path}
-            Icon={Settings}
-            href="/dashboard/config"
-          />
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className="flex flex-col items-center justify-start">
-        <SidebarGroup className="flex flex-col items-center justify-center">
-          <SidebarMenuButton
-            className="flex h-10 flex-row items-center justify-start gap-4 rounded-lg py-10 selection:bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent"
-            tooltip={"Perfil"}
-          >
-            <SignedIn>
-              <UserButton
-                afterSwitchSessionUrl="/dashboard/resume"
-                fallback={<CircleUser className="min-h-8 min-w-8" />}
-                userProfileMode="navigation"
-                userProfileUrl="/dashboard/config"
-                showName={true}
-                appearance={{
-                  elements: {
-                    avatarBox: {
-                      order: 1,
-                    },
-                    userButtonOuterIdentifier: {
-                      order: 2,
-                      fontSize: "1.25rem",
-                    },
-                    userButtonTrigger: {
-                      "&:focus": {
-                        boxShadow: "none",
-                      },
-                    },
-                  },
-                }}
-              />
-            </SignedIn>
-          </SidebarMenuButton>
-        </SidebarGroup>
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <ul className="space-y-1">
+      {NAVIGATION.map(({ href, title, icon: Icon }) => {
+        const active = pathname === href || pathname.startsWith(`${href}/`) || (href === "/dashboard/directorio" && (pathname.startsWith("/dashboard/clientes") || pathname.startsWith("/dashboard/acreedores")));
+        return (
+          <li key={href}>
+            <Link href={href} onClick={onNavigate} aria-current={active ? "page" : undefined}
+              className={`flex min-h-11 items-center gap-3 rounded-xl px-4 py-3 text-stc-label font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6] ${active ? "bg-[#143d34] text-white" : "text-[#c1ccc8] hover:bg-[#172a25] hover:text-white"}`}>
+              <Icon size={19} aria-hidden="true" /><span>{title}</span>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
-function SidebarCard(props: {
-  title: string;
-  href: string;
-  Icon: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
-  active_href: string;
-}) {
-  const { title, href, Icon, active_href } = props;
+function Profile() {
   return (
-    <SidebarGroup>
-      <SidebarMenuButton
-        className={`${active_href.includes(href) ? "bg-[#10473A] hover:bg-[#10473A]" : "hover:bg-transparent"} h-16 rounded-3xl text-xl`}
-        asChild
-        tooltip={title}
-      >
-        <Link
-          href={href}
-          className={`${active_href.includes(href) ? "" : "brightness-50"} flex flex-row items-center justify-start space-x-2 hover:brightness-100`}
-        >
-          <Icon
-            className={`brightness min-h-4 min-w-4 md:min-h-8 md:min-w-8`}
-          />
-          <span className="text-wrap">{title}</span>
-        </Link>
-      </SidebarMenuButton>
-    </SidebarGroup>
+    <Show when="signed-in">
+      <UserButton afterSwitchSessionUrl="/dashboard/resumen" fallback={<CircleUser aria-label="Perfil" />} userProfileMode="navigation" userProfileUrl="/dashboard/config" showName />
+    </Show>
   );
 }
 
-export default SidebarDashboard;
+export default function SidebarDashboard() {
+  const pathname = usePathname() ?? "";
+  const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+
+  return (
+    <>
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[#263c35] bg-[#0d1d19] lg:flex">
+        <Link href="/dashboard/resumen" className="px-7 pb-8 pt-8 text-lg font-semibold tracking-tight text-white focus-visible:outline-2 focus-visible:outline-[#75d4b6]">SigueTuCobro<span className="text-[#75d4b6]">.</span></Link>
+        <nav aria-label="Navegación principal" className="flex-1 px-3"><NavigationLinks pathname={pathname} /></nav>
+        <div className="border-t border-[#263c35] px-5 py-5"><Profile /></div>
+      </aside>
+
+      <div className="border-b border-[#263c35] bg-[#0d1d19] lg:hidden">
+        <div className="flex min-h-16 items-center justify-between gap-4 px-4 sm:px-6">
+          <Link href="/dashboard/resumen" className="text-base font-semibold text-white">SigueTuCobro<span className="text-[#75d4b6]">.</span></Link>
+          <button ref={menuButton} type="button" aria-label={open ? "Cerrar menú" : "Abrir menú"} aria-expanded={open} aria-controls="mobile-dashboard-navigation" onClick={() => setOpen((value) => !value)} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-white hover:bg-[#172a25] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75d4b6]">
+            {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+          </button>
+        </div>
+        {open && <nav id="mobile-dashboard-navigation" aria-label="Navegación móvil" onKeyDown={(event) => { if (event.key === "Escape") { setOpen(false); menuButton.current?.focus(); } }} className="border-t border-[#263c35] px-3 pb-5 pt-3"><NavigationLinks pathname={pathname} onNavigate={() => setOpen(false)} /><div className="px-4 pt-5"><Profile /></div></nav>}
+      </div>
+    </>
+  );
+}

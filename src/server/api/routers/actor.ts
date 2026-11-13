@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, privateProcedure, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
 import { actor } from "@/server/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 
@@ -8,11 +8,11 @@ const actorSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
     docType: z.enum(["CC", "CE", "NIT"], {
-        errorMap: () => ({ message: 'Tipo de documento invalido.' })
+        error: 'Tipo de documento invalido.'
     }),
     docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
     type: z.enum(["client", "creditor"], {
-        errorMap: () => ({ message: 'Tipo de actor invalido.' })
+        error: 'Tipo de actor invalido.'
     }),
     expeditionPlace: z.string().optional(),
     telephone: z.string().optional(),
@@ -28,7 +28,7 @@ export const actorRouter = createTRPCRouter({
                 and(
                     eq(actor.type, "client"),
                     eq(actor.isActive, true),
-                    eq(actor.ownerId, ctx.user.userId as string)
+                    eq(actor.ownerId, ctx.user.userId)
                 )
             ).orderBy(desc(actor.updatedAt));
             return clients;
@@ -38,7 +38,7 @@ export const actorRouter = createTRPCRouter({
                 and(
                     eq(actor.id, input.id),
                     eq(actor.type, "client"),
-                    eq(actor.ownerId, ctx.user.userId as string)
+                    eq(actor.ownerId, ctx.user.userId)
                 )
             );
             if (client.length === 0) {
@@ -51,7 +51,7 @@ export const actorRouter = createTRPCRouter({
                 and(
                     eq(actor.type, "creditor"),
                     eq(actor.isActive, true),
-                    eq(actor.ownerId, ctx.user.userId as string)
+                    eq(actor.ownerId, ctx.user.userId)
                 )
             ).orderBy(desc(actor.updatedAt));
             return creditors;
@@ -61,7 +61,7 @@ export const actorRouter = createTRPCRouter({
                 and(
                     eq(actor.id, input.id),
                     eq(actor.type, "creditor"),
-                    eq(actor.ownerId, ctx.user.userId as string)
+                    eq(actor.ownerId, ctx.user.userId)
                 )
             );
             if (creditor.length === 0) {
@@ -76,9 +76,9 @@ export const actorRouter = createTRPCRouter({
             create: privateProcedure
                 .input(actorSchema)
                 .mutation(async ({ ctx, input }) => {
-                    const result = await ctx.db.insert(actor).values({
+                    await ctx.db.insert(actor).values({
                         name: input.name,
-                        ownerId: ctx.user.userId as string,
+                        ownerId: ctx.user.userId,
                         docType: input.docType,
                         docNumber: input.docNumber,
                         telephone: input.telephone,
@@ -90,15 +90,15 @@ export const actorRouter = createTRPCRouter({
             update: privateProcedure
                 .input(z.object({
                     id: z.string(),
-                    name: z.string(),
+                    name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
                     docType: z.enum(["CC", "CE", "NIT"]),
-                    docNumber: z.string(),
+                    docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
                     expeditionPlace: z.string().optional(),
                     telephone: z.string().optional(),
                 })
                 )
                 .mutation(async ({ ctx, input }) => {
-                    const result = await ctx.db.update(actor).set({
+                    await ctx.db.update(actor).set({
                         name: input.name,
                         docType: input.docType,
                         docNumber: input.docNumber,
@@ -108,7 +108,7 @@ export const actorRouter = createTRPCRouter({
                         and(
                             eq(actor.id, input.id),
                             eq(actor.type, "client"),
-                            eq(actor.ownerId, ctx.user.userId as string)
+                            eq(actor.ownerId, ctx.user.userId)
                         )
                     )
 
@@ -116,13 +116,13 @@ export const actorRouter = createTRPCRouter({
             delete: privateProcedure
                 .input(z.object({ id: z.string() }))
                 .mutation(async ({ ctx, input }) => {
-                    const result = await ctx.db.update(actor).set({
+                    await ctx.db.update(actor).set({
                         isActive: false
                     }).where(
                         and(
                             eq(actor.id, input.id),
                             eq(actor.type, "client"),
-                            eq(actor.ownerId, ctx.user.userId as string)
+                            eq(actor.ownerId, ctx.user.userId)
                         )
                     )
                 }),
@@ -132,9 +132,9 @@ export const actorRouter = createTRPCRouter({
             create: privateProcedure
                 .input(actorSchema)
                 .mutation(async ({ ctx, input }) => {
-                    const result = await ctx.db.insert(actor).values({
+                    await ctx.db.insert(actor).values({
                         name: input.name,
-                        ownerId: ctx.user.userId as string,
+                        ownerId: ctx.user.userId,
                         docType: input.docType,
                         docNumber: input.docNumber,
                         telephone: input.telephone,
@@ -148,7 +148,7 @@ export const actorRouter = createTRPCRouter({
                     id: z.string(),
                     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
                     docType: z.enum(["CC", "CE", "NIT"], {
-                        errorMap: () => ({ message: 'Seleccione un tipo de documento.' })
+                        error: 'Seleccione un tipo de documento.'
                     }),
                     docNumber: z.string().min(5, "El número de documento debe tener al menos 5 caracteres"),
                     expeditionPlace: z.string().optional(),
@@ -156,7 +156,7 @@ export const actorRouter = createTRPCRouter({
                 })
                 )
                 .mutation(async ({ ctx, input }) => {
-                    const result = await ctx.db.update(actor).set({
+                    await ctx.db.update(actor).set({
                         name: input.name,
                         docType: input.docType,
                         docNumber: input.docNumber,
@@ -166,7 +166,7 @@ export const actorRouter = createTRPCRouter({
                         and(
                             eq(actor.id, input.id),
                             eq(actor.type, "creditor"),
-                            eq(actor.ownerId, ctx.user.userId as string)
+                            eq(actor.ownerId, ctx.user.userId)
                         )
                     )
 
@@ -174,13 +174,13 @@ export const actorRouter = createTRPCRouter({
             delete: privateProcedure
                 .input(z.object({ id: z.string() }))
                 .mutation(async ({ ctx, input }) => {
-                    const result = await ctx.db.update(actor).set({
+                    await ctx.db.update(actor).set({
                         isActive: false
                     }).where(
                         and(
                             eq(actor.id, input.id),
                             eq(actor.type, "creditor"),
-                            eq(actor.ownerId, ctx.user.userId as string)
+                            eq(actor.ownerId, ctx.user.userId)
                         )
                     )
 

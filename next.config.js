@@ -3,18 +3,35 @@
  * for Docker builds.
  */
 import "./src/env.js";
+import path from "node:path";
+
+const e2e = process.env.STC_E2E === "1";
+if (e2e && (!process.env.E2E_CONTROL_TOKEN || process.env.VERCEL)) {
+  throw new Error("El harness E2E solo puede ejecutarse localmente desde Playwright.");
+}
 
 /** @type {import("next").NextConfig} */
 const config = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  distDir: e2e ? ".next-e2e" : ".next",
   typescript: {
     ignoreBuildErrors: true,
   },
-  webpack(config) {
+  webpack(config, { webpack }) {
+    if (e2e) {
+      const fixture = (/** @type {string} */ file) => path.resolve(`src/app/tests/e2e/harness/${file}`);
+      Object.assign(config.resolve.alias, {
+        "@clerk/nextjs$": fixture("clerk-client.tsx"),
+        "@clerk/nextjs/server$": fixture("clerk-server.ts"),
+        "@/trpc/server$": fixture("api.tsx"),
+        "@/server/db$": fixture("blocked-db.ts"),
+      });
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(/(?:^@\/trpc\/server$|[\\/]src[\\/]trpc[\\/]server(?:\.tsx?)?$)/, fixture("api.tsx")),
+        new webpack.NormalModuleReplacementPlugin(/(?:^@\/server\/db$|[\\/]src[\\/]server[\\/]db(?:[\\/]index\.ts)?$)/, fixture("blocked-db.ts")),
+      );
+    }
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule) =>
+    const fileLoaderRule = config.module.rules.find((/** @type {{ test?: { test?: (value: string) => boolean } }} */ rule) =>
       rule.test?.test?.(".svg"),
     );
 

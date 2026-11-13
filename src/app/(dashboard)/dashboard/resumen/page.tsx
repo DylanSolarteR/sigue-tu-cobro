@@ -1,127 +1,29 @@
-import { Button, SidebarTrigger } from "@/components/ui";
-import Link from "next/link";
-import Statistics from "./Statistics";
 import { Suspense } from "react";
-import Loading from "@/components/Loading";
+import Link from "next/link";
+import { ArrowDown, ArrowRight, FilePlus2, ListChecks, UsersRound } from "lucide-react";
+import Statistics from "./Statistics";
+import StatisticsSkeleton from "@/components/dashboard/summary/StatisticsSkeleton";
 
-function Dashboard() {
-  return (
-    <>
-      <SidebarTrigger className="mr-4 mt-4 hidden scale-150 self-end rounded-lg hover:bg-[#10473A] md:flex" />
-      <div className="flex flex-col items-center gap-2 overflow-y-auto px-4 py-4 md:justify-center md:px-0">
-        <section className="grid h-full w-full grid-cols-1 items-center justify-center gap-3 md:grid md:h-[16rem] md:w-[70rem] md:max-w-[70rem] md:grid-flow-col md:grid-cols-4 md:items-center md:justify-between md:gap-3">
-          <Suspense
-            fallback={
-              <div className="flex h-full w-full items-center justify-center">
-                <Loading />
-              </div>
-            }
-          >
-            <Statistics />
-          </Suspense>
-        </section>
-        <section className="grid h-full max-h-[30rem] w-full items-center justify-center gap-3 md:grid-cols-4">
-          <div className="h-full grow overflow-auto rounded-lg bg-muted md:col-span-3">
-            <div className="px-8 py-4">
-              <h2 className="mb-4 text-xl font-bold">Como empezar</h2>
-              <ol className="list-inside list-decimal space-y-2 font-normal">
-                <li>
-                  <span className="font-semibold">
-                    Crear Cliente y Acreedor
-                  </span>{" "}
-                  🧑‍💼
-                  <p>Para crear un cliente y acreedor, sigue estos pasos:</p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">clientes</span>.
-                    </li>
-                    <li>
-                      Haz clic en{" "}
-                      <span className="text-accent">"Nuevo Cliente"</span>.
-                    </li>
-                    <li>Rellena los datos del cliente y guarda.</li>
-                    <li>Repite el proceso para crear un acreedor.</li>
-                  </ul>
-                </li>
-                <li>
-                  <span className="font-semibold">Crear Cuenta de Cobro</span>{" "}
-                  📝
-                  <p>Para crear una cuenta de cobro, sigue estos pasos:</p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">cuentas de cobro</span>.
-                    </li>
-                    <li>
-                      Haz clic en{" "}
-                      <span className="text-accent">
-                        "Nueva Cuenta de Cobro"
-                      </span>
-                      .
-                    </li>
-                    <li>Selecciona el cliente y acreedor.</li>
-                    <li>Rellena los detalles de la cuenta y guarda.</li>
-                  </ul>
-                </li>
-                <li>
-                  <span className="font-semibold">
-                    Editar la cuenta de cobro
-                  </span>{" "}
-                  ✏️
-                  <p>
-                    Para editar una cuenta de cobro existente, sigue estos
-                    pasos:
-                  </p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">cuentas de cobro</span>.
-                    </li>
-                    <li>Selecciona la cuenta que deseas editar.</li>
-                    <li>
-                      Haz clic en <span className="text-accent">"Editar"</span>.
-                    </li>
-                    <li>Realiza los cambios necesarios y guarda.</li>
-                  </ul>
-                </li>
-                <li>
-                  <span className="font-semibold">
-                    Descargar la cuenta de cobro (Opcional)
-                  </span>{" "}
-                  📥
-                  <p>Para descargar una cuenta de cobro, sigue estos pasos:</p>
-                  <ul className="ml-4 list-inside list-disc">
-                    <li>
-                      Accede al menú de{" "}
-                      <span className="text-accent">cuentas de cobro</span>.
-                    </li>
-                    <li>
-                      Haz clic en el icono de{" "}
-                      <span className="text-accent">descarga</span> de la cuenta
-                      que deseas descargar.
-                    </li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-          </div>
-          <div className="flex h-full w-[17rem] flex-col items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-secondary to-accent p-2">
-            {/* <h2></h2> */}
-            <p className="text-bold text-center text-2xl">
-              Crea una nueva cuenta de cobro en unos pocos clicks
-            </p>
-            <Link
-              href={"/dashboard/cuentas-cobro"}
-              className="hover:drop-shadow-xl"
-            >
-              <Button size={"xl"}>Crear nueva</Button>
-            </Link>
-          </div>
-        </section>
-      </div>
-    </>
-  );
+const steps = [
+  { href: "/dashboard/directorio", title: "Completa tu directorio", description: "Registra clientes y acreedores.", Icon: UsersRound },
+  { href: "/dashboard/items", title: "Registra tus ítems", description: "Añade los conceptos pendientes.", Icon: ListChecks },
+  { href: "/dashboard/cuentas-cobro/crear", title: "Crea una cuenta de cobro", description: "Selecciona los ítems para generar tu cuenta.", Icon: FilePlus2 },
+];
+
+export default function Dashboard() {
+  return <div className="w-full space-y-10 pb-8">
+    <header className="flex flex-col gap-5 border-b border-[#263c35] pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <div className="max-w-2xl space-y-2"><h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Tu resumen</h1><p className="text-stc-label leading-6 text-[#b9c9c2] sm:text-base">Organiza tus cobros y consulta cómo avanzan en un solo lugar.</p></div>
+      <Link href="/dashboard/cuentas-cobro/crear" className="btn btn-primary w-full rounded-xl sm:w-auto"><FilePlus2 size={19} aria-hidden="true" /> Crear cuenta de cobro</Link>
+    </header>
+    <section aria-label="Pasos para crear una cuenta" className="flex flex-col items-stretch gap-2 md:flex-row md:items-center">
+      {steps.map(({ href, title, description, Icon }, index) => <div key={href} className="contents">
+        {index > 0 && <span aria-hidden="true" className="flex justify-center text-stc-muted"><ArrowDown size={18} className="md:hidden" /><ArrowRight size={18} className="hidden md:block" /></span>}
+        <Link href={href} className="flex min-w-0 flex-1 items-start gap-3 rounded-2xl border border-stc-border bg-stc-surface p-4 text-stc-text hover:border-stc-focus focus-visible:border-stc-focus focus-visible:outline-none">
+          <Icon size={20} className="mt-0.5 shrink-0 text-stc-accent" aria-hidden="true" /><span><span className="block text-stc-label font-semibold">{title}</span><span className="mt-1 block text-xs leading-5 text-stc-muted">{description}</span></span>
+        </Link>
+      </div>)}
+    </section>
+    <Suspense fallback={<StatisticsSkeleton />}><Statistics /></Suspense>
+  </div>;
 }
-
-export default Dashboard;

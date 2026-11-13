@@ -7,14 +7,15 @@ import {
   View,
   Document,
   StyleSheet,
-  PDFDownloadLink,
+  pdf,
 } from "@react-pdf/renderer";
 import {
-  billing_statement,
-  billing_statement_item,
+  type billing_statement,
+  type billing_statement_item,
 } from "@/types/billing-statement";
 import { convertirNumeroALetras } from "@/lib/numeroALetras";
-import { useEffect, useState } from "react";
+import { formatBillingDate } from "@/lib/billing-date";
+import { useState } from "react";
 
 export const styles = StyleSheet.create({
   page: {
@@ -96,6 +97,7 @@ export const BillingStatementPDF: React.FC<{
   data: billing_statement;
   items: billing_statement_item[];
 }> = ({ data, items }) => {
+  const date = formatBillingDate(data.payDate);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -103,9 +105,7 @@ export const BillingStatementPDF: React.FC<{
         <View style={styles.header}>
           <Text style={styles.title}>CUENTA DE COBRO</Text>
           <Text style={styles.text}>
-            {new Date(data.payDate).toLocaleDateString("es-CO", {
-              dateStyle: "long",
-            })}
+            {date.ok ? date.value : "Fecha no válida"}
           </Text>
           <Text style={styles.text}>{data.client.name.toUpperCase()}</Text>
           <Text style={styles.text}>
@@ -128,7 +128,7 @@ export const BillingStatementPDF: React.FC<{
           </Text>
           <Text style={styles.amount}>
             La suma de ${data.amount?.toLocaleString('es-CO')} (
-            {convertirNumeroALetras(data.amount as number)}).
+            {convertirNumeroALetras(data.amount!)}).
           </Text>
         </View>
 
@@ -146,7 +146,7 @@ export const BillingStatementPDF: React.FC<{
                     </Text>
                     {data.showItemAmount && (
                       <Text style={styles.amountColumn}>
-                        ${item.amount?.toLocaleString()}
+                        ${item.amount?.toLocaleString("es-CO")}
                       </Text>
                     )}
                   </View>
@@ -183,36 +183,45 @@ export const BillingStatementPDF: React.FC<{
 };
 
 const DownloadPDFButton = ({ data }: { data: billing_statement }) => {
-  const [items, setItems] = useState<billing_statement_item[]>([]);
+  const [preparing, setPreparing] = useState(false);
+  const [message, setMessage] = useState("");
+  const date = formatBillingDate(data.payDate);
 
-  async function getItems(idBS: string) {
-    const result = await getBillingStatementItems(idBS);
-    if (result.success) {
-      setItems(result.data!);
+  async function download() {
+    if (!data.id || preparing || !date.ok) return;
+    setPreparing(true);
+    setMessage("");
+    try {
+      // Fetch and render only on demand; lists must not generate every PDF on mount.
+      const result = await getBillingStatementItems(data.id);
+      if (!result.success || !result.data) {
+        setMessage("No se pudo preparar el PDF.");
+        return;
+      }
+      const blob = await pdf(<BillingStatementPDF data={data} items={result.data} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Cuenta de cobro ${data.client.name} (${date.value}).pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      const revoke = URL.revokeObjectURL.bind(URL);
+      setTimeout(() => revoke(url), 1000);
+    } catch {
+      setMessage("No se pudo generar el PDF.");
+    } finally {
+      setPreparing(false);
     }
   }
 
-  useEffect(() => {
-    getItems(data.id as string);
-  }, []);
-
-  return (
-    <PDFDownloadLink
-      document={<BillingStatementPDF data={data} items={items} />}
-      fileName={`Cuenta de cobro ${data.client.name} (${new Date(
-        data.payDate,
-      ).toLocaleString("es-CO", { dateStyle: "long" })}).pdf`}
-    >
-      {({ loading }) => (
-        <button
-          className={`flex items-center justify-center ${loading ? "cursor-not-allowed" : "cursor-pointer"} `}
-          disabled={loading}
-        >
-          {<Download size={24} />}
-        </button>
-      )}
-    </PDFDownloadLink>
-  );
+  if (!data.id || !date.ok) return <span role="status">No se pudo preparar el PDF: cuenta o fecha no válida.</span>;
+  return <div className="flex flex-col gap-2">
+    <button type="button" onClick={() => void download()} disabled={preparing} aria-label={preparing ? "Preparando PDF" : "Descargar PDF"} className="flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-transparent outline-none hover:bg-stc-hover focus-visible:border-stc-focus disabled:cursor-wait disabled:opacity-50">
+      <Download size={24} aria-hidden="true" />
+    </button>
+    {message && <span role="status">{message}</span>}
+  </div>;
 };
 
 export default DownloadPDFButton;

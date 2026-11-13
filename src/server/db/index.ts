@@ -12,6 +12,9 @@ const globalForDb = globalThis as unknown as {
   conn: Pool | undefined;
 };
 
+// Fail closed if a test build ever resolves the real module instead of its fixture.
+if (process.env.STC_E2E === "1") throw new Error("La conexión real está prohibida en E2E.");
+
 const conn =
   globalForDb.conn ??
   createPool({

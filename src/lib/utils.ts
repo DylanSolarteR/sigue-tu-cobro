@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-import { KeyboardEvent } from "react";
+import { type KeyboardEvent } from "react";
 export const onlyNumberInput = (e: KeyboardEvent) => {
   if (!/[0-9]|Delete| |-|Backspace|ArrowLeft|Tab|ArrowRight/i.test(e.key)) {
     e.preventDefault()

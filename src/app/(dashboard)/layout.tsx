@@ -1,18 +1,12 @@
 import SidebarDashboard from "@/components/SidebarDashboard";
 
-export default function DashboardLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <main className="max-w-screen h-full w-full">
-      <div className="max-w-screen flex h-screen max-h-screen w-full items-start justify-center px-56 sm:px-2">
-        <SidebarDashboard />
-        <div className="flex h-full w-full flex-row items-center justify-center gap-6">
-          <main className="flex h-screen w-screen max-w-[70rem] flex-col items-center justify-start gap-2">
-            {children}
-          </main>
-        </div>
-      </div>
-    </main>
+    <div className="flex min-h-screen w-full flex-col bg-stc-bg lg:flex-row">
+      <SidebarDashboard />
+      <main id="contenido-principal" className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+        <div className="flex w-full min-w-0 flex-col gap-stc-section">{children}</div>
+      </main>
+    </div>
   );
 }

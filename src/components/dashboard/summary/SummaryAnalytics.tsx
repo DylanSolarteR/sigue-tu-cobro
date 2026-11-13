@@ -1,0 +1,93 @@
+"use client";
+
+import SelectField from "@/components/dashboard/SelectField";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import DateField from "@/components/dashboard/DateField";
+import { buildSummaryAnalytics, getSummaryPeriod, type StatementSummary } from "@/lib/dashboard-statistics";
+
+const money = (value: number) => `$${new Intl.NumberFormat("es-CO").format(value)}`;
+
+export default function SummaryAnalytics({ statements }: { statements: StatementSummary[] }) {
+  const [preset, setPreset] = useState("6");
+  const [period, setPeriod] = useState(() => getSummaryPeriod(6));
+  const [clientId, setClientId] = useState("all");
+  const [hoveredMonth, setHoveredMonth] = useState<string | null>(null);
+  const [focusedMonth, setFocusedMonth] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const chartScroll = useRef<HTMLDivElement>(null);
+  const [viewport, setViewport] = useState({ left: 0, width: 480 });
+  const updateViewport = () => {
+    const element = chartScroll.current;
+    if (element?.clientWidth) setViewport({ left: element.scrollLeft, width: element.clientWidth });
+  };
+  useEffect(() => {
+    window.addEventListener("resize", updateViewport);
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
+  const options = useMemo(() => {
+    const clients = new Map<string, string>();
+    for (const statement of statements) if (statement.client_id && statement.client?.name) clients.set(statement.client_id, statement.client.name);
+    return [...clients].sort((a, b) => a[1].localeCompare(b[1], "es"));
+  }, [statements]);
+  const result = useMemo(() => buildSummaryAnalytics(statements, period, clientId), [statements, period, clientId]);
+  const months = result.ok ? result.value.months : [];
+  const clients = result.ok ? result.value.clients : [];
+  const max = Math.max(0, ...months.map((month) => month.amount));
+  const width = Math.max(480, months.length * 75);
+  const x = (index: number) => months.length === 1 ? width / 2 : 30 + index * (width - 60) / (months.length - 1);
+  const y = (amount: number) => 155 - (max > 0 ? Math.max(0, amount) / max * 130 : 0);
+  const points = months.map((month, index) => `${x(index)},${y(month.amount)}`).join(" ");
+  const activeMonth = months.find((month) => month.key === (hoveredMonth ?? focusedMonth ?? selectedMonth));
+  const activeIndex = activeMonth ? months.indexOf(activeMonth) : -1;
+  const valueWidth = Math.max(0, Math.min(180, viewport.width - 16));
+  const valueLeft = activeMonth ? Math.max(viewport.left + 8, Math.min(x(activeIndex) - valueWidth / 2, viewport.left + viewport.width - valueWidth - 8)) : 0;
+
+  return <section aria-labelledby="analytics-title" className="space-y-stc-group rounded-2xl border border-base-content/10 bg-base-200 p-5 sm:p-6">
+    <div>
+      <h2 id="analytics-title" className="text-lg font-semibold text-base-content">Evolución y clientes</h2>
+      <p className="mt-1 max-w-3xl text-stc-label leading-relaxed text-base-content/70">Los períodos usan la fecha prevista de pago elegida para cada cuenta; no es la fecha efectiva de pago.</p>
+    </div>
+    <div className="grid gap-stc-group sm:grid-cols-2 lg:grid-cols-4">
+      <div className="space-y-2 text-stc-label font-medium"><label className="block" htmlFor="summary-period">Período</label><SelectField id="summary-period" value={preset} onChange={(value) => { setPreset(value); if (value === "3" || value === "6" || value === "12") setPeriod(getSummaryPeriod(Number(value) as 3 | 6 | 12)); }} options={[{ value: "3", label: "Últimos 3 meses" }, { value: "6", label: "Últimos 6 meses" }, { value: "12", label: "Últimos 12 meses" }, { value: "custom", label: "Personalizado" }]} /></div>
+      <div className="space-y-2 text-stc-label font-medium"><label className="block" htmlFor="summary-client">Cliente de la gráfica</label><SelectField id="summary-client" value={clientId} onChange={setClientId} searchable searchLabel="Buscar cliente" options={[{ value: "all", label: "Todos los clientes" }, ...options.map(([id, name]) => ({ value: id, label: name }))]} /></div>
+      {preset === "custom" && <><DateField id="summary-start" label="Desde" value={period.start} onChange={(start) => setPeriod((current) => ({ ...current, start }))} /><DateField id="summary-end" label="Hasta" value={period.end} onChange={(end) => setPeriod((current) => ({ ...current, end }))} /></>}
+    </div>
+    <p className="text-xs text-base-content/70">El período incluye las fechas de inicio y fin. Los meses incluyen el mes actual completo. El filtro de cliente solo afecta la gráfica.</p>
+    {!result.ok ? <p role="alert" className="text-stc-label text-error">{result.error}</p> : <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <section aria-labelledby="timeline-chart-title" className="min-w-0">
+        <h3 id="timeline-chart-title" className="font-semibold">Valor de cuentas por fecha prevista</h3>
+        <p className="mt-1 text-stc-label text-base-content/70">Cuentas pagadas y pendientes, agrupadas por mes.</p>
+        <div ref={chartScroll} data-testid="chart-scroll" onScroll={updateViewport} className="mt-4 overflow-x-auto">
+          <div className="relative" style={{ width, height: 249 }}>
+          <svg aria-hidden="true" width={width} height="185" viewBox={`0 0 ${width} 185`} className="absolute top-16 max-w-none">
+            <line x1="30" y1="155" x2={width - 30} y2="155" stroke="currentColor" opacity="0.25" />
+            <polyline points={points} fill="none" stroke="var(--color-stc-chart)" strokeWidth="3" strokeLinejoin="round" />
+            {months.map((month, index) => <g key={month.key}><circle cx={x(index)} cy={y(month.amount)} r="4" fill="var(--color-stc-chart)" /><text x={x(index)} y="178" textAnchor="middle" fill="currentColor" fontSize="11">{month.label}</text></g>)}
+          </svg>
+          {months.map((month, index) => <button
+            key={month.key}
+            type="button"
+            aria-label={`${month.label} ${month.key.slice(0, 4)}: ${money(month.amount)}`}
+            className="absolute h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-transparent bg-transparent hover:border-stc-focus hover:bg-stc-field/50 focus-visible:border-stc-focus focus-visible:bg-stc-field/70 focus-visible:outline-none"
+            style={{ left: x(index), top: 64 + y(month.amount) }}
+            onMouseEnter={() => { updateViewport(); setHoveredMonth(month.key); }}
+            onMouseLeave={() => setHoveredMonth(null)}
+            onFocus={() => { updateViewport(); setFocusedMonth(month.key); }}
+            onBlur={() => setFocusedMonth(null)}
+            onClick={() => { updateViewport(); setSelectedMonth((current) => current === month.key ? null : month.key); }}
+            onKeyDown={(event) => { if (event.key === "Escape") { setHoveredMonth(null); setFocusedMonth(null); setSelectedMonth(null); } }}
+          />)}
+          {activeMonth && <span aria-hidden="true" data-testid="chart-value" className="pointer-events-none absolute z-10 -translate-y-full break-words rounded-lg border border-stc-border bg-stc-field px-3 py-2 text-stc-label text-stc-text" style={{ left: valueLeft, top: 64 + y(activeMonth.amount) - 12, width: valueWidth }}>{activeMonth.label}: <strong>{money(activeMonth.amount)}</strong></span>}
+          </div>
+        </div>
+        <ul aria-label="Datos de la gráfica" className="sr-only">{months.map((month) => <li key={month.key}>{month.label}: {money(month.amount)}</li>)}</ul>
+      </section>
+      <section aria-labelledby="clients-chart-title" className="min-w-0 border-t border-base-content/10 pt-5 xl:border-l xl:border-t-0 xl:pl-6 xl:pt-0">
+        <h3 id="clients-chart-title" className="font-semibold">Top 5 clientes por valor de cuentas pagadas</h3>
+        <p className="mt-1 text-stc-label text-base-content/70">Cuentas pagadas con fecha prevista dentro del período</p>
+        {clients.length === 0 ? <p className="mt-5 text-stc-label text-base-content/70">No hay cuentas pagadas con cliente en este período.</p> : <ol aria-label="Ranking de clientes" className="mt-4 space-y-3">{clients.slice(0, 5).map((client, index) => <li key={client.id} className="flex items-baseline justify-between gap-stc-group border-b border-base-content/10 pb-3 text-stc-label"><span className="min-w-0 break-words"><span className="mr-2 text-base-content/60">{index + 1}.</span>{client.name}</span><strong className="shrink-0 tabular-nums">{money(client.amount)}</strong></li>)}</ol>}
+      </section>
+    </div>}
+  </section>;
+}

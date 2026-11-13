@@ -3,11 +3,9 @@ import "@/styles/globals.css";
 import { type Metadata } from "next";
 import localFont from "next/font/local";
 import { TRPCReactProvider } from "@/trpc/react";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+import { dark } from "@clerk/ui/themes";
 import { Toaster } from "@/components/Toaster";
-import { TooltipProvider } from "@/components/ui";
 
 const geologica = localFont({ src: "../fonts/Geologica.woff2" });
 
@@ -24,7 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={geologica.className + " h-screen overflow-hidden"}
+      className={geologica.className}
     >
       <head>
         <link rel="shortcut icon" href="/favicon.ico" />
@@ -35,22 +33,16 @@ export default function RootLayout({
         <TRPCReactProvider>
           <ClerkProvider
             appearance={{
-              baseTheme: dark,
+              theme: dark,
               variables: {
                 colorPrimary: "#319678",
-                colorText: "white",
+                colorForeground: "white",
                 colorBackground: "#0D0D0D",
               },
             }}
           >
-            <TooltipProvider>
-              <SidebarProvider>
-                <div className="max-w-screen h-full min-h-screen w-full">
-                  {children}
-                </div>
-                <Toaster />
-              </SidebarProvider>
-            </TooltipProvider>
+            <div className="min-h-screen w-full">{children}</div>
+            <Toaster />
           </ClerkProvider>
         </TRPCReactProvider>
       </body>

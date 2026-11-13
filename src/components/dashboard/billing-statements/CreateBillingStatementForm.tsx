@@ -1,11 +1,4 @@
 import { getClients, getCreditors } from "@/actions/actor.api";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui";
 import ActorForm from "./ActorForm";
 
 async function CreateBillingStatementForm() {
@@ -13,19 +6,19 @@ async function CreateBillingStatementForm() {
   const creditorsList = await getCreditors();
 
   return (
-    <Card className="mx-auto flex h-full w-full max-w-full flex-col overflow-auto bg-transparent">
-      <CardHeader>
-        <CardTitle className="text-xl">
-          Información de la cuenta de cobro.
-        </CardTitle>
-        <CardDescription className="brightness-75">
-          Por favor ingrese la información de la cuenta de cobro a crear.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <section className="w-full">
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-stc-text text-xl font-semibold">
+            Información de la cuenta de cobro
+          </h2>
+          <p className="text-stc-label text-stc-muted mt-2 leading-6">
+            Selecciona los datos y conceptos de esta cuenta.
+          </p>
+        </div>
         <ActorForm clientsList={clientsList} creditorsList={creditorsList} />
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 

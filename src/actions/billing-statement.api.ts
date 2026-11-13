@@ -1,225 +1,81 @@
 'use server';
-import { api } from "@/trpc/server";
-import { ActionResponse } from "@/types/actionResponses";
-import { billing_statement } from "@/types/billing-statement";
-import { z } from "zod";
 
-const billing_statement_Schema = z.object({
-    id: z.string().optional(),
-    client_id: z.string().nonempty({ message: "El Cliente es requerido" }),
-    creditor_id: z.string().nonempty({ message: "El Acreedor es requerido" }),
-    amount: z.number().optional(),
-    extraInfo: z.string().optional(),
-    showItemAmount: z.boolean().optional(),
-    payDate: z.string(),
-    status: z.enum(["payed", "pending"], { message: "Invalid status" }),
-    isActive: z.boolean().optional(),
-    createdAt: z.string().optional(),
-    updatedAt: z.string().optional(),
+import { z } from "zod";
+import { api } from "@/trpc/server";
+import type { ActionResponse } from "@/types/actionResponses";
+import type { billing_statement, billing_statement_item } from "@/types/billing-statement";
+import { billingDateSchema } from "@/lib/billing-date";
+
+const createSchema = z.object({
+  client_id: z.string().min(1), creditor_id: z.string().min(1),
+  payDate: billingDateSchema, item_ids: z.array(z.string().min(1)).min(1),
 });
 
-
 export async function getStatistics() {
-    try {
-        const numberOfBillingStatements = await api.billing_statement.queries.numberOfBillingStatements();
-        const numberOfPayedBillingStatements = await api.billing_statement.queries.numberOfPayedBillingStatements();
-        const numberOfPendingBillingStatements = await api.billing_statement.queries.numberOfPendingBillingStatements();
-        const totalAmount = await api.billing_statement.queries.totalAmount();
-        return {
-            data: {
-                numberOfBillingStatements,
-                numberOfPayedBillingStatements,
-                numberOfPendingBillingStatements,
-                totalAmount
-            },
-            success: true,
-            message: "Estadísticas obtenidas correctamente"
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: "Error al obtener estadísticas"
-        }
-    }
+  try {
+    const [numberOfBillingStatements, numberOfPayedBillingStatements, numberOfPendingBillingStatements, totalAmount] = await Promise.all([
+      api.billing_statement.queries.numberOfBillingStatements(), api.billing_statement.queries.numberOfPayedBillingStatements(),
+      api.billing_statement.queries.numberOfPendingBillingStatements(), api.billing_statement.queries.totalAmount(),
+    ]);
+    return { success: true, message: "Estadísticas obtenidas correctamente", data: { numberOfBillingStatements, numberOfPayedBillingStatements, numberOfPendingBillingStatements, totalAmount } };
+  } catch { return { success: false, message: "Error al obtener estadísticas" }; }
 }
+
 export async function getBillingStatements(): Promise<ActionResponse<billing_statement[]>> {
-    try {
-        const result = await api.billing_statement.queries.getAll();
-        return {
-            data: result,
-            success: true,
-            message: "Cuentas de cobro obtenidas correctamente"
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: "Error al obtener cuentas de cobro"
-        }
-    }
+  try { return { success: true, message: "Cuentas obtenidas.", data: await api.billing_statement.queries.getAll() }; }
+  catch { return { success: false, message: "No se pudieron obtener las cuentas." }; }
 }
-
 export async function getBillingStatement(id: string): Promise<ActionResponse<billing_statement>> {
-    try {
-        const result = await api.billing_statement.queries.getOne({ id });
-        return {
-            data: result,
-            success: true,
-            message: "Cuenta de cobro obtenida correctamente"
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: "Error al obtener cuenta de cobro"
-        }
-    }
+  if (!z.string().min(1).safeParse(id).success) return { success: false, message: "La cuenta no es válida." };
+  try { return { success: true, message: "Cuenta obtenida.", data: await api.billing_statement.queries.getOne({ id }) }; }
+  catch { return { success: false, message: "No se pudo obtener la cuenta." }; }
 }
 
-export async function createBillingStatement(prevState: ActionResponse<billing_statement>, formData: FormData, date: string): Promise<ActionResponse<billing_statement>> {
-    try {
-        if (formData.get('client') === "None" || formData.get('creditor') === "None") {
-            return {
-                success: false,
-                message: 'Por favor seleccione un cliente y un acreedor',
-            }
-        }
-        const rawData: billing_statement = {
-            extraInfo: "",
-            client_id: formData.get('client') as string,
-            client: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
-            creditor: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
-            creditor_id: formData.get('creditor') as string,
-            payDate: date,
-            status: 'pending',
-        }
-        const validatedData = billing_statement_Schema.safeParse(rawData);
-
-        if (!validatedData.success) {
-            return {
-                success: false,
-                message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
-                input: rawData,
-            }
-        }
-
-
-        await api.billing_statement.mutations.create({
-            client_id: validatedData.data.client_id,
-            creditor_id: validatedData.data.creditor_id,
-            payDate: validatedData.data.payDate,
-        });
-
-
-        return {
-            success: true,
-            message: 'Cuenta de cobro creada exitosamente!',
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: 'Un error ha ocurrido',
-        };
-    }
-
+export async function getBillingStatementDetails(id: string): Promise<ActionResponse<{ account: billing_statement; items: billing_statement_item[] }>> {
+  if (!z.string().min(1).safeParse(id).success) return { success: false, message: "La cuenta no es válida." };
+  try {
+    // Browser-triggered server actions are queued; combine these reads into one round trip.
+    const [account, items] = await Promise.all([
+      api.billing_statement.queries.getOne({ id }),
+      api.billing_statement_item.queries.getBillingStatementItems({ parentBillingStatementId: id }),
+    ]);
+    return { success: true, message: "Detalles obtenidos.", data: { account, items } };
+  } catch { return { success: false, message: "No se pudieron obtener los detalles de la cuenta." }; }
 }
 
-export async function updateBillingStatement(prevState: ActionResponse<billing_statement> | null, formData: FormData, id: string, date: string, amount: number): Promise<ActionResponse<billing_statement>> {
+export async function createBillingStatement(input: z.infer<typeof createSchema>): Promise<ActionResponse<{ id: string }>> {
+  const result = createSchema.safeParse(input);
+  if (!result.success) return { success: false, message: "Seleccione cliente, acreedor y al menos un ítem pendiente." };
+  try {
+    const id = await api.billing_statement.mutations.create(result.data);
+    return { success: true, message: "Cuenta de cobro creada.", data: { id } };
+  } catch { return { success: false, message: "No se pudo crear la cuenta. Verifique que los ítems sigan pendientes." }; }
+}
 
-    try {
-        const validatedId = z.string().safeParse(id);
-        if (!validatedId.success) {
-            return {
-                success: false,
-                message: 'La cuenta de cobro a actualizar no existe',
-            };
-        }
-        const rawData: billing_statement = {
-            client_id: "some client",
-            client: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
-            creditor_id: "some creditor",
-            creditor: { name: "some name", docType: "CC", docNumber: "123", expeditionPlace: "some place", telephone: "123" },
-            status: formData.get('status') as string,
-            amount: amount,
-            extraInfo: formData.get('extraInfo') as string,
-            payDate: date,
-            showItemAmount: Boolean(formData.get('showItemAmount')),
-        }
-        const validatedData = billing_statement_Schema.safeParse(rawData);
-        if (!validatedData.success) {
-            return {
-                success: false,
-                message: 'Por favor corrija los errores en el formulario',
-                errors: validatedData.error.flatten().fieldErrors,
-                input: rawData,
-            }
-        }
+const updateSchema = z.object({
+  id: z.string().min(1), status: z.enum(["pending", "paid"]), extraInfo: z.string().max(2000),
+  payDate: billingDateSchema, showItemAmount: z.boolean(),
+});
+export async function saveBillingStatement(input: z.infer<typeof updateSchema>): Promise<ActionResponse<{ id: string }>> {
+  const result = updateSchema.safeParse(input);
+  if (!result.success) return { success: false, message: "Revise los datos de la cuenta." };
+  try {
+    await api.billing_statement.mutations.update(result.data);
+    return { success: true, message: "Cuenta actualizada.", data: { id: result.data.id } };
+  } catch { return { success: false, message: "No se pudo actualizar la cuenta." }; }
+}
 
-        await api.billing_statement.mutations.update({
-            id: validatedId.data,
-            status: validatedData.data.status,
-            amount: validatedData.data.amount as number,
-            extraInfo: validatedData.data.extraInfo as string,
-            payDate: validatedData.data.payDate,
-            showItemAmount: validatedData.data.showItemAmount as boolean,
-        });
-
-        return {
-            success: true,
-            message: 'Cuenta de cobro actualizada exitosamente!',
-            input: rawData,
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: 'Un error ha ocurrido',
-        };
-    }
+export async function updateBillingStatementStatus(id: string, status: "pending" | "paid"): Promise<ActionResponse<{ id: string }>> {
+  const result = z.object({ id: z.string().min(1), status: z.enum(["pending", "paid"]) }).safeParse({ id, status });
+  if (!result.success) return { success: false, message: "La cuenta o el estado no son válidos." };
+  try {
+    await api.billing_statement.mutations.updateStatus(result.data);
+    return { success: true, message: "Estado actualizado.", data: { id: result.data.id } };
+  } catch { return { success: false, message: "No se pudo actualizar el estado." }; }
 }
 
 export async function deleteBillingstatement(id: string): Promise<ActionResponse<billing_statement>> {
-    try {
-        const validatedId = z.string().safeParse(id);
-        if (!validatedId.success) {
-            return {
-                success: false,
-                message: 'La cuenta de cobro a eliminar no existe',
-            };
-        }
-
-        await api.billing_statement.mutations.delete({ id: validatedId.data });
-
-        return {
-            success: true,
-            message: 'Cuenta de cobro eliminada exitosamente!',
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: 'Un error ha ocurrido',
-        };
-    }
-}
-
-export async function updateBillingStatementAmount(id: string, amount: number): Promise<ActionResponse<billing_statement>> {
-    try {
-        const validatedId = z.string().safeParse(id);
-        if (!validatedId.success) {
-            return {
-                success: false,
-                message: 'La cuenta de cobro a actualizar no existe',
-            };
-        }
-
-        await api.billing_statement.mutations.updateAmount({ id: validatedId.data, amount });
-
-        return {
-            success: true,
-            message: 'Cuenta de cobro actualizada exitosamente!',
-        }
-    } catch (error) {
-        return {
-            success: false,
-            message: 'Un error ha ocurrido',
-        };
-    }
+  if (!z.string().min(1).safeParse(id).success) return { success: false, message: "La cuenta no es válida." };
+  try { await api.billing_statement.mutations.delete({ id }); return { success: true, message: "Cuenta eliminada." }; }
+  catch { return { success: false, message: "No se pudo eliminar la cuenta. Verifique su estado." }; }
 }

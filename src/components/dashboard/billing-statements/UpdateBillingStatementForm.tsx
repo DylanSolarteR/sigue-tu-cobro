@@ -1,441 +1,295 @@
 "use client";
 
-import { useActionState, useEffect, useState, useMemo } from "react";
-import { ActionResponse } from "@/types/actionResponses";
+import SelectField from "@/components/dashboard/SelectField";
+
+import { useEffect, useEffectEvent, useState } from "react";
 import {
-  Alert,
-  AlertDescription,
-  Button,
-  Label,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Textarea,
-  Checkbox,
-} from "@/components/ui";
-import { priceInput } from "@/lib/utils";
-import Loading from "@/components/Loading";
+  getBillingStatementDetails,
+  saveBillingStatement,
+} from "@/actions/billing-statement.api";
 import {
+  updateBillingStatementItem,
+} from "@/actions/billing-statement.item.api";
+import { DatePicker } from "@/components/DatePicker";
+import MoneyInput from "@/components/dashboard/MoneyInput";
+import type {
   billing_statement,
   billing_statement_item,
 } from "@/types/billing-statement";
 import {
-  getBillingStatement,
-  updateBillingStatement,
-  updateBillingStatementAmount,
-} from "@/actions/billing-statement.api";
-import {
-  createBillingStatementItem,
-  deleteBillingStatementItem,
-  getBillingStatementItems,
-  updateBillingStatementItem,
-} from "@/actions/billing-statement.item.api";
-import { DatePicker } from "@/components/DatePicker";
-import { toast } from "sonner";
-import { ClassRegistry } from "node_modules/superjson/dist/class-registry";
+  calendarDateToCivil,
+  parseBillingDateForCalendar,
+} from "@/lib/billing-date";
 
-const initialState: ActionResponse<billing_statement> = {
-  success: false,
-  message: "",
-};
-
-function UpdateBillingStatmenteForm({ id }: { id: string }) {
-  const [loading, setLoading] = useState(true);
-
-  const [BillingStatementInitialData, setBillingStatementInitialData] =
-    useState<billing_statement | null>(null);
-
-  const [bsExists, setBsExists] = useState(true);
-
-  const [state, action, isPending] = useActionState(
-    (prevState: ActionResponse<billing_statement>, formData: FormData) =>
-      updateBillingStatement(
-        prevState,
-        formData,
-        id,
-        date.toISOString(),
-        totalAmount,
-      ),
-    initialState,
-  );
-
-  const [date, setDate] = useState<Date>(new Date());
-
-  const [isChekedItemsAmount, setIsChekedItemsAmount] = useState(false);
-
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-
+export default function UpdateBillingStatementForm({
+  id,
+  onUpdated,
+  onPdfInvalidated,
+  onItemsRefreshing,
+  onItemsRefreshed,
+}: {
+  id: string;
+  onUpdated?: (account: billing_statement) => void;
+  onPdfInvalidated?: () => void;
+  onItemsRefreshing?: () => void;
+  onItemsRefreshed?: () => void;
+}) {
+  const [account, setAccount] = useState<billing_statement | null>(null);
   const [items, setItems] = useState<billing_statement_item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [status, setStatus] = useState<"pending" | "paid">("pending");
+  const [date, setDate] = useState(new Date());
+  const [extraInfo, setExtraInfo] = useState("");
+  const [showItemAmount, setShowItemAmount] = useState(true);
+  const [message, setMessage] = useState("");
 
+  const notifyLoaded = useEffectEvent((loadedAccount: billing_statement) => {
+    onUpdated?.(loadedAccount);
+    onItemsRefreshed?.();
+  });
   useEffect(() => {
-    const total = items.reduce((acc, item) => acc + item.amount, 0);
-    setTotalAmount(total);
-
-    updateBillingStatementAmount(id, total).catch((err) => {
-      console.error("Error actualizando el total:", err);
-    });
-  }, [items]);
-
-  function addItem(item: billing_statement_item) {
-    setItems((prevItems) => [...prevItems, item]);
-  }
-
-  async function deleteItem(idItem: string) {
-    const result = await deleteBillingStatementItem(idItem);
-    if (result.success) {
-      setItems((prevItems) => prevItems.filter((item) => item.id !== idItem));
-      toast.success(result.message);
-    } else toast.error(result.message);
-  }
-  async function updateItem(idItem: string, desc: string, amount: number) {
-    const result = await updateBillingStatementItem(idItem, desc, amount);
-    if (result.success) {
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === idItem ? { ...item, desc, amount } : item,
-        ),
-      );
-      toast.success(result.message);
-    } else toast.error(result.message);
-  }
-
-  async function init() {
-    await getBillingStatement(id).then((res) => {
-      if (res.success) {
-        setBillingStatementInitialData(res.data as billing_statement);
-        setIsChekedItemsAmount(res.data?.showItemAmount!);
-        setDate(new Date(res.data?.payDate!));
+    let active = true;
+    void (async () => {
+      const result = await getBillingStatementDetails(id);
+      if (!active) return;
+      if (!result.success || !result.data) {
+        setMessage(result.message);
         setLoading(false);
-      } else {
-        setBsExists(false);
-        setLoading(false);
+        return;
       }
-    });
-    if (!bsExists) {
+      const { account: loadedAccount, items: loadedItems } = result.data;
+      const parsedDate = parseBillingDateForCalendar(loadedAccount.payDate);
+      if (!parsedDate.ok) {
+        setMessage("La fecha guardada no es válida.");
+        setLoading(false);
+        return;
+      }
+      setAccount(loadedAccount);
+      setItems(loadedItems);
+      notifyLoaded(loadedAccount);
+      setStatus(loadedAccount.status === "paid" ? "paid" : "pending");
+      setDate(parsedDate.value);
+      setExtraInfo(loadedAccount.extraInfo);
+      setShowItemAmount(Boolean(loadedAccount.showItemAmount));
+      setLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  async function save(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const civilDate = calendarDateToCivil(date);
+    if (!civilDate.ok) {
+      setMessage("Selecciona una fecha válida.");
       return;
     }
-    await getBillingStatementItems(id).then((res) => {
-      if (res.success) {
-        setItems(res.data as billing_statement_item[]);
-      }
+    setSaving(true);
+    const result = await saveBillingStatement({
+      id,
+      status,
+      extraInfo,
+      payDate: civilDate.value,
+      showItemAmount,
     });
-  }
-
-  useEffect(() => {
-    init();
-  }, []);
-
-  return loading ? (
-    <Loading />
-  ) : bsExists ? (
-    <Card className="mx-auto flex h-full w-full max-w-full flex-col overflow-y-auto bg-transparent">
-      <CardHeader className="flex flex-col items-start justify-start gap-2">
-        <CardTitle className="text-xl">
-          Información de la cuenta de cobro
-        </CardTitle>
-        <CardDescription className="brightness-75">
-          Por favor cambie la información de la cuenta de cobro a actualizar.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex h-full flex-col gap-4">
-        <ItemBuilder idBillingStatement={id} addToList={addItem} />
-
-        <ItemList
-          items={items}
-          deleteItem={deleteItem}
-          updateItem={updateItem}
-        />
-
-        {state?.message && (
-          <Alert
-            variant={state.success ? "default" : "destructive"}
-            className={`${state.success ? "border border-green-800" : "bg-background"} mb-4 flex items-center justify-start`}
-          >
-            <AlertDescription>{state.message}</AlertDescription>
-          </Alert>
-        )}
-        <form action={action} className="w-full space-y-6 py-4">
-          <div className="w-full space-y-4">
-            <div className="flex w-full items-center justify-evenly space-x-4">
-              <div className="mb-2 space-y-2">
-                <Label htmlFor="status">Estado</Label>
-                <Select
-                  name="status"
-                  defaultValue={BillingStatementInitialData?.status}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue
-                      placeholder="Seleccione el estado de la cuenta de cobro"
-                      aria-describedby="status-error"
-                      className={`${state?.errors?.status ? "border-red-500" : ""} placeholder:brightness-50`}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pendiente</SelectItem>
-                    <SelectItem value="payed">Pagado</SelectItem>
-                  </SelectContent>
-                </Select>
-                {state?.errors?.status && (
-                  <p id="status-error" className="text-sm text-red-500">
-                    {state.errors.status[0]}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="amount">Valor total</Label>
-                <Input id="amount" name="amount" disabled value={totalAmount} />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="payDate">Fecha</Label>
-                <DatePicker date={date} setDate={setDate} />
-              </div>
-            </div>
-            <div className="flex items-center justify-start gap-2">
-              <Checkbox
-                id="showItemAmount"
-                name="showItemAmount"
-                checked={state.input?.showItemAmount ?? isChekedItemsAmount}
-                onCheckedChange={(e) => {
-                  setIsChekedItemsAmount(!isChekedItemsAmount);
-                  if (state.input) {
-                    state.input.showItemAmount = !state.input.showItemAmount;
-                  }
-                }}
-                value={
-                  (state.input?.showItemAmount ?? isChekedItemsAmount) ? 1 : 0
-                }
-                aria-describedby="showItemAmount-error"
-                className="border-accent"
-              />
-              <Label htmlFor="showItemAmount">
-                Mostrar precio unitario de los Items
-              </Label>
-            </div>
-            <div className="flex h-fit w-full items-center justify-start space-x-4"></div>
-            <div className="space-y-2">
-              <Label htmlFor="extraInfo">
-                {"Información Extra (Opcional)"}
-              </Label>
-              <Textarea
-                placeholder="Ej: Informacion de contacto, informacion de facturacion, etc."
-                className="resize-none placeholder:brightness-50"
-                name="extraInfo"
-                defaultValue={
-                  state.input?.extraInfo ??
-                  BillingStatementInitialData?.extraInfo
-                }
-              />
-              <p className="text-sm text-muted-foreground brightness-75">
-                Informacion extra para agregar despues de los items.
-              </p>
-              {state?.errors?.extraInfo && (
-                <p id="telephone-error" className="text-sm text-red-500">
-                  {state.errors.extraInfo[0]}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Actualizando..." : "Actualizar Cuenta de cobro"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
-  ) : (
-    <Alert variant="destructive" className="w-fit">
-      <AlertDescription>La cuenta de cobro no existe</AlertDescription>
-    </Alert>
-  );
-}
-
-export default UpdateBillingStatmenteForm;
-
-const initialStateItem: ActionResponse<billing_statement_item> = {
-  success: false,
-  message: "",
-};
-function ItemBuilder({
-  idBillingStatement,
-  addToList,
-}: {
-  idBillingStatement: string;
-  addToList: (item: billing_statement_item) => void;
-}) {
-  const [state, action, isPending] = useActionState(
-    (prevState: ActionResponse<billing_statement_item>, formData: FormData) =>
-      createBillingStatementItem(prevState, formData, idBillingStatement),
-    initialStateItem,
-  );
-
-  useEffect(() => {
-    if (state.success) {
-      addToList(state.data as billing_statement_item);
+    setMessage(result.message);
+    if (result.success && account) {
+      const updated = {
+        ...account,
+        status,
+        extraInfo,
+        payDate: civilDate.value,
+        showItemAmount,
+      };
+      setAccount(updated);
+      onUpdated?.(updated);
+      onPdfInvalidated?.();
     }
-  }, [state]);
-
-  return (
-    <form
-      action={action}
-      className="flex h-full w-full flex-col space-y-4 rounded-lg border p-8"
-    >
-      <h2 className="text-2xl">Crear Item</h2>
-      {state?.message && (
-        <Alert
-          variant={state.success ? "default" : "destructive"}
-          className={`${state.success ? "border border-green-800" : "bg-background"} mb-4 flex items-center justify-start`}
-        >
-          <AlertDescription>{state.message}</AlertDescription>
-        </Alert>
-      )}
-      <Label htmlFor="desc">Descripcion del item</Label>
-      <Input
-        id="desc"
-        name="desc"
-        placeholder="Servicio prestado, producto vendido, etc."
-        autoComplete="off"
-        minLength={2}
-        maxLength={150}
-        required
-        className="placeholder:brightness-50"
-        defaultValue={state.input?.desc ?? ""}
-      />
-      {state?.errors?.desc && (
-        <p id="desc-error" className="text-sm text-red-500">
-          {state.errors.desc[0]}
-        </p>
-      )}
-      <Label htmlFor="amount">Valor del item</Label>
-      <Input
-        className="placeholder:brightness-50"
-        id="amount"
-        name="amount"
-        autoComplete="off"
-        minLength={2}
-        maxLength={50}
-        required
-        placeholder="Ej: 100000"
-        onKeyDown={priceInput}
-      />
-      {state?.errors?.amount && (
-        <p id="amount-error" className="text-sm text-red-500">
-          {state.errors.amount[0]}
-        </p>
-      )}
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Creando..." : "Crear item"}
-      </Button>
-    </form>
-  );
-}
-
-function ItemList({
-  items,
-  deleteItem,
-  updateItem,
-}: {
-  items: billing_statement_item[];
-  deleteItem: (id: string) => void;
-  updateItem: (id: string, desc: string, amount: number) => void;
-}) {
-  return (
-    <div
-      className={
-        `flex max-h-[50rem] w-full flex-col space-y-4 overflow-y-auto rounded-lg border p-8` +
-        (items.length !== 0 ? " min-h-72" : " min-h-fit")
+    setSaving(false);
+  }
+  async function editItem(itemId: string, desc: string, amount: number) {
+    const result = await updateBillingStatementItem(itemId, desc, amount);
+    setMessage(result.message);
+    if (result.success) {
+      onItemsRefreshing?.();
+      const details = await getBillingStatementDetails(id);
+      if (details.success && details.data) {
+        setAccount(details.data.account);
+        onUpdated?.(details.data.account);
+        setItems(details.data.items);
+        onItemsRefreshed?.();
+      } else {
+        setMessage("Ítem actualizado, pero no se pudieron recargar los datos.");
       }
-    >
-      <h2 className="text-2xl">Items</h2>
-      {items.length > 0 ? (
-        <div className="flex flex-row flex-wrap items-start justify-start gap-4">
-          {items.map((item) => (
-            <Item
-              key={item.id}
-              item={item}
-              deleteItem={() => deleteItem(item.id!)}
-              updateItem={updateItem}
+    }
+  }
+  if (loading)
+    return (
+      <div
+        role="status"
+        aria-label="Cargando cuenta"
+        className="space-y-stc-group w-full"
+      >
+        <div className="skeleton rounded h-8 w-2/3" />
+        <div className="skeleton rounded h-32 w-full" />
+        <div className="skeleton rounded h-48 w-full" />
+      </div>
+    );
+  if (!account) return <p role="alert">{message || "La cuenta no existe."}</p>;
+
+  return (
+    <div className="w-full space-y-6">
+      <h2 className="w-full text-xl font-semibold">
+        Información de la cuenta de cobro
+      </h2>
+      {message && <p role="status">{message}</p>}
+      <div className="gap-stc-group flex w-full flex-col px-6">
+        <section className="flex w-full flex-col gap-2">
+          <h3 className="w-full text-lg font-semibold">Ítems de la cuenta</h3>
+          {account.status === "paid" && (
+            <p className="text-stc-label">
+              Para editar los ítems, cambia la cuenta a pendiente y guarda el
+              cambio.
+            </p>
+          )}
+          {items.length ? (
+            items.map((item) => (
+              <ItemEditor
+                key={item.id}
+                item={item}
+                disabled={account.status === "paid"}
+                onSave={editItem}
+              />
+            ))
+          ) : (
+            <p>No hay ítems en esta cuenta.</p>
+          )}
+        </section>
+        <form
+          onSubmit={(event) => void save(event)}
+          className="gap-stc-group border-stc-border flex w-full flex-col rounded-2xl border sm:p-6"
+        >
+          <div className="flex w-full flex-col gap-2">
+            <label htmlFor="statement-status" className="font-medium">
+              Estado
+            </label>
+            <SelectField id="statement-status" value={status} onChange={(value) => setStatus(value === "paid" ? "paid" : "pending")} options={[{ value: "pending", label: "Pendiente" }, { value: "paid", label: "Pagada" }]} />
+          </div>
+          <p>Valor total: ${(account.amount ?? 0).toLocaleString("es-CO")}</p>
+          <DatePicker date={date} setDate={setDate} />
+          <div className="flex items-center gap-2">
+            <input
+              id="show-item-amount"
+              type="checkbox"
+              className="checkbox checkbox-primary rounded-md"
+              checked={showItemAmount}
+              onChange={(event) => setShowItemAmount(event.target.checked)}
             />
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-muted-foreground brightness-75">
-          No hay items
-        </p>
-      )}
+            <label htmlFor="show-item-amount" className="text-stc-label">
+              Mostrar valor de los ítems en el PDF
+            </label>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="extra-info" className="font-medium">
+              Información adicional
+            </label>
+            <textarea
+              className="textarea border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-24 w-full rounded-2xl border outline-0"
+              id="extra-info"
+              value={extraInfo}
+              onChange={(event) => setExtraInfo(event.target.value)}
+              maxLength={2000}
+            />
+          </div>
+          <button
+            className="btn btn-primary min-h-12 w-full rounded-xl sm:w-auto"
+            disabled={saving}
+            type="submit"
+          >
+            {saving ? "Guardando…" : "Guardar cambios"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
-function Item({
+function ItemEditor({
   item,
-  deleteItem,
-  updateItem,
+  disabled,
+  onSave,
 }: {
   item: billing_statement_item;
-  deleteItem: () => void;
-  updateItem: (id: string, desc: string, amount: number) => void;
+  disabled: boolean;
+  onSave: (id: string, desc: string, amount: number) => Promise<void>;
 }) {
-  const [hasChanged, setHasChanged] = useState(false);
   const [description, setDescription] = useState(item.desc);
   const [amount, setAmount] = useState(String(item.amount));
-
-  useEffect(() => {
-    if (description !== item.desc || amount !== String(item.amount)) {
-      setHasChanged(true);
-    } else {
-      setHasChanged(false);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  async function save(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = Number(amount);
+    if (
+      !item.id ||
+      !description.trim() ||
+      !Number.isSafeInteger(value) ||
+      value <= 0 ||
+      value > 2147483647
+    ) {
+      setMessage("Ingrese una descripción y un valor entero mayor que cero.");
+      return;
     }
-  }, [description, amount]);
-
+    setSaving(true);
+    setMessage("");
+    await onSave(item.id, description, value);
+    setSaving(false);
+  }
   return (
-    <Card className="mx-auto flex h-fit w-fit max-w-full flex-row overflow-auto bg-transparent">
-      <CardHeader className="flex flex-row items-start justify-between">
-        <CardTitle className="flex flex-col gap-2 text-lg">
-          <div className="flex flex-col gap-1">
-            <Label htmlFor={`amountDesc-${item.id}`}>{"Descripción"}</Label>
-            <Input
-              id={`amountDesc-${item.id}`}
-              name={`amountDesc-${item.id}`}
-              className="placeholder:brightness-50"
-              minLength={2}
-              defaultValue={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor={`amountItem-${item.id}`}>Valor</Label>
-            <Input
-              id={`amountItem-${item.id}`}
-              name={`amountItem-${item.id}`}
-              className="placeholder:brightness-50"
-              defaultValue={amount}
-              minLength={2}
-              maxLength={9}
-              onChange={(e) => setAmount(e.target.value)}
-              onKeyDown={priceInput}
-            />
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-row gap-3">
-        <div className="mt-6 flex flex-col justify-center gap-2">
-          <Button onClick={deleteItem}>Eliminar</Button>
-          <Button
-            onClick={() => updateItem(item.id!, description, parseInt(amount))}
-            disabled={!hasChanged}
-          >
-            Actualizar
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <form
+      onSubmit={(event) => void save(event)}
+      className="border-stc-border grid w-full gap-3 rounded-2xl border p-4 sm:grid-cols-2"
+    >
+      <div className="space-y-2">
+        <label className="font-medium" htmlFor={`desc-${item.id}`}>
+          Descripción del ítem
+        </label>
+        <input
+          className="input border-stc-border bg-stc-field hover:border-stc-focus focus-visible:border-stc-focus min-h-12 w-full rounded-2xl border text-base outline-0"
+          id={`desc-${item.id}`}
+          value={description}
+          disabled={disabled || saving}
+          maxLength={200}
+          required
+          onChange={(event) => setDescription(event.target.value)}
+        />
+      </div>
+      <div className="space-y-2">
+        <label className="font-medium" htmlFor={`amount-${item.id}`}>
+          Valor del ítem
+        </label>
+        <MoneyInput
+          id={`amount-${item.id}`}
+          value={amount}
+          disabled={disabled || saving}
+          required
+          onChange={setAmount}
+        />
+      </div>
+      {message && <p role="alert">{message}</p>}
+      <button
+        className="btn btn-primary btn-sm w-full rounded-xl border sm:w-fit"
+        type="submit"
+        disabled={
+          disabled ||
+          saving ||
+          (description === item.desc && amount === String(item.amount))
+        }
+      >
+        Guardar ítem
+      </button>
+    </form>
   );
 }

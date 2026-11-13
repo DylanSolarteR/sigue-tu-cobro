@@ -1,0 +1,236 @@
+[
+  {
+    "accounts": 1000,
+    "pending": 100,
+    "project": "desktop",
+    "timings": {
+      "accountsReady": {
+        "median": 286,
+        "worst": 470,
+        "samples": [
+          286,
+          271,
+          470,
+          320,
+          223
+        ]
+      },
+      "filter": {
+        "median": 118,
+        "worst": 400,
+        "samples": [
+          114,
+          100,
+          400,
+          267,
+          118
+        ]
+      },
+      "pagination": {
+        "median": 136,
+        "worst": 164,
+        "samples": [
+          164,
+          118,
+          148,
+          136,
+          99
+        ]
+      },
+      "selection": {
+        "median": 135,
+        "worst": 197,
+        "samples": [
+          197,
+          117,
+          135,
+          167,
+          100
+        ]
+      },
+      "editor": {
+        "median": 1266,
+        "worst": 1598,
+        "samples": [
+          1383,
+          1266,
+          1164,
+          1131,
+          1598
+        ]
+      },
+      "itemsReady": {
+        "median": 381,
+        "worst": 527,
+        "samples": [
+          350,
+          527,
+          436,
+          381,
+          320
+        ]
+      },
+      "createReady": {
+        "median": 405,
+        "worst": 488,
+        "samples": [
+          405,
+          428,
+          488,
+          350,
+          336
+        ]
+      },
+      "summaryReady": {
+        "median": 465,
+        "worst": 547,
+        "samples": [
+          465,
+          547,
+          519,
+          377,
+          350
+        ]
+      }
+    },
+    "routes": {
+      "accounts": {
+        "maxDomNodes": 540,
+        "maxLongTaskMs": 80,
+        "maxCLS": 0.019066990740740742
+      },
+      "items": {
+        "maxDomNodes": 836,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "create": {
+        "maxDomNodes": 548,
+        "maxLongTaskMs": 53,
+        "maxCLS": 0
+      },
+      "summary": {
+        "maxDomNodes": 265,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      }
+    }
+  },
+  {
+    "accounts": 10000,
+    "pending": 1000,
+    "project": "desktop",
+    "timings": {
+      "accountsReady": {
+        "median": 1040,
+        "worst": 1321,
+        "samples": [
+          1099,
+          1040,
+          1028,
+          1321,
+          1005
+        ]
+      },
+      "filter": {
+        "median": 117,
+        "worst": 161,
+        "samples": [
+          149,
+          115,
+          161,
+          116,
+          117
+        ]
+      },
+      "pagination": {
+        "median": 168,
+        "worst": 189,
+        "samples": [
+          167,
+          168,
+          168,
+          189,
+          151
+        ]
+      },
+      "selection": {
+        "median": 166,
+        "worst": 199,
+        "samples": [
+          167,
+          151,
+          165,
+          199,
+          166
+        ]
+      },
+      "editor": {
+        "median": 5980,
+        "worst": 8482,
+        "samples": [
+          5184,
+          7400,
+          8482,
+          5980,
+          4817
+        ]
+      },
+      "itemsReady": {
+        "median": 1096,
+        "worst": 1215,
+        "samples": [
+          1215,
+          1096,
+          982,
+          1131,
+          1032
+        ]
+      },
+      "createReady": {
+        "median": 998,
+        "worst": 1036,
+        "samples": [
+          1027,
+          952,
+          985,
+          1036,
+          998
+        ]
+      },
+      "summaryReady": {
+        "median": 2030,
+        "worst": 2376,
+        "samples": [
+          1963,
+          2376,
+          2196,
+          2024,
+          2030
+        ]
+      }
+    },
+    "routes": {
+      "accounts": {
+        "maxDomNodes": 540,
+        "maxLongTaskMs": 97,
+        "maxCLS": 0.019066990740740742
+      },
+      "items": {
+        "maxDomNodes": 7136,
+        "maxLongTaskMs": 226,
+        "maxCLS": 0
+      },
+      "create": {
+        "maxDomNodes": 4148,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      },
+      "summary": {
+        "maxDomNodes": 265,
+        "maxLongTaskMs": 0,
+        "maxCLS": 0
+      }
+    }
+  }
+]

@@ -1,6 +1,80 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-stc-bg: #0b1512;
+  /* --color-stc-field: #101815; */
+  --color-stc-field: #0b1512;
+  --color-stc-surface: #101d1a;
+  --color-stc-hover: #25332d;
+  --color-stc-field-focus: #17251e;
+  --color-stc-ink: #10231a;
+  --color-stc-border: #40544b;
+  --color-stc-border-strong: #52645d;
+  --color-stc-focus: #87bba5;
+  --color-stc-text: #edf5ef;
+  --color-stc-muted: #c1d3c8;
+  --color-stc-accent: #74d5a7;
+  --color-stc-error: #ffb4a6;
+  --color-stc-warning: #f8dfaa;
+  --color-stc-day-hover: #355146;
+  --color-stc-danger: #ef9999;
+  --color-stc-danger-surface: #422625;
+  --color-stc-chart: #73d2ae;
+  --color-stc-divider: #39403e;
+  --color-stc-accent-hover: #9ce5bf;
+  --color-stc-accent-focus: #b6efd1;
+  --color-stc-label: #d8e6df;
+  --color-stc-date-focus: #1c3027;
+  --color-stc-date-muted: #a9bdb2;
+  --color-stc-date-ink: #10231b;
+  --color-stc-date-text: #e2eee8;
+  --color-stc-date-clear: #b5c9be;
+  --color-stc-money-prefix: #b4c9be;
+  --color-stc-filter-title: #e4ebe7;
+  --color-stc-paid-surface: #294639;
+  --color-stc-paid-text: #c5f2d9;
+  --color-stc-pending-surface: #4b3e28;
+  --color-stc-selected-dot: #b7ffda;
+  --text-stc-body: 1rem;
+  --text-stc-label: 0.875rem;
+  --text-stc-title: 1.25rem;
+  --spacing-stc-field: 0.5rem;
+  --spacing-stc-group: 1rem;
+  --spacing-stc-section: 1.5rem;
+}
+
+@config "../../tailwind.config.ts";
+
+@plugin "daisyui" {
+  themes: false;
+  exclude: join;
+}
+
+@plugin "daisyui/theme" {
+  name: "sigue";
+  default: true;
+  color-scheme: dark;
+  --color-base-100: #0d1312;
+  --color-base-200: #101d1a;
+  --color-base-300: #193029;
+  --color-base-content: #f4f7f5;
+  --color-primary: #319678;
+  --color-primary-content: #06130f;
+  --color-secondary: #18483a;
+  --color-secondary-content: #f4f7f5;
+  --color-accent: #73d2ae;
+  --color-accent-content: #06130f;
+  --color-neutral: #233730;
+  --color-neutral-content: #f4f7f5;
+  --color-info: #8ecde0;
+  --color-info-content: #10222a;
+  --color-success: #7fd4a7;
+  --color-success-content: #102719;
+  --color-warning: #e8c47d;
+  --color-warning-content: #2b2009;
+  --color-error: #ef9999;
+  --color-error-content: #311010;
+}
 
 @layer base {
   :root {
@@ -38,13 +112,9 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 162 51% 20%;
 
-    
-    
+
+
     --radius: 0.5rem
-
-
-
-    
   }
 }
 
@@ -52,6 +122,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -74,4 +145,30 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: hsl(var(--primary-foreground));
+}
+
+li[data-sonner-toast].stc-toast {
+  background: var(--color-stc-field) !important;
+  color: var(--color-stc-text) !important;
+  border: 1px solid var(--color-stc-border) !important;
+  border-radius: 1rem !important;
+  padding: var(--spacing-stc-group) !important;
+  font-size: var(--text-stc-label) !important;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 0.24) !important;
+}
+
+li[data-sonner-toast].stc-toast-success [data-icon] {
+  color: var(--color-stc-accent);
+}
+
+li[data-sonner-toast].stc-toast-error [data-icon] {
+  color: var(--color-stc-error);
+}
+
+li[data-sonner-toast].stc-toast-warning [data-icon] {
+  color: var(--color-stc-warning);
+}
+
+li[data-sonner-toast].stc-toast [data-description] {
+  color: var(--color-stc-muted);
 }
